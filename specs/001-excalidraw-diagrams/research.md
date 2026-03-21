@@ -40,14 +40,15 @@ The two-stage pipeline avoids browser automation entirely:
 
 ### Font Handling
 
-Excalidraw uses two custom fonts:
-- **Virgil** — handwriting style (default for freehand text)
-- **Cascadia Code** — monospace (for code blocks)
+Excalidraw has both legacy and modern font families:
+- **Legacy**: Virgil (deprecated), Helvetica, Cascadia (hidden)
+- **Modern**: Excalifont (hand-drawn default, ID 5), Nunito (body text, ID 6), Lilita One (headings, ID 7), Comic Shanns (code, ID 8)
 
-For accurate PNG rendering, font files must be provided to resvg via the
-`fontFiles` option. The render script should bundle or download these fonts.
-If fonts are unavailable, text renders in system fallback fonts — functional
-but visually different from the Excalidraw editor.
+The styling configuration uses modern fonts by default. For accurate PNG
+rendering, font files must be provided to resvg via the `fontFiles` option.
+The render script should bundle or download these fonts. If fonts are
+unavailable, text renders in system fallback fonts — functional but visually
+different from the Excalidraw editor.
 
 ### Known Limitations
 
@@ -68,7 +69,7 @@ The Excalidraw JSON format is stable and well-documented through the
 excalidraw.com source code and developer docs. The plugin's reference material
 will document the subset needed for diagram generation:
 
-- **Element types**: rectangle, diamond, ellipse, arrow, line, text, frame
+- **Element types**: rectangle, diamond, ellipse, arrow, line, text, frame, freedraw, image, iframe
 - **Common properties**: id, type, x, y, width, height, strokeColor,
   backgroundColor, fillStyle, strokeWidth, roughness, opacity, groupIds
 - **Arrow bindings**: startBinding/endBinding with elementId, focus, gap
@@ -120,7 +121,7 @@ than a separate JSON config file that would need parsing logic.
 
 The configuration defines:
 - Colour palette (5-7 colours for backgrounds, strokes, text)
-- Font family defaults (Virgil for labels, Cascadia for technical annotations)
+- Font family defaults (Excalifont for hand-drawn labels, Nunito for body text, Comic Shanns for code annotations)
 - Stroke width, roughness, and opacity defaults
 - Fill style defaults (hachure vs solid vs cross-hatch)
 

@@ -14,14 +14,14 @@ standard plugin package under `plugins/diagramming/excalidraw-diagrams/`.
 
 ## Technical Context
 
-**Language/Version**: Markdown (reference material) + Node.js 18+ (render script only)
+**Language/Version**: Markdown (reference material) + Node.js 22+ (render script only)
 **Primary Dependencies**: `excalidraw-to-svg` (JSON→SVG), `@resvg/resvg-js` (SVG→PNG)
 **Storage**: N/A — file-based output (JSON written to disk, PNG rendered on demand)
 **Testing**: Manual validation via render script (generate JSON → render PNG → visual check); JSON schema validation for format correctness
 **Target Platform**: Claude Code plugin (cross-platform, any OS with Node.js)
 **Project Type**: Claude plugin (skill package)
 **Performance Goals**: PNG render < 30 seconds for typical diagrams (5–30 elements)
-**Constraints**: Self-contained script with inline deps, no global installs, no browser automation, no MCP server
+**Constraints**: Self-contained script with deps declared in local package.json, no global installs, no browser automation, no MCP server
 **Scale/Scope**: Single-user local execution; diagrams typically 5–50 elements
 
 ## Constitution Check

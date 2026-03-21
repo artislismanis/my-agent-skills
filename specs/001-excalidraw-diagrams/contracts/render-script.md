@@ -34,7 +34,7 @@ On error: Error message describing the failure
 Valid Excalidraw JSON document (see data-model.md). Must contain at minimum:
 - `type: "excalidraw"`
 - `version: 2`
-- `elements: [...]` (at least one element)
+- `elements: [...]` (may be empty — an empty array renders a blank PNG per spec edge cases)
 
 ### Output Format
 
@@ -43,5 +43,5 @@ if specified in input JSON).
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - Dependencies installed via `npm install` in the `scripts/` directory

@@ -202,8 +202,8 @@ a Constitution Check. Principles: Spec-First, Test-First, User Story Independenc
 MVP-First, Simplicity (YAGNI).
 
 ## Active Technologies
-- Markdown (reference material) + Node.js 18+ (render script only) + Render script deps declared inline (see research.md) (001-excalidraw-diagrams)
+- Markdown (reference material) + Node.js 22+ (render script only) + Render script deps in local package.json (see research.md) (001-excalidraw-diagrams)
 - N/A — file-based output (JSON written to disk, PNG rendered on demand) (001-excalidraw-diagrams)
 
 ## Recent Changes
-- 001-excalidraw-diagrams: Added Markdown (reference material) + Node.js 18+ (render script only) + Render script deps declared inline (see research.md)
+- 001-excalidraw-diagrams: Added Markdown (reference material) + Node.js 22+ (render script only) + Render script deps in local package.json (see research.md)

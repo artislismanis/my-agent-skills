@@ -233,7 +233,8 @@ elements while correctly applying the requested change.
   having Node.js available.
 - **SC-006**: A user can iterate on a generated diagram (add, remove, or modify
   elements) across multiple interactions while maintaining consistency with the
-  brand defined in the styling configuration.
+  brand defined in the styling configuration and the applicable diagram template
+  conventions.
 
 ## Assumptions
 

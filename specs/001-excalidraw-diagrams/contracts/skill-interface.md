@@ -29,7 +29,7 @@ The skill description should cause auto-invocation when the user asks to:
 
 | Output | Format | Description |
 |--------|--------|-------------|
-| Excalidraw JSON | JSON code block | Complete, valid Excalidraw document |
+| Excalidraw JSON | `.excalidraw` file on disk | Complete, valid Excalidraw document |
 | PNG image | File on disk | Visual rendering (when render script is invoked) |
 
 ### Reference Loading
