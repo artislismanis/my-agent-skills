@@ -23,9 +23,11 @@ After Claude generates a diagram and saves it to a file:
 
 ```bash
 cd "${CLAUDE_SKILL_DIR}/scripts"
-npm install   # first time only
 node render.mjs /path/to/diagram.excalidraw
 ```
+
+Claude checks for missing dependencies before the first render and asks
+permission to install them.
 
 This produces `diagram.png` in the same directory as the input file.
 
