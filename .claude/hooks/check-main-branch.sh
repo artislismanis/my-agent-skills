@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 # Blocks file-editing tools when on the main branch (GitHub Flow enforcement).
-# Exit 2 = block with message. Exit 0 = allow.
+# Outputs a structured JSON deny decision when on main; exits 0 to allow otherwise.
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
 if [ "$BRANCH" = "main" ]; then
-  echo "⛔ GitHub Flow violation: you are on '$BRANCH'."
-  echo ""
-  echo "All changes require a feature branch. Options:"
-  echo "  • New plugin (speckit):  /speckit.specify \"description\""
-  echo "  • Any other change:      git checkout -b <short-description>"
-  exit 2
+  REASON="GitHub Flow: you are on main. Create a feature branch first: git checkout -b <name>, or use /speckit.specify for new plugins."
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}' "$REASON"
+  exit 0
 fi
+
+exit 0
