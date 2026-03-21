@@ -5,29 +5,29 @@
 
 ## R1: PNG Rendering Approach
 
-### Decision: Three-package pipeline — `excalidraw-to-svg` + `@napi-rs/canvas` → `@resvg/resvg-js`
+### Decision: Official `@excalidraw/utils` with jsdom + `@napi-rs/canvas` polyfills
 
 ### Rationale
 
-`@excalidraw/utils` provides `exportToSvg`, `exportToBlob`, `exportToCanvas`,
-and `exportToClipboard` — but all require browser DOM APIs
-(`HTMLCanvasElement`, `window.URL.createObjectURL`, etc.). An Excalidraw
-maintainer confirmed in [GitHub issue #8747](https://github.com/excalidraw/excalidraw/issues/8747)
-that server-side use is "not completely out-of-the-box."
+> **Updated**: Pipeline replaced — removed `excalidraw-to-svg` + `@resvg/resvg-js` in favour
+> of official `@excalidraw/utils` (see R5, R6). The third-party `excalidraw-to-svg` library
+> produced broken text positioning — labels inside containers were misplaced and overlapping,
+> making output unusable.
 
-The pipeline avoids browser automation entirely:
+The official `@excalidraw/utils` package provides `exportToCanvas()` which renders
+PNG directly using Excalidraw's own rendering code (same as the web app). It needs
+browser APIs, but these are polyfilled in render.mjs:
 
-1. **`excalidraw-to-svg`** ^3.1.0 — handles jsdom setup internally, runs Excalidraw +
-   React in Node.js to produce SVG.
-2. **`@napi-rs/canvas`** ^0.1.97 — Rust-based canvas implementation (prebuilt binary,
-   no system dependencies). Required because jsdom needs a `canvas` package for
-   `HTMLCanvasElement.getContext()`. Aliased as `canvas` via a postinstall script.
-3. **`@resvg/resvg-js`** ^2.6.2 — Rust-based SVG renderer with prebuilt napi-rs
-   binaries. Fast, no native compilation.
+1. **`@excalidraw/utils`** (latest) — official Excalidraw export utilities. `exportToCanvas()`
+   produces a canvas element with correct text positioning and layout.
+2. **`@napi-rs/canvas`** ^0.1.97 — Rust-based canvas implementation (prebuilt binary).
+   Provides real canvas rendering in Node.js. Also used to register Excalidraw's bundled
+   fonts (Nunito, Excalifont, Virgil, etc.) via `GlobalFonts.registerFromPath()`.
+3. **`jsdom`** ^26.1.0 — DOM polyfill providing `window`, `document`, `HTMLElement`, etc.
 
-> **Updated during testing** (see R5): Original plan used only two packages.
-> Testing revealed `excalidraw-to-svg` v3 requires a canvas backend for jsdom.
-> `@napi-rs/canvas` was added as the solution — see R5 for the full decision trail.
+The render script sets up global polyfills (`window`, `document`, `navigator`, `FontFace`,
+`document.fonts`) before dynamically importing `@excalidraw/utils`. Canvas creation is
+intercepted via `document.createElement('canvas')` override to route through `@napi-rs/canvas`.
 
 ### Alternatives Considered
 
@@ -42,9 +42,9 @@ The pipeline avoids browser automation entirely:
 
 | Package | Version | Purpose | Size Impact |
 |---------|---------|---------|-------------|
-| `excalidraw-to-svg` | ^3.1.0 | Excalidraw JSON → SVG (bundles jsdom, @excalidraw/utils) | Heavy transitive deps |
-| `@napi-rs/canvas` | ^0.1.97 | Canvas backend for jsdom (prebuilt Rust binary) | ~15MB platform binary |
-| `@resvg/resvg-js` | ^2.6.2 | SVG → PNG (prebuilt Rust binary via napi-rs) | ~8MB platform binary |
+| `@excalidraw/utils` | latest | Official Excalidraw renderer — exportToCanvas() for direct PNG | Bundles Excalidraw rendering code + fonts |
+| `@napi-rs/canvas` | ^0.1.97 | Canvas backend for Node.js (prebuilt Rust binary) + font registration | ~15MB platform binary |
+| `jsdom` | ^26.1.0 | DOM polyfill (window, document, HTMLElement, etc.) | Moderate transitive deps |
 
 ### Font Handling
 
@@ -52,20 +52,19 @@ Excalidraw has both legacy and modern font families:
 - **Legacy**: Virgil (deprecated), Helvetica, Cascadia (hidden)
 - **Modern**: Excalifont (hand-drawn default, ID 5), Nunito (body text, ID 6), Lilita One (headings, ID 7), Comic Shanns (code, ID 8)
 
-The styling configuration uses modern fonts by default. For accurate PNG
-rendering, font files must be provided to resvg via the `fontFiles` option.
-The render script should bundle or download these fonts. If fonts are
-unavailable, text renders in system fallback fonts — functional but visually
-different from the Excalidraw editor.
+The styling configuration uses modern fonts by default. The `@excalidraw/utils`
+package bundles all font files as `.ttf` assets in `dist/prod/assets/`. The
+render script registers these with `@napi-rs/canvas` via `GlobalFonts.registerFromPath()`
+for correct font rendering. If fonts are unavailable, text renders in system
+fallback fonts — functional but visually different from the Excalidraw editor.
 
 ### Known Limitations
 
-- `excalidraw-to-svg`'s jsdom-based rendering may have minor differences vs
-  browser rendering
 - Embedded images in diagrams require passing the `files` property from the
   Excalidraw JSON to the export function
-- Transitive dependency tree is heavy (~react, jsdom, excalidraw) — mitigated
-  by using npx/inline deps so nothing is globally installed
+- `@excalidraw/utils` is browser-focused — render.mjs sets up jsdom/canvas
+  polyfills to make it work in Node.js. Font rendering uses `@napi-rs/canvas`
+  GlobalFonts rather than the CSS Font Loading API (FontFace polyfill is a stub)
 
 ## R2: Excalidraw JSON Format
 
@@ -105,10 +104,8 @@ npm install && node render.mjs input.excalidraw output.png
 ```
 
 Or Claude runs it automatically after generating diagram JSON. The
-`package.json` declares `excalidraw-to-svg`, `@resvg/resvg-js`, and
-`@napi-rs/canvas` — npm handles transitive deps. A `postinstall` script
-creates a `canvas` alias in `node_modules/` so that jsdom (used internally
-by `excalidraw-to-svg`) can find a canvas implementation.
+`package.json` declares `@excalidraw/utils`, `@napi-rs/canvas`, and
+`jsdom` — npm handles transitive deps.
 
 ### Alternatives Considered
 
@@ -214,3 +211,55 @@ All tests pass after the fixes above:
 | Wrong type field | `type: "other"` | Error message, exit 1 | Pass |
 | Missing file | Nonexistent path | Error message, exit 1 | Pass |
 | Clean install | `rm -rf node_modules && npm install` | Postinstall creates canvas alias, render works | Pass |
+
+## R6: Pipeline Replacement — excalidraw-to-svg → @excalidraw/utils
+
+### Decision: Replace render pipeline with official @excalidraw/utils
+
+### Problem
+
+The `excalidraw-to-svg` v3.1.0 library (third-party reimplementation) produced broken
+PNG output: text inside containers was mispositioned and overlapping. The SVG intermediate
+step introduced layout errors that made rendered diagrams unusable for visual validation.
+
+### Alternatives Evaluated
+
+| Option | Approach | Text accuracy | Deps | Verdict |
+| ------ | -------- | ------------- | ---- | ------- |
+| Keep excalidraw-to-svg, fix text | Patch SVG output | Partial | Low | Fragile — different rendering code |
+| @excalidraw/utils + polyfills | Official renderer in Node.js | Correct | Medium | Chosen — uses same code as web app |
+| Puppeteer/headless Chrome | Full browser rendering | Perfect | Heavy | Overkill — 200MB+ Chromium dependency |
+| excalidraw-render MCP server | Headless Chromium service | Perfect | Heavy | Separate process, complex setup |
+
+### Solution
+
+Replaced the two-stage pipeline (JSON → SVG → PNG) with direct PNG rendering via
+`@excalidraw/utils.exportToCanvas()`. The official library uses the same rendering code
+as excalidraw.com, producing correct text positioning.
+
+**Polyfills required** (set up as globals before dynamic import):
+- `jsdom` — provides `window`, `document`, `HTMLElement`, `DOMParser`, etc.
+- `@napi-rs/canvas` — provides real canvas via `document.createElement('canvas')` override
+- `FontFace` stub — CSS Font Loading API polyfill (non-functional, allows library to load)
+- `document.fonts` stub — FontFaceSet polyfill
+- Font registration via `GlobalFonts.registerFromPath()` using bundled `.ttf` files from
+  `@excalidraw/utils/dist/prod/assets/`
+
+**Dependencies changed**:
+- Removed: `excalidraw-to-svg`, `@resvg/resvg-js`
+- Added: `@excalidraw/utils`, `jsdom`
+- Kept: `@napi-rs/canvas`
+- Removed: postinstall canvas alias shim (no longer needed)
+
+### Test Results
+
+All 8 test cases pass with the new pipeline:
+
+| Test | Result |
+| ---- | ------ |
+| C4 context diagram (text in containers, arrows, frame) | Pass — text correctly positioned |
+| Empty elements | Pass — blank 16:9 canvas |
+| Custom --width | Pass |
+| --help / no args | Pass |
+| Invalid JSON / wrong type / missing file | Pass — correct error messages |
+| Clean npm install | Pass — no postinstall shim needed |

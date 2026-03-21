@@ -17,16 +17,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
-import { Resvg } from '@resvg/resvg-js';
-import exportToSvg from 'excalidraw-to-svg';
 
-// excalidraw-to-svg reads node_modules via relative path — must run from script dir
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-process.chdir(scriptDir);
-
-// ---------------------------------------------------------------------------
-// Argument parsing
-// ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2);
 
@@ -63,16 +55,11 @@ if (!inputPath) {
   process.exit(1);
 }
 
-// Default output path: same directory, same name, .png extension
 if (!outputPath) {
   const dir = dirname(inputPath);
   const name = basename(inputPath, extname(inputPath));
   outputPath = resolve(dir, `${name}.png`);
 }
-
-// ---------------------------------------------------------------------------
-// Load and validate input
-// ---------------------------------------------------------------------------
 
 let raw;
 try {
@@ -105,58 +92,149 @@ if (!Array.isArray(doc.elements)) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// Render: Excalidraw JSON → SVG → PNG
-// ---------------------------------------------------------------------------
-
 const bgColor = doc.appState?.viewBackgroundColor ?? '#ffffff';
-if (!/^#[0-9a-fA-F]{3,8}$|^[a-zA-Z]+$/.test(bgColor)) {
+if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3}([0-9a-fA-F]{2})?)?$/.test(bgColor) && bgColor !== 'transparent') {
   console.error('Error: invalid viewBackgroundColor value');
   process.exit(1);
 }
-let svgString;
 
-if (doc.elements.length === 0) {
-  // Empty elements array — render a blank canvas (matches Excalidraw behaviour)
-  const blankHeight = Math.round(width * 0.5625);
-  svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${blankHeight}"><rect width="${width}" height="${blankHeight}" fill="${bgColor}"/></svg>`;
-} else {
-  // Stage 1: Excalidraw JSON → SVG via excalidraw-to-svg
-  // The library takes the full Excalidraw document object
-  let svgElement;
-  try {
-    const exportDoc = {
-      ...doc,
-      appState: {
-        ...(doc.appState ?? {}),
-        exportWithDarkMode: false,
-        viewBackgroundColor: bgColor,
-      },
-    };
-    svgElement = await exportToSvg(exportDoc);
-  } catch (err) {
-    console.error(`Error: SVG export failed: ${err.message}`);
-    process.exit(1);
+// ---------------------------------------------------------------------------
+// Heavy initialization — deferred via dynamic import so --help, bad args,
+// and invalid inputs exit without paying jsdom/canvas/font startup cost
+// ---------------------------------------------------------------------------
+
+const { JSDOM } = await import('jsdom');
+const napiCanvas = await import('@napi-rs/canvas');
+const { GlobalFonts } = napiCanvas;
+
+const fontsDir = resolve(scriptDir, 'node_modules/@excalidraw/utils/dist/prod/assets');
+
+const fontMap = {
+  'Nunito ExtraLight Medium.ttf': 'Nunito',
+  'Excalifont.ttf': 'Excalifont',
+  'Virgil.ttf': 'Virgil',
+  'Comic Shanns Regular.ttf': 'Comic Shanns',
+  'Liberation Sans.ttf': 'Liberation Sans',
+  'Lilita One.ttf': 'Lilita One',
+  'Cascadia Code.ttf': 'Cascadia',
+};
+try {
+  for (const [file, family] of Object.entries(fontMap)) {
+    GlobalFonts.registerFromPath(resolve(fontsDir, file), family);
   }
-
-  svgString = svgElement.outerHTML;
+} catch {
+  // Fonts directory missing — fall back to system fonts
 }
 
-// Stage 2: SVG → PNG via @resvg/resvg-js
+if (doc.elements.length === 0) {
+  const blankHeight = Math.round(width * 0.5625);
+  const canvas = napiCanvas.createCanvas(width, blankHeight);
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, width, blankHeight);
+  writeFileSync(outputPath, canvas.toBuffer('image/png'));
+  console.log(`Rendered: ${width}x${blankHeight} → ${outputPath}`);
+  process.exit(0);
+}
+
+// @excalidraw/utils requires DOM + Canvas APIs that only exist in browsers.
+// jsdom provides the DOM; @napi-rs/canvas provides real canvas rendering.
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  pretendToBeVisual: true,
+  url: 'http://localhost',
+});
+
+global.window = dom.window;
+global.document = dom.window.document;
+Object.defineProperty(global, 'navigator', {
+  value: dom.window.navigator, writable: true, configurable: true,
+});
+global.HTMLElement = dom.window.HTMLElement;
+global.HTMLCanvasElement = dom.window.HTMLCanvasElement;
+global.HTMLImageElement = dom.window.HTMLImageElement;
+global.Image = dom.window.Image;
+global.DOMParser = dom.window.DOMParser;
+global.XMLSerializer = dom.window.XMLSerializer;
+global.Element = dom.window.Element;
+global.SVGElement = dom.window.SVGElement;
+global.Node = dom.window.Node;
+global.NodeList = dom.window.NodeList;
+global.Blob = dom.window.Blob;
+global.URL = dom.window.URL;
+Object.defineProperty(global, 'crypto', {
+  value: globalThis.crypto, writable: true, configurable: true,
+});
+global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+global.cancelAnimationFrame = (id) => clearTimeout(id);
+global.devicePixelRatio = 1;
+
+// CSS Font Loading API stub — not available in jsdom but @excalidraw/utils
+// expects FontFace and document.fonts to exist without throwing
+class FontFace {
+  constructor(family, source, descriptors = {}) {
+    this.family = family;
+    this.source = source;
+    this.style = descriptors.style || 'normal';
+    this.weight = descriptors.weight || 'normal';
+    this.status = 'loaded';
+    this.loaded = Promise.resolve(this);
+  }
+  async load() { return this; }
+}
+global.FontFace = FontFace;
+
+if (!document.fonts) {
+  const fontSet = new Set();
+  fontSet.ready = Promise.resolve();
+  fontSet.check = () => true;
+  fontSet.load = async () => [];
+  Object.defineProperty(document, 'fonts', {
+    value: fontSet, writable: true, configurable: true,
+  });
+}
+
+const origCreateElement = document.createElement.bind(document);
+document.createElement = function(tagName, options) {
+  if (tagName.toLowerCase() === 'canvas') {
+    const canvas = napiCanvas.createCanvas(300, 150);
+    canvas.style = {};
+    canvas.setAttribute = () => {};
+    canvas.getAttribute = () => null;
+    return canvas;
+  }
+  return origCreateElement(tagName, options);
+};
+
+// Must import after polyfills — @excalidraw/utils reads globals at module load
+const { exportToCanvas } = await import('@excalidraw/utils');
+
+const origConsoleWarn = console.warn;
+console.warn = (...args) => {
+  const msg = args[0];
+  if (typeof msg === 'string' && msg.includes("Couldn't transform font-face")) return;
+  origConsoleWarn.apply(console, args);
+};
+
 try {
-  const resvg = new Resvg(svgString, {
-    fitTo: { mode: 'width', value: width },
-    font: { loadSystemFonts: true },
+  const canvas = await exportToCanvas({
+    elements: doc.elements,
+    appState: {
+      exportBackground: true,
+      viewBackgroundColor: bgColor,
+      exportWithDarkMode: false,
+    },
+    files: doc.files || {},
+    maxWidthOrHeight: width,
   });
 
-  const rendered = resvg.render();
-  const renderWidth = rendered.width;
-  const renderHeight = rendered.height;
-  const pngBuffer = rendered.asPng();
-
-  writeFileSync(outputPath, pngBuffer);
+  const renderWidth = canvas.width;
+  const renderHeight = canvas.height;
+  writeFileSync(outputPath, canvas.toBuffer('image/png'));
   console.log(`Rendered: ${renderWidth}x${renderHeight} → ${outputPath}`);
 } catch (err) {
   console.error(`Error: PNG render failed: ${err.message}`);
   process.exit(1);
+} finally {
+  console.warn = origConsoleWarn;
+  dom.window.close();
 }

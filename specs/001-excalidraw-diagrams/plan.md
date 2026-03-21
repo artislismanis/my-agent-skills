@@ -15,7 +15,7 @@ standard plugin package under `plugins/diagramming/excalidraw-diagrams/`.
 ## Technical Context
 
 **Language/Version**: Markdown (reference material) + Node.js 22+ (render script only)
-**Primary Dependencies**: `excalidraw-to-svg` ^3.1.0 (JSON→SVG via jsdom), `@resvg/resvg-js` ^2.6.2 (SVG→PNG), `@napi-rs/canvas` ^0.1.97 (canvas backend for jsdom — aliased as `canvas` via postinstall)
+**Primary Dependencies**: `@excalidraw/utils` (official Excalidraw renderer, JSON→PNG via exportToCanvas), `@napi-rs/canvas` ^0.1.97 (canvas backend + font registration), `jsdom` ^26.1.0 (DOM polyfill)
 **Storage**: N/A — file-based output (JSON written to disk, PNG rendered on demand)
 **Testing**: Manual validation via render script (generate JSON → render PNG → visual check); JSON schema validation for format correctness
 **Target Platform**: Claude Code plugin (cross-platform, any OS with Node.js)

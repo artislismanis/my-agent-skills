@@ -26,7 +26,7 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 - [X] T001 Create full directory structure per plan.md: `plugins/diagramming/excalidraw-diagrams/{.claude-plugin/,skills/excalidraw-diagrams/{scripts/,references/,assets/templates/}}`
 - [X] T002 [P] Create plugin metadata in `plugins/diagramming/excalidraw-diagrams/.claude-plugin/plugin.json` with name, version 1.0.0, description, and capabilities
-- [X] T003 [P] Create `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/package.json` declaring `excalidraw-to-svg` and `@resvg/resvg-js` dependencies per research.md
+- [X] T003 [P] Create `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/package.json` declaring `@excalidraw/utils`, `@napi-rs/canvas`, and `jsdom` dependencies per research.md
 
 ---
 
@@ -65,7 +65,7 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 ### Implementation for User Story 2
 
-- [X] T007 [US2] Implement render script in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/render.mjs` per render-script.md contract: CLI interface (`node render.mjs <input-path> [output-path] [--width <pixels>]`), two-stage pipeline (excalidraw-to-svg → @resvg/resvg-js), exit codes 0/1, stdout format, Node.js 22+, handle empty elements array (render blank PNG), handle appState.viewBackgroundColor
+- [X] T007 [US2] Implement render script in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/render.mjs` per render-script.md contract: CLI interface (`node render.mjs <input-path> [output-path] [--width <pixels>]`), direct PNG rendering via @excalidraw/utils exportToCanvas(), exit codes 0/1, stdout format, Node.js 22+, handle empty elements array (render blank PNG), handle appState.viewBackgroundColor
 - [X] T008 [US2] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add render script invocation instructions: after saving .excalidraw file, run `node render.mjs <path>` to generate PNG preview for visual validation (FR-011)
 
 **Checkpoint**: User Stories 1 AND 2 both work independently — diagrams generate and render to PNG
