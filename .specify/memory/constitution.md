@@ -1,11 +1,12 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: (unversioned template) → 1.0.0
-Initial population of all placeholder tokens.
+Version change: 1.0.0 → 1.0.1
+Scoped observability requirement to MCP servers and long-running services only.
+Standalone scripts and skill definitions are now exempt.
 
-Modified principles: N/A (first version)
-Added sections: Core Principles, Development Standards, Workflow, Governance
+Modified sections: Development Standards (Observability bullet)
+Added sections: N/A
 Removed sections: N/A
 
 Templates reviewed:
@@ -90,8 +91,9 @@ reason about, and change.
 - **Quality gates**: All P1 acceptance scenarios MUST pass before any P2 work
   begins. All acceptance scenarios MUST pass before a feature is considered
   complete.
-- **Observability**: Structured logging MUST be included for all service-layer
-  operations. Log levels (DEBUG/INFO/WARN/ERROR) MUST be used consistently.
+- **Observability**: Structured logging MUST be included for MCP servers and
+  long-running services. Log levels (DEBUG/INFO/WARN/ERROR) MUST be used
+  consistently. Standalone scripts and skill definitions are exempt.
 - **Versioning**: Public interfaces MUST follow Semantic Versioning
   (MAJOR.MINOR.PATCH). Breaking changes MUST increment MAJOR and include a
   migration note in the plan.
@@ -135,4 +137,4 @@ explicitly verifies compliance with each principle. Any violation MUST be
 justified in the plan's Complexity Tracking table or the plan MUST NOT be
 approved.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-21 | **Last Amended**: 2026-03-21
+**Version**: 1.0.1 | **Ratified**: 2026-03-21 | **Last Amended**: 2026-03-21
