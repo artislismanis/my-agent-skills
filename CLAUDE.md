@@ -122,6 +122,7 @@ Installable via `claude mcp add` from npm/PyPI or directly from GitHub.
 ## Technology Rules
 
 - Choose **one primary language** per plugin: Python, TypeScript/Node, or Bash.
+- **Supported runtimes**: Node.js 22+ for JS/TS scripts, Python 3.12+ for Python scripts.
 - Scripts in `skills/*/scripts/` must use self-contained dependency declarations to avoid
   requiring manual setup steps.
 - Any cross-language use within a plugin requires a **Technology Decisions** section in
@@ -199,3 +200,10 @@ Speckit commands are defined in `.claude/commands/speckit.*.md`. Key scripts:
 Constitution at `.specify/memory/constitution.md` (v1.0.0). Every `plan.md` must include
 a Constitution Check. Principles: Spec-First, Test-First, User Story Independence,
 MVP-First, Simplicity (YAGNI).
+
+## Active Technologies
+- Markdown (reference material) + Node.js 18+ (render script only) + Render script deps declared inline (see research.md) (001-excalidraw-diagrams)
+- N/A — file-based output (JSON written to disk, PNG rendered on demand) (001-excalidraw-diagrams)
+
+## Recent Changes
+- 001-excalidraw-diagrams: Added Markdown (reference material) + Node.js 18+ (render script only) + Render script deps declared inline (see research.md)
