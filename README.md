@@ -9,7 +9,8 @@ Personal Claude plugin marketplace — skills, agents, and MCP servers organised
 | *Coming soon* | — | — | — |
 
 Browse the [`plugins/`](plugins/) directory for all available packages, or see
-[`marketplace.yml`](marketplace.yml) for the machine-readable manifest.
+[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) for the
+machine-readable manifest.
 
 ## What's in a plugin?
 
@@ -23,14 +24,19 @@ See [`CLAUDE.md`](CLAUDE.md) for the full plugin package standard and folder str
 
 ## Installation
 
-Plugins from this repo can be installed via the Claude plugin mechanism:
+First, add this marketplace to your Claude Code:
 
-```
-/plugin install artislismanis/my-agent-skills/plugins/<topic>/<plugin-name>
+```text
+/plugin marketplace add artislismanis/my-agent-skills
 ```
 
-Refer to each plugin's `README.md` for specific installation instructions and
-configuration details.
+Then install individual plugins:
+
+```text
+/plugin install <plugin-name>@my-agent-skills
+```
+
+Refer to each plugin's `README.md` for specific configuration details.
 
 ## Other resources
 

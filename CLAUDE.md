@@ -13,8 +13,9 @@ directly from this repo via the Claude plugin mechanism.
 
 ```text
 README.md                  # Human-readable marketplace catalog (GitHub homepage)
-marketplace.yml            # Machine-readable plugin manifest
 CLAUDE.md                  # This file
+.claude-plugin/
+  marketplace.json         # Machine-readable plugin manifest (Claude plugin mechanism)
 docs/
   best-practices/          # AI/agent development guides
   templates/               # Reusable prompt and config templates
@@ -131,19 +132,32 @@ Installable via `claude mcp add` from npm/PyPI or directly from GitHub.
 **`README.md`** (root) serves as the GitHub homepage and human catalog: grouped by topic,
 one-liner per plugin, install snippet, link to each plugin's README.
 
-**`marketplace.yml`** is the machine-readable manifest:
+**`.claude-plugin/marketplace.json`** is the machine-readable manifest used by the
+Claude plugin mechanism:
 
-```yaml
-plugins:
-  - name: plugin-name
-    path: plugins/topic/plugin-name/
-    description: One-line description
-    types: [skill, mcp-server] # skill | agent | mcp-server
-    tags: [coding, review]
-    install: '/plugin install owner/repo/plugins/topic/plugin-name'
+```json
+{
+  "name": "my-agent-skills",
+  "owner": { "name": "Artis Lismanis" },
+  "plugins": [
+    {
+      "name": "plugin-name",
+      "source": "./plugins/topic/plugin-name",
+      "description": "One-line description"
+    }
+  ]
+}
 ```
 
-Update both files whenever a plugin is added, moved, or removed.
+Users add this marketplace and install plugins via:
+
+```text
+/plugin marketplace add artislismanis/my-agent-skills
+/plugin install plugin-name@my-agent-skills
+```
+
+Update both `README.md` and `.claude-plugin/marketplace.json` whenever a plugin is
+added, moved, or removed.
 
 ## Developing New Plugins (speckit workflow)
 
@@ -156,7 +170,8 @@ New plugin development uses the speckit pipeline:
 5. `/speckit.implement` — execute tasks
 
 Plugin source lands in `plugins/<topic>/<plugin-name>/`; speckit artifacts live in
-`specs/<branch>/`. After implementation, update `README.md` and `marketplace.yml`.
+`specs/<branch>/`. After implementation, update `README.md` and
+`.claude-plugin/marketplace.json`.
 
 ## Branching (GitHub Flow)
 
