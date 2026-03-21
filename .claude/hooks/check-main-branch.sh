@@ -4,7 +4,7 @@
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
-if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+if [ "$BRANCH" = "main" ]; then
   echo "⛔ GitHub Flow violation: you are on '$BRANCH'."
   echo ""
   echo "All changes require a feature branch. Options:"
