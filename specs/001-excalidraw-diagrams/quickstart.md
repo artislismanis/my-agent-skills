@@ -22,7 +22,7 @@ styling defaults.
 After Claude generates a diagram and saves it to a file:
 
 ```bash
-cd ~/.claude/plugins/excalidraw-diagrams/skills/excalidraw-diagrams/scripts
+cd "${CLAUDE_SKILL_DIR}/scripts"
 npm install   # first time only
 node render.mjs /path/to/diagram.excalidraw
 ```

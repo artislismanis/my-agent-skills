@@ -46,6 +46,10 @@ for (let i = 0; i < args.length; i++) {
       console.error('Error: --width must be a positive integer');
       process.exit(1);
     }
+    if (width > 8192) {
+      console.error('Error: --width must not exceed 8192');
+      process.exit(1);
+    }
     i++;
   } else if (!inputPath) {
     inputPath = resolve(args[i]);
@@ -106,6 +110,10 @@ if (!Array.isArray(doc.elements)) {
 // ---------------------------------------------------------------------------
 
 const bgColor = doc.appState?.viewBackgroundColor ?? '#ffffff';
+if (!/^#[0-9a-fA-F]{3,8}$|^[a-zA-Z]+$/.test(bgColor)) {
+  console.error('Error: invalid viewBackgroundColor value');
+  process.exit(1);
+}
 let svgString;
 
 if (doc.elements.length === 0) {

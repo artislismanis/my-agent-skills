@@ -41,7 +41,7 @@ general box-and-arrow conventions.
 The PNG render script requires Node.js 22+ and a one-time `npm install`:
 
 ```bash
-cd ~/.claude/plugins/excalidraw-diagrams/skills/excalidraw-diagrams/scripts
+cd "${CLAUDE_SKILL_DIR}/scripts"
 npm install
 ```
 
@@ -64,7 +64,7 @@ Claude will:
 ### Render an Existing File
 
 ```bash
-cd ~/.claude/plugins/excalidraw-diagrams/skills/excalidraw-diagrams/scripts
+cd "${CLAUDE_SKILL_DIR}/scripts"
 node render.mjs /path/to/diagram.excalidraw
 # → produces /path/to/diagram.png
 ```

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "render": "node render.mjs",
-    "postinstall": "mkdir -p node_modules/canvas && echo '{\"name\":\"canvas\",\"version\":\"2.11.2\",\"main\":\"index.js\"}' > node_modules/canvas/package.json && echo 'module.exports = require(\"@napi-rs/canvas\");' > node_modules/canvas/index.js"
+    "postinstall": "mkdir -p node_modules/canvas && echo '{\"name\":\"canvas\",\"version\":\"2.11.2\",\"main\":\"index.js\",\"description\":\"Alias for @napi-rs/canvas — see postinstall in parent package.json\"}' > node_modules/canvas/package.json && echo 'module.exports = require(\"@napi-rs/canvas\");' > node_modules/canvas/index.js"
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.97",
