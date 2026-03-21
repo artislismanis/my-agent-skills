@@ -126,11 +126,41 @@ After saving:
 
 ## Render Script
 
-After saving a `.excalidraw` file, render it to PNG for visual validation:
+After saving a `.excalidraw` file, render it to PNG for visual validation.
+
+**Prerequisites**: Node.js 22+ must be available.
+
+### Dependency Check
+
+Before rendering, check whether the render script's dependencies are installed:
+
+```bash
+ls "${CLAUDE_SKILL_DIR}/scripts/node_modules" 2>/dev/null
+```
+
+If `node_modules` does not exist, **do not install automatically**. Instead,
+inform the user:
+
+> "The render script needs three npm packages installed locally:
+> - `excalidraw-to-svg` — converts Excalidraw JSON to SVG
+> - `@resvg/resvg-js` — converts SVG to PNG
+> - `@napi-rs/canvas` — canvas backend required by the SVG converter
+>
+> These install to the plugin's own `scripts/` directory — nothing global.
+> Shall I run `npm install` to set them up?"
+
+Once the user confirms, run:
+
+```bash
+cd "${CLAUDE_SKILL_DIR}/scripts" && npm install
+```
+
+### Rendering
+
+Once dependencies are installed, render with:
 
 ```bash
 cd "${CLAUDE_SKILL_DIR}/scripts"
-npm install  # first time only — installs excalidraw-to-svg, @resvg/resvg-js, and @napi-rs/canvas
 node render.mjs <path-to-file>.excalidraw
 ```
 
@@ -142,9 +172,6 @@ The render script accepts:
 - `[--width <pixels>]` — optional: output width (default: `1200`)
 
 On success it prints: `Rendered: <width>x<height> → <output-path>`
-
-**Prerequisites**: Node.js 22+ must be available. Run `npm install` in the
-`scripts/` directory once before first use.
 
 ---
 

@@ -36,16 +36,12 @@ general box-and-arrow conventions.
 /plugin install excalidraw-diagrams@my-agent-skills
 ```
 
-### Render Script Setup (one-time)
+### Render Script Dependencies
 
-The PNG render script requires Node.js 22+ and a one-time `npm install`:
-
-```bash
-cd "${CLAUDE_SKILL_DIR}/scripts"
-npm install
-```
-
-This installs `excalidraw-to-svg`, `@resvg/resvg-js`, and `@napi-rs/canvas` locally — no global packages or system dependencies.
+The PNG render script requires Node.js 22+ and three npm packages (`excalidraw-to-svg`,
+`@resvg/resvg-js`, `@napi-rs/canvas`). Claude will check for these automatically before
+the first render and ask your permission to install them locally — no global packages or
+system dependencies needed.
 
 ## Usage
 

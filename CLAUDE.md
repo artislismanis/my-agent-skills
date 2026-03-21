@@ -55,8 +55,9 @@ Single-type plugins (e.g. `skills`) may omit unused type subfolders (e.g., `agen
 Each plugin folder is a self-contained Claude plugin package.
 
 **`.claude-plugin/plugin.json`** declares plugin metadata: name, version, description,
-and capabilities. Plugins install to `~/.claude/plugins/<plugin-name>/` via the Claude
-plugin mechanism.
+and capabilities. Plugins install to `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/`
+via the Claude plugin mechanism, where `<source-path>` is the `source` field from
+`marketplace.json`.
 
 **`README.md`** (required in every plugin) covers:
 
@@ -97,12 +98,12 @@ auto-install for Bun.
 
 **Installation paths** — depends on scenario:
 
-| Scope                          | Path                                                   |
-| ------------------------------ | ------------------------------------------------------ |
-| User-level                     | `~/.claude/skills/<skill-name>/`                       |
-| Project-level                  | `.claude/skills/<skill-name>/`                         |
-| Plugin-bundled                 | `~/.claude/plugins/<plugin-name>/skills/<skill-name>/` |
-| Legacy human-invocable command | `~/.claude/commands/<name>.md` (flat file)             |
+| Scope                          | Path                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| User-level                     | `~/.claude/skills/<skill-name>/`                                                  |
+| Project-level                  | `.claude/skills/<skill-name>/`                                                    |
+| Plugin-bundled                 | `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/skills/<skill-name>/`  |
+| Legacy human-invocable command | `~/.claude/commands/<name>.md` (flat file)                                        |
 
 ## Agents
 
