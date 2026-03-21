@@ -16,7 +16,8 @@
 
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname, basename, extname } from 'path';
-import { fileURLToPath } from 'url';
+import { Resvg } from '@resvg/resvg-js';
+import { exportToSvg } from 'excalidraw-to-svg';
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -25,8 +26,8 @@ import { fileURLToPath } from 'url';
 const args = process.argv.slice(2);
 
 if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-  console.error('Usage: node render.mjs <input-path> [output-path] [--width <pixels>]');
-  process.exit(1);
+  console.log('Usage: node render.mjs <input-path> [output-path] [--width <pixels>]');
+  process.exit(args.length === 0 ? 1 : 0);
 }
 
 let inputPath = null;
@@ -40,7 +41,7 @@ for (let i = 0; i < args.length; i++) {
       console.error('Error: --width must be a positive integer');
       process.exit(1);
     }
-    i++; // skip value
+    i++;
   } else if (!inputPath) {
     inputPath = resolve(args[i]);
   } else if (!outputPath) {
@@ -96,77 +97,48 @@ if (!Array.isArray(doc.elements)) {
 }
 
 // ---------------------------------------------------------------------------
-// Handle empty elements — render a blank PNG matching Excalidraw behaviour
+// Render: Excalidraw JSON → SVG → PNG
 // ---------------------------------------------------------------------------
 
-const BLANK_CANVAS_WIDTH = width;
-const BLANK_CANVAS_HEIGHT = Math.round(width * 0.5625); // 16:9 default
+const bgColor = doc.appState?.viewBackgroundColor ?? '#ffffff';
+let svgString;
 
 if (doc.elements.length === 0) {
-  const bgColor = doc.appState?.viewBackgroundColor ?? '#ffffff';
+  // Empty elements array — render a blank canvas (matches Excalidraw behaviour)
+  const blankHeight = Math.round(width * 0.5625);
+  svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${blankHeight}"><rect width="${width}" height="${blankHeight}" fill="${bgColor}"/></svg>`;
+} else {
+  // Stage 1: Excalidraw JSON → SVG via excalidraw-to-svg
+  let svgElement;
+  try {
+    svgElement = await exportToSvg({
+      elements: doc.elements,
+      appState: {
+        ...(doc.appState ?? {}),
+        exportWithDarkMode: false,
+        viewBackgroundColor: bgColor,
+      },
+      files: doc.files ?? {},
+    });
+  } catch (err) {
+    console.error(`Error: SVG export failed: ${err.message}`);
+    process.exit(1);
+  }
 
-  // Use @resvg/resvg-js directly to render a blank SVG
-  const { Resvg } = await import('@resvg/resvg-js');
-  const blankSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${BLANK_CANVAS_WIDTH}" height="${BLANK_CANVAS_HEIGHT}"><rect width="${BLANK_CANVAS_WIDTH}" height="${BLANK_CANVAS_HEIGHT}" fill="${bgColor}"/></svg>`;
-  const resvg = new Resvg(blankSvg, { fitTo: { mode: 'width', value: BLANK_CANVAS_WIDTH } });
-  const pngData = resvg.render();
-  const pngBuffer = pngData.asPng();
-
-  writeFileSync(outputPath, pngBuffer);
-  console.log(`Rendered: ${BLANK_CANVAS_WIDTH}x${BLANK_CANVAS_HEIGHT} → ${outputPath}`);
-  process.exit(0);
-}
-
-// ---------------------------------------------------------------------------
-// Two-stage pipeline: Excalidraw JSON → SVG → PNG
-// ---------------------------------------------------------------------------
-
-// Stage 1: Excalidraw JSON → SVG via excalidraw-to-svg
-let svgElement;
-try {
-  const { exportToSvg } = await import('excalidraw-to-svg');
-
-  svgElement = await exportToSvg({
-    elements: doc.elements,
-    appState: {
-      exportWithDarkMode: false,
-      viewBackgroundColor: doc.appState?.viewBackgroundColor ?? '#ffffff',
-      ...(doc.appState ?? {}),
-    },
-    files: doc.files ?? {},
-  });
-} catch (err) {
-  console.error(`Error: SVG export failed: ${err.message}`);
-  process.exit(1);
-}
-
-// Serialise SVG element to string
-let svgString;
-try {
-  // excalidraw-to-svg returns a DOM SVGSVGElement via jsdom
-  svgString = svgElement.outerHTML ?? new XMLSerializer().serializeToString(svgElement);
-} catch (err) {
-  console.error(`Error: could not serialise SVG: ${err.message}`);
-  process.exit(1);
+  svgString = svgElement.outerHTML;
 }
 
 // Stage 2: SVG → PNG via @resvg/resvg-js
-let pngBuffer;
 try {
-  const { Resvg } = await import('@resvg/resvg-js');
-
   const resvg = new Resvg(svgString, {
     fitTo: { mode: 'width', value: width },
-    // Font fallback: use system fonts if Excalidraw custom fonts are unavailable
-    font: {
-      loadSystemFonts: true,
-    },
+    font: { loadSystemFonts: true },
   });
 
   const rendered = resvg.render();
   const renderWidth = rendered.width;
   const renderHeight = rendered.height;
-  pngBuffer = rendered.asPng();
+  const pngBuffer = rendered.asPng();
 
   writeFileSync(outputPath, pngBuffer);
   console.log(`Rendered: ${renderWidth}x${renderHeight} → ${outputPath}`);

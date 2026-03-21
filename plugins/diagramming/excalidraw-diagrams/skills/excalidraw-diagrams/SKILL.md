@@ -79,40 +79,23 @@ message and proceed.
 
 ### Styling
 
-Apply `references/styling-defaults.md` values to every element:
-
-- `strokeColor`: `#1e1e1e`
-- `strokeWidth`: `2`
-- `roughness`: `0`
-- `opacity`: `100`
-- `fontFamily`: `6` (Nunito) for labels
-- Background colours: use the palette by role (blue for internal, green for
-  external, grey for infrastructure, yellow for data stores / decisions)
-- `fillStyle`: `"solid"` for coloured shapes
-- Arrow defaults: `endArrowhead: "arrow"`, `strokeStyle: "solid"`
-
-If the user specified any style overrides during the design session, apply those
-overrides while keeping all other defaults.
+Apply all values from `references/styling-defaults.md` — colours, fonts, stroke
+settings, fill styles, and arrow defaults. Use the colour palette by role (blue
+for internal, green for external, grey for infrastructure, yellow for data
+stores / decisions). If the user specified style overrides during the design
+session, apply only those overrides while keeping all other defaults.
 
 ### Layout
 
-- Start elements at `x: 100, y: 100` to avoid clipping
-- Minimum 40px gap between elements
-- Arrow `gap: 8` in bindings
-- Standard shape: `160 × 80` for boxes, `80 × 80` for circles and diamonds
-- Frame padding: 40px inside boundary around children
-- Top-to-bottom flows: 60px vertical spacing between shape edges
-- Left-to-right flows: 80px horizontal spacing between shape edges
+Follow the Layout Spacing Guidelines in `references/styling-defaults.md` for
+element positioning, gap sizes, standard shape dimensions, and frame padding.
 
 ### Text and Labels
 
-- All shape labels: `textAlign: "center"`, `verticalAlign: "middle"`, `fontSize: 16`
-- Sub-labels / technology annotations: `fontSize: 14`
-- Frame names: `fontSize: 18`
-- Arrow labels (if used): standalone text near midpoint, `fontSize: 14`
-- Text outside shapes MUST be shown in full. Text inside shapes MAY be
-  truncated only when necessary — if truncated, flag this to the user and ask
-  for a decision.
+Follow the Font Sizes table in `references/styling-defaults.md` for element
+labels, sub-labels, frame names, and arrow labels. Text outside shapes MUST be
+shown in full. Text inside shapes MAY be truncated only when necessary — if
+truncated, flag this to the user and ask for a decision.
 
 ### Validation Before Output
 
@@ -146,7 +129,8 @@ After saving:
 After saving a `.excalidraw` file, render it to PNG for visual validation:
 
 ```bash
-cd <skill-directory>/scripts
+# Find the skill's scripts directory (sibling to this SKILL.md file)
+cd "$(dirname "$(find ~/.claude/plugins ~/.claude/skills .claude/skills -name SKILL.md -path '*/excalidraw-diagrams/*' 2>/dev/null | head -1)")/scripts"
 npm install  # first time only — installs excalidraw-to-svg and @resvg/resvg-js
 node render.mjs <path-to-file>.excalidraw
 ```
