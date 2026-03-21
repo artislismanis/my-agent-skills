@@ -24,9 +24,9 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 **Purpose**: Create project directory structure and plugin metadata
 
-- [ ] T001 Create full directory structure per plan.md: `plugins/diagramming/excalidraw-diagrams/{.claude-plugin/,skills/excalidraw-diagrams/{scripts/,references/,assets/templates/}}`
-- [ ] T002 [P] Create plugin metadata in `plugins/diagramming/excalidraw-diagrams/.claude-plugin/plugin.json` with name, version 1.0.0, description, and capabilities
-- [ ] T003 [P] Create `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/package.json` declaring `excalidraw-to-svg` and `@resvg/resvg-js` dependencies per research.md
+- [X] T001 Create full directory structure per plan.md: `plugins/diagramming/excalidraw-diagrams/{.claude-plugin/,skills/excalidraw-diagrams/{scripts/,references/,assets/templates/}}`
+- [X] T002 [P] Create plugin metadata in `plugins/diagramming/excalidraw-diagrams/.claude-plugin/plugin.json` with name, version 1.0.0, description, and capabilities
+- [X] T003 [P] Create `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/package.json` declaring `excalidraw-to-svg` and `@resvg/resvg-js` dependencies per research.md
 
 ---
 
@@ -36,8 +36,8 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 [P] Create Excalidraw JSON format reference in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/references/excalidraw-format.md` covering all 10 element types (rectangle, diamond, ellipse, arrow, text, line, frame, freedraw, image, iframe), common properties, arrow bindings (startBinding/endBinding with elementId, focus, gap, fixedPoint), text labels (containerId/boundElements back-reference), grouping (groupIds), frames (frameId), and appState — targeting schema version 2 per data-model.md
-- [ ] T005 [P] Create styling defaults brand definition in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/references/styling-defaults.md` defining colour palette (5–7 colours for backgrounds, strokes, text), font family defaults (modern: Excalifont 5 for hand-drawn, Nunito 6 for body, Comic Shanns 8 for code), stroke width, roughness (0), opacity (100), fill style defaults, and inline JSON snippets for each default value per FR-002
+- [X] T004 [P] Create Excalidraw JSON format reference in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/references/excalidraw-format.md` covering all 10 element types (rectangle, diamond, ellipse, arrow, text, line, frame, freedraw, image, iframe), common properties, arrow bindings (startBinding/endBinding with elementId, focus, gap, fixedPoint), text labels (containerId/boundElements back-reference), grouping (groupIds), frames (frameId), and appState — targeting schema version 2 per data-model.md
+- [X] T005 [P] Create styling defaults brand definition in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/references/styling-defaults.md` defining colour palette (5–7 colours for backgrounds, strokes, text), font family defaults (modern: Excalifont 5 for hand-drawn, Nunito 6 for body, Comic Shanns 8 for code), stroke width, roughness (0), opacity (100), fill style defaults, and inline JSON snippets for each default value per FR-002
 
 **Checkpoint**: Foundation ready — format reference and brand definition available for all stories
 
@@ -51,7 +51,7 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Create SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` with: frontmatter per skill-interface.md contract (name, description, metadata, allowed-tools), collaborative design flow (FR-012: ask clarifying questions before generating), instructions to load excalidraw-format.md and styling-defaults.md for every request, instructions to save output as `.excalidraw` file, and structured generation guidance (element creation, binding setup, styling application from brand defaults)
+- [X] T006 [US1] Create SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` with: frontmatter per skill-interface.md contract (name, description, metadata, allowed-tools), collaborative design flow (FR-012: ask clarifying questions before generating), instructions to load excalidraw-format.md and styling-defaults.md for every request, instructions to save output as `.excalidraw` file, and structured generation guidance (element creation, binding setup, styling application from brand defaults)
 
 **Checkpoint**: User Story 1 fully functional — Claude can generate styled Excalidraw diagrams from descriptions
 
@@ -65,8 +65,8 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 ### Implementation for User Story 2
 
-- [ ] T007 [US2] Implement render script in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/render.mjs` per render-script.md contract: CLI interface (`node render.mjs <input-path> [output-path] [--width <pixels>]`), two-stage pipeline (excalidraw-to-svg → @resvg/resvg-js), exit codes 0/1, stdout format, Node.js 22+, handle empty elements array (render blank PNG), handle appState.viewBackgroundColor
-- [ ] T008 [US2] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add render script invocation instructions: after saving .excalidraw file, run `node render.mjs <path>` to generate PNG preview for visual validation (FR-011)
+- [X] T007 [US2] Implement render script in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/scripts/render.mjs` per render-script.md contract: CLI interface (`node render.mjs <input-path> [output-path] [--width <pixels>]`), two-stage pipeline (excalidraw-to-svg → @resvg/resvg-js), exit codes 0/1, stdout format, Node.js 22+, handle empty elements array (render blank PNG), handle appState.viewBackgroundColor
+- [X] T008 [US2] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add render script invocation instructions: after saving .excalidraw file, run `node render.mjs <path>` to generate PNG preview for visual validation (FR-011)
 
 **Checkpoint**: User Stories 1 AND 2 both work independently — diagrams generate and render to PNG
 
@@ -80,12 +80,12 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 ### Implementation for User Story 3
 
-- [ ] T009 [P] [US3] Create C4 diagrams template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/c4-diagrams.md` defining C4 model specification (Context, Container, Component levels), shape-to-concept mapping (rectangles for systems/containers, boundary frames for contexts), labelling conventions (name + technology + description), connection patterns (arrows with protocol labels), and example JSON patterns per FR-007
-- [ ] T010 [P] [US3] Create data flow template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/data-flow.md` defining DFD conventions: external entities (rectangles), processes (ellipses/rounded rectangles), data stores (open rectangles/parallel lines), data flows (labelled arrows), and levelling approach
-- [ ] T011 [P] [US3] Create cloud architecture template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/cloud-architecture.md` defining multi-cloud conventions (AWS/GCP/Azure): service category grouping, VPC/subnet boundary frames, consistent iconography conventions (shape + label patterns for compute, storage, networking, databases), and connection patterns
-- [ ] T012 [P] [US3] Create flowchart template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/flowchart.md` defining flowchart and decision tree conventions: process (rectangles), decision (diamonds), terminator (rounded rectangles), flow arrows with labels, swim lanes for roles, and top-to-bottom or left-to-right layout
-- [ ] T013 [P] [US3] Create BPMN template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/bpmn.md` defining BPMN 2.0 conventions: events (circles — start/intermediate/end), tasks (rounded rectangles), gateways (diamonds — exclusive/parallel/inclusive), swim lanes (horizontal frames), message flows, and sequence flows per FR-007
-- [ ] T014 [US3] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add template selection logic: detect diagram type from user request, load appropriate template from `assets/templates/`, apply template conventions on top of styling defaults, fall back to general-purpose styling for unsupported types
+- [X] T009 [P] [US3] Create C4 diagrams template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/c4-diagrams.md` defining C4 model specification (Context, Container, Component levels), shape-to-concept mapping (rectangles for systems/containers, boundary frames for contexts), labelling conventions (name + technology + description), connection patterns (arrows with protocol labels), and example JSON patterns per FR-007
+- [X] T010 [P] [US3] Create data flow template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/data-flow.md` defining DFD conventions: external entities (rectangles), processes (ellipses/rounded rectangles), data stores (open rectangles/parallel lines), data flows (labelled arrows), and levelling approach
+- [X] T011 [P] [US3] Create cloud architecture template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/cloud-architecture.md` defining multi-cloud conventions (AWS/GCP/Azure): service category grouping, VPC/subnet boundary frames, consistent iconography conventions (shape + label patterns for compute, storage, networking, databases), and connection patterns
+- [X] T012 [P] [US3] Create flowchart template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/flowchart.md` defining flowchart and decision tree conventions: process (rectangles), decision (diamonds), terminator (rounded rectangles), flow arrows with labels, swim lanes for roles, and top-to-bottom or left-to-right layout
+- [X] T013 [P] [US3] Create BPMN template in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/templates/bpmn.md` defining BPMN 2.0 conventions: events (circles — start/intermediate/end), tasks (rounded rectangles), gateways (diamonds — exclusive/parallel/inclusive), swim lanes (horizontal frames), message flows, and sequence flows per FR-007
+- [X] T014 [US3] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add template selection logic: detect diagram type from user request, load appropriate template from `assets/templates/`, apply template conventions on top of styling defaults, fall back to general-purpose styling for unsupported types
 
 **Checkpoint**: All 5 diagram types produce output following established visual conventions
 
@@ -99,7 +99,7 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 ### Implementation for User Story 4
 
-- [ ] T015 [US4] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add iteration guidance: how to modify existing Excalidraw JSON (add/remove/reposition elements), preserve existing element IDs and styling, update arrow bindings when elements move, maintain brand consistency from styling-defaults.md across iterations, and re-render PNG after modifications
+- [X] T015 [US4] Update SKILL.md in `plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md` to add iteration guidance: how to modify existing Excalidraw JSON (add/remove/reposition elements), preserve existing element IDs and styling, update arrow bindings when elements move, maintain brand consistency from styling-defaults.md across iterations, and re-render PNG after modifications
 
 **Checkpoint**: All user stories independently functional — generate, render, template, iterate
 
@@ -109,9 +109,9 @@ folder is `skills/excalidraw-diagrams/` within the plugin root.
 
 **Purpose**: Plugin documentation, marketplace registration, and validation
 
-- [ ] T016 [P] Create plugin README.md in `plugins/diagramming/excalidraw-diagrams/README.md` covering: what the plugin is, what the skill does, supported diagram types, installation instructions, usage examples, render script setup (npm install + Node.js 22+), and quickstart guide per quickstart.md
-- [ ] T017 Update root `README.md` and `.claude-plugin/marketplace.json` to register the new excalidraw-diagrams plugin in the marketplace
-- [ ] T018 Run quickstart.md validation: install plugin, generate a test diagram, render to PNG, verify end-to-end flow works
+- [X] T016 [P] Create plugin README.md in `plugins/diagramming/excalidraw-diagrams/README.md` covering: what the plugin is, what the skill does, supported diagram types, installation instructions, usage examples, render script setup (npm install + Node.js 22+), and quickstart guide per quickstart.md
+- [X] T017 Update root `README.md` and `.claude-plugin/marketplace.json` to register the new excalidraw-diagrams plugin in the marketplace
+- [X] T018 Run quickstart.md validation: install plugin, generate a test diagram, render to PNG, verify end-to-end flow works
 
 ---
 

@@ -1,0 +1,9 @@
+{
+  "name": "excalidraw-diagrams",
+  "version": "1.0.0",
+  "description": "Generate professional, consistently styled Excalidraw diagrams from natural language. Includes format reference, styling brand, diagram templates (C4, data flow, cloud architecture, flowchart, BPMN), and a self-contained PNG render script.",
+  "author": "Artis Lismanis",
+  "capabilities": {
+    "skills": ["excalidraw-diagrams"]
+  }
+}

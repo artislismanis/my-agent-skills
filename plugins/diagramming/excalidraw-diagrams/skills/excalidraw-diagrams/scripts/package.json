@@ -1,0 +1,16 @@
+{
+  "name": "excalidraw-render",
+  "version": "1.0.0",
+  "description": "Self-contained render script: converts Excalidraw JSON to PNG",
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "excalidraw-to-svg": "^0.2.0",
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

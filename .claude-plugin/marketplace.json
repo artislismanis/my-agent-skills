@@ -3,5 +3,11 @@
   "owner": {
     "name": "Artis Lismanis"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "excalidraw-diagrams",
+      "source": "./plugins/diagramming/excalidraw-diagrams",
+      "description": "Generate professional Excalidraw diagrams from natural language. Includes C4, flowchart, BPMN, data flow, and cloud architecture templates with consistent styling and PNG preview."
+    }
+  ]
 }
