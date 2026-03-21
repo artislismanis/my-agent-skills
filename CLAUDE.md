@@ -158,6 +158,24 @@ New plugin development uses the speckit pipeline:
 Plugin source lands in `plugins/<topic>/<plugin-name>/`; speckit artifacts live in
 `specs/<branch>/`. After implementation, update `README.md` and `marketplace.yml`.
 
+## Branching (GitHub Flow)
+
+All changes — including docs, config, and ad-hoc fixes — MUST be made on a
+feature branch. Direct commits to `main` are not allowed.
+
+**For new plugin development**: the speckit pipeline creates the branch automatically
+via `/speckit.specify`. Speckit branches (`###-name`) are GitHub Flow branches.
+
+**For everything else** (docs, config, marketplace updates, etc.):
+
+```bash
+git checkout -b <short-description>   # e.g. git checkout -b update-readme
+# make changes, commit, then merge into main
+```
+
+A `PreToolUse` hook in `.claude/settings.json` enforces this by blocking `Edit`,
+`Write`, and `NotebookEdit` calls when Claude is on `main`.
+
 Speckit commands are defined in `.claude/commands/speckit.*.md`. Key scripts:
 
 - `.specify/scripts/bash/create-new-feature.sh "" --json --short-name "name" "description"` — creates feature branch + spec. Never pass `--number`.
