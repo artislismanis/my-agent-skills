@@ -40,7 +40,7 @@ general-purpose box-and-arrow conventions.
 
 ---
 
-## Design Session (FR-012)
+## Design Session
 
 **Do not generate the diagram immediately.** First, have a collaborative design
 conversation to understand the diagram's intent and content:
