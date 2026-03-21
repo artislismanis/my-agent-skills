@@ -38,10 +38,10 @@ general box-and-arrow conventions.
 
 ### Render Script Dependencies
 
-The PNG render script requires Node.js 22+ and three npm packages (`excalidraw-to-svg`,
-`@resvg/resvg-js`, `@napi-rs/canvas`). Claude will check for these automatically before
-the first render and ask your permission to install them locally — no global packages or
-system dependencies needed.
+The PNG render script requires Node.js 22+ and three npm packages (`@excalidraw/utils`,
+`@napi-rs/canvas`, `jsdom`). Claude will check for these automatically before the first
+render and ask your permission to install them locally — no global packages or system
+dependencies needed.
 
 ## Usage
 

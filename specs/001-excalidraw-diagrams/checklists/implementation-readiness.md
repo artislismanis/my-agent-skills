@@ -95,7 +95,7 @@
 
 - [x] CHK033 - Is the assumption "Claude has sufficient context window" validated against estimated reference + template sizes? [Assumption]
   > **Deferred**: Don't optimise prematurely. Assess after implementation when actual file sizes are known.
-- [x] CHK034 - Is the dependency on `excalidraw-to-svg` and `@resvg/resvg-js` documented in the spec or only in research? [Traceability]
+- [x] CHK034 - Is the dependency on `@excalidraw/utils`, `@napi-rs/canvas`, and `jsdom` documented in the spec or only in research? [Traceability]
   > **Resolved**: Research deps stay in research.md. Spec describes what, not how — no need to duplicate.
 - [x] CHK035 - Is the font availability assumption (Virgil, Cascadia) documented with fallback behaviour when fonts are unavailable? [Assumption, Gap]
   > **Resolved**: Assumptions updated with full font family mapping (legacy + modern). Fallback behaviour documented: system fonts used, functional but visually different.

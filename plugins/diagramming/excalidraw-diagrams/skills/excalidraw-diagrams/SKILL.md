@@ -142,9 +142,9 @@ If `node_modules` does not exist, **do not install automatically**. Instead,
 inform the user:
 
 > "The render script needs three npm packages installed locally:
-> - `excalidraw-to-svg` — converts Excalidraw JSON to SVG
-> - `@resvg/resvg-js` — converts SVG to PNG
-> - `@napi-rs/canvas` — canvas backend required by the SVG converter
+> - `@excalidraw/utils` — official Excalidraw export utilities (JSON to PNG)
+> - `@napi-rs/canvas` — canvas backend for Node.js rendering
+> - `jsdom` — DOM polyfill for the Excalidraw renderer
 >
 > These install to the plugin's own `scripts/` directory — nothing global.
 > Shall I run `npm install` to set them up?"
