@@ -5,7 +5,7 @@
 
 ## R1: PNG Rendering Approach
 
-### Decision: Two-stage pipeline — `excalidraw-to-svg` → `@resvg/resvg-js`
+### Decision: Three-package pipeline — `excalidraw-to-svg` + `@napi-rs/canvas` → `@resvg/resvg-js`
 
 ### Rationale
 
@@ -15,12 +15,19 @@ and `exportToClipboard` — but all require browser DOM APIs
 maintainer confirmed in [GitHub issue #8747](https://github.com/excalidraw/excalidraw/issues/8747)
 that server-side use is "not completely out-of-the-box."
 
-The two-stage pipeline avoids browser automation entirely:
+The pipeline avoids browser automation entirely:
 
-1. **`excalidraw-to-svg`** — handles jsdom setup internally, runs Excalidraw +
-   React in Node.js to produce SVG. No manual DOM polyfill needed.
-2. **`@resvg/resvg-js`** — Rust-based SVG renderer with prebuilt napi-rs
-   binaries. Fast, no native compilation, no canvas dependency.
+1. **`excalidraw-to-svg`** ^3.1.0 — handles jsdom setup internally, runs Excalidraw +
+   React in Node.js to produce SVG.
+2. **`@napi-rs/canvas`** ^0.1.97 — Rust-based canvas implementation (prebuilt binary,
+   no system dependencies). Required because jsdom needs a `canvas` package for
+   `HTMLCanvasElement.getContext()`. Aliased as `canvas` via a postinstall script.
+3. **`@resvg/resvg-js`** ^2.6.2 — Rust-based SVG renderer with prebuilt napi-rs
+   binaries. Fast, no native compilation.
+
+> **Updated during testing** (see R5): Original plan used only two packages.
+> Testing revealed `excalidraw-to-svg` v3 requires a canvas backend for jsdom.
+> `@napi-rs/canvas` was added as the solution — see R5 for the full decision trail.
 
 ### Alternatives Considered
 
@@ -33,10 +40,11 @@ The two-stage pipeline avoids browser automation entirely:
 
 ### Dependencies
 
-| Package | Purpose | Size Impact |
-|---------|---------|-------------|
-| `excalidraw-to-svg` | Excalidraw JSON → SVG (bundles jsdom, react, @excalidraw/excalidraw) | Heavy transitive deps |
-| `@resvg/resvg-js` | SVG → PNG (prebuilt Rust binary via napi-rs) | ~8MB platform binary |
+| Package | Version | Purpose | Size Impact |
+|---------|---------|---------|-------------|
+| `excalidraw-to-svg` | ^3.1.0 | Excalidraw JSON → SVG (bundles jsdom, @excalidraw/utils) | Heavy transitive deps |
+| `@napi-rs/canvas` | ^0.1.97 | Canvas backend for jsdom (prebuilt Rust binary) | ~15MB platform binary |
+| `@resvg/resvg-js` | ^2.6.2 | SVG → PNG (prebuilt Rust binary via napi-rs) | ~8MB platform binary |
 
 ### Font Handling
 
@@ -97,8 +105,10 @@ npm install && node render.mjs input.excalidraw output.png
 ```
 
 Or Claude runs it automatically after generating diagram JSON. The
-`package.json` declares only `excalidraw-to-svg` and `@resvg/resvg-js` —
-npm handles transitive deps.
+`package.json` declares `excalidraw-to-svg`, `@resvg/resvg-js`, and
+`@napi-rs/canvas` — npm handles transitive deps. A `postinstall` script
+creates a `canvas` alias in `node_modules/` so that jsdom (used internally
+by `excalidraw-to-svg`) can find a canvas implementation.
 
 ### Alternatives Considered
 
@@ -132,3 +142,75 @@ The configuration defines:
 | JSON config file loaded by script | Adds complexity, script doesn't need it — Claude reads markdown |
 | YAML config | Same issue, plus adds a parser dependency |
 | Embedded in SKILL.md | Would bloat the main skill definition |
+
+## R5: Render Script Testing and Dependency Fixes
+
+**Date**: 2026-03-21 (post-implementation validation)
+
+### Context
+
+During end-to-end validation of the render script, several issues were
+discovered with the original dependency specification. This section documents
+the problems found, alternatives evaluated, and final decisions.
+
+### Finding 1: `excalidraw-to-svg` ^0.2.0 does not exist
+
+The original `package.json` specified `excalidraw-to-svg@^0.2.0`. The package's
+actual published versions start at `1.0.0`. `npm install` fails with `ETARGET`.
+
+**Resolution**: Updated to `^3.1.0` (latest). v3 replaces the native `canvas`
+dependency with `canvas-5-polyfill` and upgrades jsdom to v24.
+
+### Finding 2: `excalidraw-to-svg` v3 requires a canvas backend
+
+v3 bundles `canvas-5-polyfill` which provides `Path2D` but does **not** provide
+a real `HTMLCanvasElement.getContext()` implementation. jsdom v24 checks for
+`require("canvas")` and falls back to a "not implemented" error without it.
+The Excalidraw renderer internally calls `getContext("2d")` for text measurement,
+causing a crash: `TypeError: Cannot use 'in' operator to search for 'filter' in null`.
+
+**Alternatives evaluated**:
+
+| Approach | Outcome |
+| -------- | ------- |
+| `excalidraw-to-svg` v2 (uses native `canvas` package) | Fails — requires `pixman-1` dev headers for native compilation; no prebuilt binary for Node v23 |
+| `canvas-5-polyfill` only (v3 default) | Fails — polyfill mocks `CanvasRenderingContext2D` class but doesn't patch jsdom's `HTMLCanvasElement.getContext()` |
+| `@napi-rs/canvas` aliased as `canvas` | Works — prebuilt Rust binary, no system dependencies, provides real `createCanvas` + `getContext` |
+| Install system dev headers (`libpixman-1-dev`, etc.) | Not viable — no sudo access, and would add system-level prerequisites for users |
+
+**Resolution**: Added `@napi-rs/canvas@^0.1.97` to `package.json`. A
+`postinstall` script creates a `node_modules/canvas/` shim that re-exports
+`@napi-rs/canvas`, satisfying jsdom's `require("canvas")` lookup.
+
+### Finding 3: `excalidraw-to-svg` API differs from expected
+
+The library exports a single default function that takes the full Excalidraw
+document object (not separate `{elements, appState, files}` arguments). It is
+also a CommonJS module, requiring `import exportToSvg from 'excalidraw-to-svg'`
+rather than a named import.
+
+Additionally, the library reads `@excalidraw/utils` and `canvas-5-polyfill`
+from `./node_modules/` via `fs.readFileSync` with a relative path. The render
+script must `process.chdir()` to the scripts directory to ensure these paths
+resolve correctly regardless of where the script is invoked from.
+
+**Resolution**: Updated `render.mjs` with:
+- Default import instead of named import
+- `process.chdir(scriptDir)` at startup
+- Pass full `doc` object (with merged `appState`) to `exportToSvg()`
+
+### Finding 4: Render script validation results
+
+All tests pass after the fixes above:
+
+| Test | Input | Expected | Result |
+| ---- | ----- | -------- | ------ |
+| Happy path | Rectangle + ellipse + arrow with bindings | 1200x222 PNG with shapes and arrow | Pass |
+| Empty elements | `"elements": []` | Blank 16:9 PNG (1200x675) | Pass |
+| Custom width | `--width 2400` | Wider PNG (2400x444) | Pass |
+| `--help` flag | `node render.mjs --help` | Usage text, exit 0 | Pass |
+| No args | `node render.mjs` | Usage text, exit 1 | Pass |
+| Invalid JSON | `"not json"` | Error message, exit 1 | Pass |
+| Wrong type field | `type: "other"` | Error message, exit 1 | Pass |
+| Missing file | Nonexistent path | Error message, exit 1 | Pass |
+| Clean install | `rm -rf node_modules && npm install` | Postinstall creates canvas alias, render works | Pass |

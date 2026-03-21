@@ -45,7 +45,7 @@ cd ~/.claude/plugins/excalidraw-diagrams/skills/excalidraw-diagrams/scripts
 npm install
 ```
 
-This installs `excalidraw-to-svg` and `@resvg/resvg-js` locally — no global packages.
+This installs `excalidraw-to-svg`, `@resvg/resvg-js`, and `@napi-rs/canvas` locally — no global packages or system dependencies.
 
 ## Usage
 

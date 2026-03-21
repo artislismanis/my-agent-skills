@@ -4,11 +4,13 @@
   "description": "Self-contained render script: converts Excalidraw JSON to PNG",
   "type": "module",
   "scripts": {
-    "render": "node render.mjs"
+    "render": "node render.mjs",
+    "postinstall": "mkdir -p node_modules/canvas && echo '{\"name\":\"canvas\",\"version\":\"2.11.2\",\"main\":\"index.js\"}' > node_modules/canvas/package.json && echo 'module.exports = require(\"@napi-rs/canvas\");' > node_modules/canvas/index.js"
   },
   "dependencies": {
-    "excalidraw-to-svg": "^0.2.0",
-    "@resvg/resvg-js": "^2.6.2"
+    "@napi-rs/canvas": "^0.1.97",
+    "@resvg/resvg-js": "^2.6.2",
+    "excalidraw-to-svg": "^3.1.0"
   },
   "engines": {
     "node": ">=22.0.0"

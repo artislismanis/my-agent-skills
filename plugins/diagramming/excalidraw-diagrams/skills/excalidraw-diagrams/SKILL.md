@@ -131,7 +131,7 @@ After saving a `.excalidraw` file, render it to PNG for visual validation:
 ```bash
 # Find the skill's scripts directory (sibling to this SKILL.md file)
 cd "$(dirname "$(find ~/.claude/plugins ~/.claude/skills .claude/skills -name SKILL.md -path '*/excalidraw-diagrams/*' 2>/dev/null | head -1)")/scripts"
-npm install  # first time only — installs excalidraw-to-svg and @resvg/resvg-js
+npm install  # first time only — installs excalidraw-to-svg, @resvg/resvg-js, and @napi-rs/canvas
 node render.mjs <path-to-file>.excalidraw
 ```
 

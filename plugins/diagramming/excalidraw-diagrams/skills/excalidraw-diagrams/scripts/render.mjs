@@ -16,8 +16,13 @@
 
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname, basename, extname } from 'path';
+import { fileURLToPath } from 'url';
 import { Resvg } from '@resvg/resvg-js';
-import { exportToSvg } from 'excalidraw-to-svg';
+import exportToSvg from 'excalidraw-to-svg';
+
+// excalidraw-to-svg reads node_modules via relative path — must run from script dir
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+process.chdir(scriptDir);
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -109,17 +114,18 @@ if (doc.elements.length === 0) {
   svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${blankHeight}"><rect width="${width}" height="${blankHeight}" fill="${bgColor}"/></svg>`;
 } else {
   // Stage 1: Excalidraw JSON → SVG via excalidraw-to-svg
+  // The library takes the full Excalidraw document object
   let svgElement;
   try {
-    svgElement = await exportToSvg({
-      elements: doc.elements,
+    const exportDoc = {
+      ...doc,
       appState: {
         ...(doc.appState ?? {}),
         exportWithDarkMode: false,
         viewBackgroundColor: bgColor,
       },
-      files: doc.files ?? {},
-    });
+    };
+    svgElement = await exportToSvg(exportDoc);
   } catch (err) {
     console.error(`Error: SVG export failed: ${err.message}`);
     process.exit(1);
