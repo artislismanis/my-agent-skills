@@ -93,7 +93,7 @@ if (!Array.isArray(doc.elements)) {
 }
 
 const bgColor = doc.appState?.viewBackgroundColor ?? '#ffffff';
-if (!/^#[0-9a-fA-F]{3,8}$|^[a-zA-Z]+$/.test(bgColor)) {
+if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3}([0-9a-fA-F]{2})?)?$/.test(bgColor) && bgColor !== 'transparent') {
   console.error('Error: invalid viewBackgroundColor value');
   process.exit(1);
 }
