@@ -10,23 +10,35 @@ defines flowchart-specific shape conventions on top of those defaults.
 
 ## Shape Conventions
 
-| Flowchart Element | Excalidraw Shape | Background | Typical Size |
+| Flowchart Element | Excalidraw Shape | Style Tier | Typical Size |
 |-------------------|-----------------|------------|--------------|
-| Start / End (Terminator) | `rectangle` with `roundness: { type: 3 }` | `#d3f9d8` | `160 × 60` |
-| Process / Action | `rectangle` | `#dbe4ff` | `160 × 80` |
-| Decision | `diamond` | `#fff3bf` | `120 × 120` |
-| Input / Output | `rectangle` (use parallelogram label convention) | `#f1f3f5` | `160 × 80` |
-| Sub-Process | `rectangle` (double border via label convention) | `#dbe4ff` | `160 × 80` |
-| Data Store / Database | `rectangle` | `#fff3bf` | `160 × 80` |
-| Connector (off-page) | `ellipse` | `#f1f3f5` | `60 × 60` |
-| Annotation / Note | `text` (standalone, no background) | `transparent` | — |
-| Swim Lane | `frame` | `transparent` | — |
+| Start / End (Terminator) | `rectangle` with `roundness: { type: 3 }` | Standard | `160 × 60` |
+| Process / Action | `rectangle` | Standard | `160 × 80` |
+| Decision | `diamond` | Standard | `120 × 120` |
+| Input / Output | `rectangle` | Standard Light | `160 × 80` |
+| Sub-Process | `rectangle` | Standard | `160 × 80` |
+| Data Store / Database | `rectangle` | Standard | `160 × 80` |
+| Connector (off-page) | `ellipse` | Standard Lighter | `60 × 60` |
+| Annotation / Note | `text` (standalone, no background) | — | — |
+| Swim Lane | `frame` | Frame defaults | — |
+
+```json
+{ "type": "rectangle", "roundness": { "type": 3 }, "width": 160, "height": 60 }
+```
+
+```json
+{ "type": "diamond", "width": 120, "height": 120 }
+```
+
+```json
+{ "type": "ellipse", "roundness": { "type": 2 }, "width": 60, "height": 60 }
+```
 
 ---
 
 ## Label Conventions
 
-- **Terminator**: `"Start"` or `"End"` — `fontFamily: 6`, `fontSize: 16`
+- **Terminator**: `"Start"` or `"End"`
 - **Process**: Imperative verb phrase — `"Validate Input"`, `"Send Email"`
 - **Decision**: Question form ending with `?` — `"Is user authenticated?"`, `"Amount > $100?"`
 - **Decision branches**: Label arrows exiting a diamond with `"Yes"` / `"No"` or `"True"` / `"False"`
@@ -45,6 +57,7 @@ defines flowchart-specific shape conventions on top of those defaults.
 | Error / exception | `dashed` arrow | `"Error"` or `"Timeout"` |
 
 Decision diamond labels:
+
 - Arrows come out from the **bottom** (false/no) and **right** (true/yes) — or bottom and left
 - Add a short text label on each outgoing arrow
 
@@ -109,6 +122,7 @@ Lane width: equal widths for all lanes. Minimum lane height: 140px.
 ## Decision Tree Specifics
 
 For decision trees (rather than process flows):
+
 - Root decision at top
 - Branch left and right (or multiple directions) for each outcome
 - Leaf nodes (final outcomes) at bottom — use Terminator shape
@@ -125,24 +139,6 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 - **Parallel paths**: Use a horizontal `line` to indicate fork and join (or label arrows clearly).
 - **Sub-processes**: Indicate with an `"[SP]"` suffix in the label or a nested frame.
 - **Off-page connectors**: Use small labelled `ellipse` elements at page breaks.
-
----
-
-## Example: Simple Decision Flow
-
-```
-[Start] → [Get User Input] → [Is Valid?] → Yes → [Process Request] → [Show Success] → [End]
-                                    ↓ No
-                              [Show Error] → [End (error)]
-```
-
-Shapes:
-- Start/End: `rectangle` rounded, `#d3f9d8`, `160 × 60`
-- Get User Input: `rectangle`, `#dbe4ff`, `160 × 80`
-- Is Valid?: `diamond`, `#fff3bf`, `120 × 120`
-- Process Request: `rectangle`, `#dbe4ff`, `160 × 80`
-- Show Success: `rectangle`, `#d3f9d8`, `160 × 80`
-- Show Error: `rectangle`, `#ffe3e3`, `160 × 80`
 
 ---
 

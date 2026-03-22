@@ -89,11 +89,12 @@ message and proceed.
 
 ### Styling
 
-Apply all values from `references/styling-defaults.md` — colours, fonts, stroke
-settings, fill styles, and arrow defaults. Use the colour palette by role (blue
-for internal, green for external, grey for infrastructure, yellow for data
-stores / decisions). If the user specified style overrides during the design
-session, apply only those overrides while keeping all other defaults.
+Apply all values from `references/styling-defaults.md` — the five shape style
+tiers (Standard, Standard Light, Standard Lighter, Occasional Highlight, Rare
+Highlight), text tiers, arrow defaults, and layout spacing. If a template is
+loaded, its role-to-style mappings take precedence. If the user specified style
+overrides during the design session, apply only those overrides while keeping all
+other defaults.
 
 ### Layout
 

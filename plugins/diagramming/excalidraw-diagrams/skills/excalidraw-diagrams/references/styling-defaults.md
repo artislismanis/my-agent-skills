@@ -1,7 +1,7 @@
 # Styling Defaults: Excalidraw Diagram Brand
 
 **Purpose**: Apply these defaults to ALL generated diagrams for a consistent, professional appearance.
-**Rule**: Use these values unless the user explicitly requests a different style. When overriding, keep all other defaults intact.
+**Rule**: Use these values unless the user explicitly requests a different style, or a template defines its own overrides. When overriding, keep all other defaults intact.
 
 ---
 
@@ -13,9 +13,8 @@ templates may override or extend these with diagram-type-specific conventions.
 ### Consistency
 
 - Use the **same shape type** for elements of the same kind throughout a diagram
-- Stick to the **colour palette** defined below — do not introduce ad-hoc colours
-- Use **one font family** per diagram (default: Nunito) unless a specific context
-  demands a second (e.g. monospace for code annotations)
+- Use the **same style tier** (Standard, Standard Light, etc.) for elements of the same semantic role
+- Use **one font family** per diagram (Excalifont) for all labels
 - Keep stroke widths and styles uniform for elements at the same level of hierarchy
 
 ### Flow and Layout
@@ -63,238 +62,103 @@ templates may override or extend these with diagram-type-specific conventions.
 
 ---
 
-## Colour Palette
+## Text Styling
 
-Use these colours by role. Do not use arbitrary hex values outside this palette.
+All text uses a consistent style. Only `fontSize` changes by context.
 
-| Role | Hex | Use For |
-|------|-----|---------|
-| `stroke` | `#1e1e1e` | Borders, arrows, text — primary dark |
-| `text` | `#1e1e1e` | All text elements |
-| `background-blue` | `#dbe4ff` | Primary system/component fill |
-| `background-green` | `#d3f9d8` | Secondary system / external entity fill |
-| `background-yellow` | `#fff3bf` | Highlight / warning / annotation fill |
-| `background-red` | `#ffe3e3` | Error state / critical path fill |
-| `background-grey` | `#f1f3f5` | Neutral / infrastructure fill |
-| `canvas` | `#ffffff` | Canvas background (`appState.viewBackgroundColor`) |
-| `transparent` | `"transparent"` | Frames, arrows, text containers |
+| Context | fontSize | fontFamily | strokeColor | textAlign | verticalAlign |
+|---------|----------|------------|-------------|-----------|---------------|
+| Main title (standalone) | `36` | `5` (Excalifont) | `#01190e` | `"left"` | `"top"` |
+| Subtitle (standalone) | `20` | `5` | `#01190e` | `"left"` | `"top"` |
+| General text / labels | `16` | `5` | `#01190e` | `"left"` | `"top"` |
 
-### Colour Assignment by Diagram Layer
+**Labels inside shapes and on arrows** always use:
 
-- **External systems / actors**: `background-green` (`#d3f9d8`)
-- **Internal systems / components**: `background-blue` (`#dbe4ff`)
-- **Infrastructure / supporting services**: `background-grey` (`#f1f3f5`)
-- **Data stores**: `background-yellow` (`#fff3bf`)
-- **Decision / gateway elements**: `background-yellow` (`#fff3bf`)
-- **Frames / boundaries**: `transparent` fill, `stroke` border at reduced opacity
-- **Arrows / connectors**: `transparent` fill, `stroke` colour
+```json
+"textAlign": "center",
+"verticalAlign": "middle",
+"fontSize": 16,
+"fontFamily": 5,
+"strokeColor": "#01190e",
+"lineHeight": 1.25
+```
+
+Note: `lineHeight: 1.25` must always be set explicitly — the renderer defaults to
+`2.5` when absent, which over-spaces multi-line labels.
 
 ---
 
-## Font Families
+## Shape Styles
 
-Use modern Excalidraw font families (do not use legacy fonts 1/2/3).
+Use these five named styles. Most diagram content uses the three Standard tiers.
+Highlight styles are used sparingly to draw attention to key elements.
 
-| ID | Family | Use For |
-|----|--------|---------|
-| `6` | Nunito | **Default for all labels** — clean, readable body text |
-| `5` | Excalifont | Informal / hand-drawn aesthetic when requested |
-| `8` | Comic Shanns | Code annotations, technical labels, monospace content |
+| Style | backgroundColor | fillStyle | strokeStyle | strokeColor | roughness |
+|-------|----------------|-----------|-------------|-------------|-----------|
+| **Standard** | `#d9fce3` | `"solid"` | `"solid"` | `#01190e` | `1` |
+| **Standard Light** | `#d9fce3` | `"cross-hatch"` | `"dashed"` | `#01190e` | `1` |
+| **Standard Lighter** | `#d9fce3` | `"hachure"` | `"dotted"` | `#01190e` | `1` |
+| **Occasional Highlight** | `#01190e` | `"solid"` | `"solid"` | `#01190e` | `1` |
+| **Rare Highlight** | `#ff5033` | `"solid"` | `"solid"` | `#01190e` | `1` |
 
-**Default font**: `6` (Nunito) for all text unless a specific context calls for another.
+All shapes use: `strokeWidth: 2`, `opacity: 100`.
 
-```json
-"fontFamily": 6
-```
+**Text color inside shapes** (bound text `strokeColor`):
 
----
+| Shape style | Text strokeColor |
+|-------------|-----------------|
+| Standard / Standard Light / Standard Lighter | `#01190e` |
+| Occasional Highlight | `#d9fce3` (inverted — light on dark) |
+| Rare Highlight | `#f5fff7` (light on red) |
 
-## Font Sizes
+### Usage guidance
 
-| Context | Size |
-|---------|------|
-| Element label (inside shape) | `16` |
-| Sub-label / technology annotation | `14` |
-| Frame / boundary label | `18` |
-| Standalone heading text | `20` |
-| Arrow label | `14` |
+- **Standard** — primary, foreground elements (most diagram nodes)
+- **Standard Light** — secondary elements, less prominent paths
+- **Standard Lighter** — tertiary elements, background context, optional/future items
+- **Occasional Highlight** — key focal points; use for at most 1-2 elements per diagram
+- **Rare Highlight** — errors, critical warnings, blockers; use only when essential
 
-```json
-"fontSize": 16
-```
+### Deprecated or future items
 
----
-
-## Stroke Settings
-
-| Property | Default Value | Notes |
-|----------|--------------|-------|
-| `strokeWidth` | `2` | Medium weight — readable at any scale |
-| `strokeStyle` | `"solid"` | Use `"dashed"` for optional/async flows |
-| `roughness` | `0` | Clean, polished lines (not hand-drawn) |
-| `opacity` | `100` | Full opacity for all elements |
-
-```json
-"strokeWidth": 2,
-"strokeStyle": "solid",
-"roughness": 0,
-"opacity": 100
-```
-
----
-
-## Fill Style
-
-| Context | fillStyle |
-|---------|-----------|
-| Shapes with background colour | `"solid"` |
-| Shapes where hachure is desired | `"hachure"` |
-| Transparent / outline only | `"solid"` (with `backgroundColor: "transparent"`) |
-
-Default: `"solid"` for all coloured shapes.
-
-```json
-"fillStyle": "solid"
-```
+Apply any style above but set `opacity: 50` to visually de-emphasise the element.
 
 ---
 
 ## Arrow Defaults
 
+Arrows inherit from the shape styling aesthetic:
+
 ```json
 {
-  "startArrowhead": null,
-  "endArrowhead": "arrow",
-  "elbowed": false,
-  "strokeColor": "#1e1e1e",
+  "strokeColor": "#01190e",
   "backgroundColor": "transparent",
   "fillStyle": "solid",
   "strokeWidth": 2,
   "strokeStyle": "solid",
-  "roughness": 0,
-  "opacity": 100
+  "roughness": 1,
+  "opacity": 100,
+  "startArrowhead": null,
+  "endArrowhead": "arrow",
+  "elbowed": false
 }
 ```
 
 - Use `"endArrowhead": "arrow"` for directed relationships
 - Use `"startArrowhead": "arrow"` + `"endArrowhead": "arrow"` for bidirectional
 - Use `null` on both ends for undirected lines (prefer `line` type instead)
-- Use `"strokeStyle": "dashed"` for async, optional, or future flows
+- Use `"strokeStyle": "dashed"` for async, optional, or future flows (matches Standard Light)
+- Use `"strokeStyle": "dotted"` for weaker associations (matches Standard Lighter)
+
+Arrow labels use the same font as shape labels: `fontFamily: 5`, `fontSize: 16` (or 14 for sub-labels).
 
 ---
 
-## Text Alignment Defaults
+## Frame Styling
 
-```json
-"textAlign": "center",
-"verticalAlign": "middle"
-```
-
-For bound labels (text inside shapes and on arrows): always set both `textAlign` and
-`verticalAlign` explicitly — the renderer does not default these.
-
-**Important:** The static PNG renderer (`@excalidraw/utils`) does **not** auto-centre
-or reposition text. The `x`, `y`, `width`, and `height` values on text elements are
-used as-is. You must calculate these at generation time using the positioning formulas
-in `references/excalidraw-format.md`. Setting `textAlign` and `verticalAlign` controls
-alignment within the text element's bounding box, but the bounding box itself must be
-positioned correctly.
-
-For standalone text: `"left"` alignment is acceptable.
-
----
-
-## Text Element Defaults
-
-All `text` elements (bound and standalone) must include `lineHeight`. The renderer
-defaults to `2.5` when the field is absent, which over-spaces multi-line labels.
-
-```json
-"lineHeight": 1.25
-```
-
-| Property | Default | Notes |
-|----------|---------|-------|
-| `lineHeight` | `1.25` | Line spacing multiplier. Always set explicitly to avoid the renderer's `2.5` default. |
-
----
-
-## appState Defaults
-
-```json
-"appState": {
-  "viewBackgroundColor": "#ffffff",
-  "gridSize": null,
-  "theme": "light"
-}
-```
-
----
-
-## Complete Element Default Template
-
-Use this as the baseline for any new element, then override only what differs:
-
-```json
-{
-  "id": "<unique-id>",
-  "type": "<element-type>",
-  "x": 0,
-  "y": 0,
-  "width": 160,
-  "height": 80,
-  "angle": 0,
-  "strokeColor": "#1e1e1e",
-  "backgroundColor": "#dbe4ff",
-  "fillStyle": "solid",
-  "strokeWidth": 2,
-  "strokeStyle": "solid",
-  "roughness": 0,
-  "opacity": 100,
-  "groupIds": [],
-  "frameId": null,
-  "boundElements": [],
-  "link": null,
-  "locked": false
-}
-```
-
-## Complete Text Element Default Template
-
-Use this as the baseline for any new text element:
-
-```json
-{
-  "id": "<unique-id>",
-  "type": "text",
-  "x": 0,
-  "y": 0,
-  "width": 160,
-  "height": 40,
-  "angle": 0,
-  "strokeColor": "#1e1e1e",
-  "backgroundColor": "transparent",
-  "fillStyle": "solid",
-  "strokeWidth": 2,
-  "strokeStyle": "solid",
-  "roughness": 0,
-  "opacity": 100,
-  "groupIds": [],
-  "frameId": null,
-  "boundElements": [],
-  "link": null,
-  "locked": false,
-  "text": "",
-  "originalText": "",
-  "fontSize": 16,
-  "fontFamily": 6,
-  "textAlign": "center",
-  "verticalAlign": "middle",
-  "lineHeight": 1.25,
-  "containerId": null,
-  "autoResize": true
-}
-```
+Frames use Excalidraw's built-in defaults — visual style is not configurable.
+Set only `name` (the boundary label) and size/position. Child elements reference
+the frame via `frameId`.
 
 ---
 
@@ -315,9 +179,21 @@ Use this as the baseline for any new text element:
   set them to the same `y` value (or offset so their vertical centres match). When
   connected by a vertical arrow, use the same `x` value. This eliminates diagonal arrows
 - **Canvas origin**: Start first element at `x: 100, y: 100` to avoid clipping
-- **Balanced spacing**: distribute spacing evenly across the diagram — avoid very
+- **Balanced spacing**: Distribute spacing evenly across the diagram — avoid very
   short gaps on one side and very long gaps on the other. Aim for roughly equal
   arrow lengths between shapes at the same depth level
+
+---
+
+## appState Defaults
+
+```json
+"appState": {
+  "viewBackgroundColor": "#ffffff",
+  "gridSize": null,
+  "theme": "light"
+}
+```
 
 ---
 
@@ -339,7 +215,7 @@ is normal to need 2–3 iterations.
 ## Style Override Rules
 
 1. Apply all defaults above as a baseline
-2. If the user requests a specific colour → apply only that override, keep all others
-3. If the user requests a different font → override `fontFamily` only
+2. Templates may define their own role-to-style mappings — these take precedence over the general defaults
+3. If the user requests a specific style override → apply only that override, keep all others
 4. Never introduce colours outside the palette unless explicitly requested
-5. Never change `roughness` from `0` unless hand-drawn aesthetic is requested
+5. Never change `roughness` from `1` unless a different aesthetic is specifically requested

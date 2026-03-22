@@ -48,12 +48,12 @@ Every element shares these fields:
   "width": 160,
   "height": 80,
   "angle": 0,
-  "strokeColor": "#1e1e1e",
-  "backgroundColor": "transparent",
+  "strokeColor": "#01190e",
+  "backgroundColor": "#d9fce3",
   "fillStyle": "solid",
   "strokeWidth": 2,
   "strokeStyle": "solid",
-  "roughness": 0,
+  "roughness": 1,
   "opacity": 100,
   "groupIds": [],
   "frameId": null,
@@ -274,8 +274,8 @@ renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`,
 **Sizing formulas for arrow labels:**
 
 - `text_height` = `num_lines × fontSize × lineHeight` (e.g. 1 × 14 × 1.25 = 17.5)
-- `text_width` — estimate from text content: **~8px per character** for fontSize 14
-  Nunito, **~9px per character** for fontSize 16. Round up generously to avoid
+- `text_width` — estimate from text content: **~9px per character** for fontSize 14
+  Excalifont, **~10px per character** for fontSize 16. Round up generously to avoid
   clipping — the Excalidraw app measures precisely but we must overestimate.
 - `text_x` = arrow midpoint x − text_width / 2
 - `text_y` = arrow midpoint y − text_height / 2
@@ -283,19 +283,19 @@ renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`,
 Example: "Uses" (4 chars, fontSize 14) on a horizontal arrow from x=260 to x=400, y=240:
 
 - Arrow midpoint: x=330, y=240
-- `text_width` = 4 × 8 = 32 → round up to 40
+- `text_width` = 4 × 9 = 36 → round up to 50
 - `text_height` = 1 × 14 × 1.25 = 17.5
-- `text_x` = 330 − 40/2 = 310
+- `text_x` = 330 − 50/2 = 305
 - `text_y` = 240 − 17.5/2 ≈ 231
 
 ```json
 {
   "id": "lbl-arr1",
   "type": "text",
-  "x": 310, "y": 231, "width": 40, "height": 17.5,
+  "x": 305, "y": 231, "width": 50, "height": 17.5,
   "text": "Uses",
   "fontSize": 14,
-  "fontFamily": 6,
+  "fontFamily": 5,
   "textAlign": "center",
   "verticalAlign": "middle",
   "lineHeight": 1.25,
@@ -352,7 +352,7 @@ inside shapes and on arrows.
 
 | Field | Values | Notes |
 |-------|--------|-------|
-| `fontFamily` | `5` Excalifont, `6` Nunito, `8` Comic Shanns | Use brand defaults |
+| `fontFamily` | `5` Excalifont (default), `6` Nunito, `8` Comic Shanns | Use brand defaults |
 | `textAlign` | `"left"`, `"center"`, `"right"` | |
 | `verticalAlign` | `"top"`, `"middle"`, `"bottom"` | |
 | `containerId` | string\|null | ID of parent shape/arrow for bound labels; `null` only for standalone text |
@@ -385,7 +385,7 @@ Example: "System A" (1 line, fontSize 16) in a 160×80 box at (100, 200):
   "x": 100, "y": 230, "width": 160, "height": 20,
   "text": "System A",
   "fontSize": 16,
-  "fontFamily": 6,
+  "fontFamily": 5,
   "textAlign": "center",
   "verticalAlign": "middle",
   "containerId": "box-a",
@@ -420,6 +420,7 @@ Example: "Customer\n[Person]" (2 lines, fontSize 16) in a 160×80 box at (100, 2
   "x": 100, "y": 220, "width": 160, "height": 40,
   "text": "Customer\n[Person]",
   "originalText": "Customer\n[Person]",
+  "fontFamily": 5,
   "containerId": "user1",
   "lineHeight": 1.25
 }
@@ -542,7 +543,9 @@ Text positions are calculated using the formulas from the text section above:
 
 - "System A" (1 line, fontSize 16) in 160×80 box at y=200: `text_y` = 200 + (80 − 20) / 2 = 230
 - "System B" same calculation: `text_y` = 230
-- "Calls" (5 chars, fontSize 14) on arrow at midpoint (330, 240): `width` = 5 × 8 = 40, `height` = 17.5, `x` = 310, `y` = 231
+- "Calls" (5 chars, fontSize 14) on arrow at midpoint (330, 240): `width` = 5 × 9 = 45 → round up to 55, `height` = 17.5, `x` = 330 − 55/2 ≈ 302, `y` = 231
+
+Style values below use the Standard shape style from `references/styling-defaults.md`.
 
 ```json
 {
@@ -553,9 +556,9 @@ Text positions are calculated using the formulas from the text section above:
       "id": "box-a",
       "type": "rectangle",
       "x": 100, "y": 200, "width": 160, "height": 80,
-      "strokeColor": "#1e1e1e", "backgroundColor": "#dbe4ff",
+      "strokeColor": "#01190e", "backgroundColor": "#d9fce3",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null,
       "boundElements": [
         { "id": "txt-a", "type": "text" },
@@ -566,21 +569,21 @@ Text positions are calculated using the formulas from the text section above:
       "id": "txt-a",
       "type": "text",
       "x": 100, "y": 230, "width": 160, "height": 20,
-      "text": "System A", "fontSize": 16, "fontFamily": 6,
+      "text": "System A", "fontSize": 16, "fontFamily": 5,
       "textAlign": "center", "verticalAlign": "middle",
       "containerId": "box-a", "originalText": "System A", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "strokeColor": "#01190e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null, "boundElements": []
     },
     {
       "id": "box-b",
       "type": "rectangle",
       "x": 400, "y": 200, "width": 160, "height": 80,
-      "strokeColor": "#1e1e1e", "backgroundColor": "#d3f9d8",
+      "strokeColor": "#01190e", "backgroundColor": "#d9fce3",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null,
       "boundElements": [
         { "id": "txt-b", "type": "text" },
@@ -591,12 +594,12 @@ Text positions are calculated using the formulas from the text section above:
       "id": "txt-b",
       "type": "text",
       "x": 400, "y": 230, "width": 160, "height": 20,
-      "text": "System B", "fontSize": 16, "fontFamily": 6,
+      "text": "System B", "fontSize": 16, "fontFamily": 5,
       "textAlign": "center", "verticalAlign": "middle",
       "containerId": "box-b", "originalText": "System B", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "strokeColor": "#01190e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null, "boundElements": []
     },
     {
@@ -608,22 +611,22 @@ Text positions are calculated using the formulas from the text section above:
       "endBinding": { "mode": "orbit", "elementId": "box-b", "fixedPoint": [0.5001, 0.5001] },
       "startArrowhead": null, "endArrowhead": "arrow",
       "elbowed": false,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "strokeColor": "#01190e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null,
       "boundElements": [{ "id": "lbl-arr1", "type": "text" }]
     },
     {
       "id": "lbl-arr1",
       "type": "text",
-      "x": 310, "y": 231, "width": 40, "height": 17.5,
-      "text": "Calls", "fontSize": 14, "fontFamily": 6,
+      "x": 302, "y": 231, "width": 55, "height": 17.5,
+      "text": "Calls", "fontSize": 14, "fontFamily": 5,
       "textAlign": "center", "verticalAlign": "middle",
       "containerId": "arr-1", "originalText": "Calls", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "strokeColor": "#01190e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0,
+      "roughness": 1, "opacity": 100, "angle": 0,
       "groupIds": [], "frameId": null, "boundElements": []
     }
   ],

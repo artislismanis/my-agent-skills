@@ -10,65 +10,44 @@ defines DFD-specific shape conventions on top of those defaults.
 
 ## DFD Concepts and Shapes
 
-| DFD Concept | Excalidraw Shape | Background | Notes |
+| DFD Concept | Excalidraw Shape | Style Tier | Notes |
 |-------------|-----------------|------------|-------|
-| External Entity | `rectangle` | `#d3f9d8` | Source or sink outside the system |
-| Process | `ellipse` | `#dbe4ff` | Transforms or handles data |
-| Data Store | `rectangle` (open sides) | `#fff3bf` | Persistent storage (database, file, cache) |
-| Data Flow | `arrow` | `transparent` | Labelled with the data being transferred |
-| System Boundary | `frame` | `transparent` | Optional: wraps processes in scope |
+| External Entity | `rectangle` | Standard | Source or sink outside the system |
+| Process | `ellipse` | Standard | Transforms or handles data |
+| Data Store | `rectangle` | Standard | Persistent storage (database, file, cache) |
+| Data Flow | `arrow` | Arrow defaults | Labelled with the data being transferred |
+| System Boundary | `frame` | Frame defaults | Optional: wraps processes in scope |
 
 ---
 
 ## Shape Details
 
-### External Entity (rectangle, green fill)
+### External Entity (rectangle)
 
 Represents a person, organisation, or external system that sends or receives data.
 
 ```json
-{
-  "type": "rectangle",
-  "backgroundColor": "#d3f9d8",
-  "strokeColor": "#1e1e1e",
-  "strokeWidth": 2,
-  "roughness": 0
-}
+{ "type": "rectangle", "width": 140, "height": 70 }
 ```
 
-Label: entity name only (`fontFamily: 6`, `fontSize: 16`)
+Label: entity name only (`fontSize: 16`)
 
-### Process (ellipse, blue fill)
+### Process (ellipse)
 
 Represents a function or transformation. Label with a verb phrase.
 
 ```json
-{
-  "type": "ellipse",
-  "backgroundColor": "#dbe4ff",
-  "strokeColor": "#1e1e1e",
-  "strokeWidth": 2,
-  "roughness": 0,
-  "roundness": { "type": 2 }
-}
+{ "type": "ellipse", "roundness": { "type": 2 }, "width": 160, "height": 80 }
 ```
 
 Label convention: `"1.0\nProcess Name"` — process number on first line, name on second.
-Dimensions: `160 × 80` (wider than tall for readability).
 
-### Data Store (open rectangle, yellow fill)
+### Data Store (rectangle)
 
-Represented as a rectangle with a visual cue. Use standard rectangle with a
-distinctive colour. Label format: `"D1: Store Name"` (Yourdon convention).
+Represented as a rectangle with a distinctive style. Label format: `"D1: Store Name"` (Yourdon convention).
 
 ```json
-{
-  "type": "rectangle",
-  "backgroundColor": "#fff3bf",
-  "strokeColor": "#1e1e1e",
-  "strokeWidth": 2,
-  "roughness": 0
-}
+{ "type": "rectangle", "width": 160, "height": 60 }
 ```
 
 Label: `"D1: Orders DB"` or `"D2: User Cache"`
@@ -77,22 +56,12 @@ Label: `"D1: Orders DB"` or `"D2: User Cache"`
 
 Each arrow carries a label describing the data being transferred.
 
-```json
-{
-  "type": "arrow",
-  "endArrowhead": "arrow",
-  "strokeColor": "#1e1e1e",
-  "strokeWidth": 2,
-  "strokeStyle": "solid"
-}
-```
+Use `"strokeStyle": "dashed"` for async or event-driven flows.
 
 **Arrow label binding:** Data flow labels (e.g. `"Order Data"`, `"Payment Info"`)
 use `containerId` binding with `lineHeight: 1.25` and calculated midpoint
 positioning. See `references/excalidraw-format.md` section "Arrow label rules"
 for the complete JSON pattern, sizing formulas, and readability rules.
-
-Use `"strokeStyle": "dashed"` for async or event-driven flows.
 
 ---
 
@@ -143,57 +112,3 @@ at the bottom.
 3. Every data store: `"D<n>: Name"` format
 4. Every external entity: proper name (`"Customer"`, `"Payment Gateway"`)
 5. Process IDs increase sequentially and are shown in the label
-
----
-
-## Example: Level 1 DFD Snippet (3 processes)
-
-```json
-{
-  "elements": [
-    { "id": "ext1", "type": "rectangle", "backgroundColor": "#d3f9d8",
-      "x": 60, "y": 200, "width": 140, "height": 70,
-      "boundElements": [{"id": "lbl-ext1", "type": "text"}, {"id": "flow1", "type": "arrow"}],
-      "strokeColor": "#1e1e1e", "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null },
-    { "id": "lbl-ext1", "type": "text", "x": 60, "y": 225, "width": 140, "height": 20,
-      "text": "Customer", "fontSize": 16, "fontFamily": 6,
-      "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "ext1", "originalText": "Customer", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] },
-    { "id": "proc1", "type": "ellipse", "backgroundColor": "#dbe4ff",
-      "x": 300, "y": 180, "width": 180, "height": 110,
-      "boundElements": [{"id": "lbl-p1", "type": "text"}, {"id": "flow1", "type": "arrow"}],
-      "strokeColor": "#1e1e1e", "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null,
-      "roundness": {"type": 2} },
-    { "id": "lbl-p1", "type": "text", "x": 300, "y": 215, "width": 180, "height": 40,
-      "text": "1.0\nValidate Order", "fontSize": 16, "fontFamily": 6,
-      "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "proc1", "originalText": "1.0\nValidate Order", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] },
-    { "id": "flow1", "type": "arrow",
-      "x": 200, "y": 235, "width": 100, "height": 0,
-      "points": [[0, 0], [100, 0]],
-      "startBinding": { "mode": "orbit", "elementId": "ext1", "fixedPoint": [0.5001, 0.5001] },
-      "endBinding": { "mode": "orbit", "elementId": "proc1", "fixedPoint": [0.5001, 0.5001] },
-      "startArrowhead": null, "endArrowhead": "arrow",
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "elbowed": false,
-      "groupIds": [], "frameId": null, "boundElements": [{"id": "lbl-flow1", "type": "text"}] },
-    { "id": "lbl-flow1", "type": "text",
-      "x": 210, "y": 226, "width": 80, "height": 17.5,
-      "text": "Order Data", "fontSize": 14, "fontFamily": 6,
-      "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "flow1", "originalText": "Order Data", "autoResize": true, "lineHeight": 1.25,
-      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
-      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] }
-  ]
-}
-```

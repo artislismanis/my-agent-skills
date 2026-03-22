@@ -16,57 +16,57 @@ diagramming tools.
 
 Events mark where a process starts, ends, or is interrupted.
 
-| BPMN Event | Excalidraw Shape | Background | Border | Notes |
-|------------|-----------------|------------|--------|-------|
-| Start Event | `ellipse` | `#d3f9d8` | single thin (`strokeWidth: 1`) | Entry point — one per pool |
-| End Event | `ellipse` | `#ffe3e3` | double (simulate with thick `strokeWidth: 4`) | Termination |
-| Intermediate Event | `ellipse` | `#fff3bf` | double thin | Timer, message, signal |
-| Boundary Event | `ellipse` | `#fff3bf` | attached to task border | Interrupting exception |
+| BPMN Event | Excalidraw Shape | Style Tier | Border Notes |
+|------------|-----------------|------------|--------------|
+| Start Event | `ellipse` | Standard | Thin border — use `strokeWidth: 1` |
+| End Event | `ellipse` | Occasional Highlight | Thick border — use `strokeWidth: 4` |
+| Intermediate Event | `ellipse` | Standard | Double thin — standard stroke |
+| Boundary Event | `ellipse` | Standard | Attached to task border |
 
-Start/End Event size: `60 × 60`
+Size: `60 × 60`
 
 ```json
-{ "type": "ellipse", "width": 60, "height": 60,
-  "backgroundColor": "#d3f9d8", "strokeWidth": 1, "roughness": 0 }
+{ "type": "ellipse", "width": 60, "height": 60, "roundness": { "type": 2 }, "strokeWidth": 1 }
+```
+
+```json
+{ "type": "ellipse", "width": 60, "height": 60, "roundness": { "type": 2 }, "strokeWidth": 4 }
 ```
 
 ### Tasks
 
 Tasks are the work items — atomic activities performed by a person or system.
 
-| BPMN Task Type | Excalidraw Shape | Background | Label Prefix |
+| BPMN Task Type | Excalidraw Shape | Style Tier | Label Prefix |
 |----------------|-----------------|------------|--------------|
-| User Task | `rectangle` with roundness | `#dbe4ff` | No prefix (default) |
-| Service Task | `rectangle` with roundness | `#dbe4ff` | `⚙` prefix or `[Service]` |
-| Send Task | `rectangle` with roundness | `#dbe4ff` | `[Send]` prefix |
-| Receive Task | `rectangle` with roundness | `#dbe4ff` | `[Receive]` prefix |
-| Script Task | `rectangle` with roundness | `#dbe4ff` | `[Script]` prefix |
-| Manual Task | `rectangle` with roundness | `#f1f3f5` | `[Manual]` prefix |
+| User Task | `rectangle` with roundness | Standard | No prefix (default) |
+| Service Task | `rectangle` with roundness | Standard | `[Service]` prefix |
+| Send Task | `rectangle` with roundness | Standard | `[Send]` prefix |
+| Receive Task | `rectangle` with roundness | Standard | `[Receive]` prefix |
+| Script Task | `rectangle` with roundness | Standard | `[Script]` prefix |
+| Manual Task | `rectangle` with roundness | Standard Light | `[Manual]` prefix |
 
-Task size: `160 × 80`
+Size: `160 × 80`
 
 ```json
-{ "type": "rectangle", "width": 160, "height": 80,
-  "roundness": { "type": 3 },
-  "backgroundColor": "#dbe4ff", "strokeWidth": 2, "roughness": 0 }
+{ "type": "rectangle", "roundness": { "type": 3 }, "width": 160, "height": 80 }
 ```
 
 ### Gateways
 
 Gateways control the flow — splitting or merging paths.
 
-| BPMN Gateway | Excalidraw Shape | Background | Label Convention |
+| BPMN Gateway | Excalidraw Shape | Style Tier | Label Convention |
 |--------------|-----------------|------------|-----------------|
-| Exclusive (XOR) | `diamond` | `#fff3bf` | `X` in label or `"XOR"` |
-| Parallel (AND) | `diamond` | `#fff3bf` | `+` in label or `"AND"` |
-| Inclusive (OR) | `diamond` | `#fff3bf` | `O` in label or `"OR"` |
-| Event-Based | `diamond` | `#fff3bf` | `"Event"` |
+| Exclusive (XOR) | `diamond` | Standard | `"X"` in label or `"XOR"` |
+| Parallel (AND) | `diamond` | Standard | `"+"` in label or `"AND"` |
+| Inclusive (OR) | `diamond` | Standard | `"O"` in label or `"OR"` |
+| Event-Based | `diamond` | Standard | `"Event"` |
 
-Gateway size: `80 × 80`
+Size: `80 × 80`
 
 ```json
-{ "type": "diamond", "width": 80, "height": 80,
-  "backgroundColor": "#fff3bf", "strokeWidth": 2, "roughness": 0 }
+{ "type": "diamond", "width": 80, "height": 80 }
 ```
 
 Label incoming arrow with the condition; label outgoing arrows with outcomes.
@@ -83,17 +83,14 @@ within a participant).
 A `frame` element representing one process participant.
 
 ```json
-{ "type": "frame", "name": "Order Fulfilment Process",
-  "width": 1200, "height": 400,
-  "backgroundColor": "transparent", "strokeWidth": 2 }
+{ "type": "frame", "name": "Order Fulfilment Process", "width": 1200, "height": 400 }
 ```
 
 ### Lane
 
 Horizontal bands within a pool, each representing a role or system.
 
-Implement lanes as `rectangle` elements (or `frame` elements) stacked vertically
-inside the pool frame:
+Implement lanes as `rectangle` elements stacked vertically inside the pool frame.
 
 ```
 Pool frame (full width)
@@ -102,17 +99,10 @@ Pool frame (full width)
 └── Lane: Warehouse    (bottom strip, height: 140)
 ```
 
-Lane label: vertical text at left edge — use standalone `text` element rotated
-90° (`angle: -1.5708` ≈ -90°) or a horizontal label at left edge.
+Lane label: horizontal label at the top-left of each lane rectangle.
 
-For simplicity, use horizontal lane labels at the top-left of each lane rectangle.
-
-Lane styling:
-```json
-{ "type": "rectangle",
-  "backgroundColor": "transparent", "strokeColor": "#1e1e1e",
-  "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0 }
-```
+Lane styling: use Standard Lighter style (`fillStyle: "hachure"`, `strokeStyle: "dotted"`) to keep lanes visually
+subordinate to the process elements they contain.
 
 ---
 
@@ -123,8 +113,8 @@ Lane styling:
 | Sequence Flow | `solid` arrow | Normal flow between elements in same pool |
 | Message Flow | `dashed` arrow | Cross-pool communication (different participants) |
 | Association | `dotted` arrow, no arrowhead | Links annotation to element |
-| Default Flow | `solid` arrow with `//` marking | Use arrow label `"[default]"` |
-| Conditional Flow | `solid` arrow with diamond marker | Use arrow label with condition |
+| Default Flow | `solid` arrow | Use arrow label `"[default]"` |
+| Conditional Flow | `solid` arrow | Use arrow label with condition |
 
 **Arrow label binding:** All flow labels (gateway branch labels like `"Yes"` /
 `"No"`, condition labels, `"[default]"`) use `containerId` binding with
