@@ -1,4 +1,8 @@
 {
+  "model": "opusplan",
+  "permissions": {
+    "defaultMode": "plan"
+  },
   "hooks": {
     "PreToolUse": [
       {
