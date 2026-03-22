@@ -208,4 +208,3 @@ Ask the user: "Would you like me to suggest concrete remediation edits for the t
 ### Idempotency by Design
 
 The command produces deterministic output — running verification twice on the same state yields the same report. No counters, timestamp-dependent logic, or accumulated state affects findings. The report is fully regenerated on each run.
-

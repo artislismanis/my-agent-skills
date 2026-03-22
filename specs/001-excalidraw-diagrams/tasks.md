@@ -188,6 +188,7 @@ Task: "Update SKILL.md with template selection logic"
 ### Parallel Execution (Single Developer)
 
 After Foundational phase:
+
 - T006 (SKILL.md) and T007 (render.mjs) can run in parallel
 - All 5 templates (T009–T013) can run in parallel
 - SKILL.md updates (T008, T014, T015) must be sequential

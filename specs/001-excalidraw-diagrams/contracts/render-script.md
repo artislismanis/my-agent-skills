@@ -32,6 +32,7 @@ On error: Error message describing the failure
 ### Input Format
 
 Valid Excalidraw JSON document (see data-model.md). Must contain at minimum:
+
 - `type: "excalidraw"`
 - `version: 2`
 - `elements: [...]` (may be empty — an empty array renders a blank PNG per spec edge cases)
