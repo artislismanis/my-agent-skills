@@ -104,7 +104,7 @@ auto-install for Bun.
 | ------------------------------ | --------------------------------------------------------------------------------- |
 | User-level                     | `~/.claude/skills/<skill-name>/`                                                  |
 | Project-level                  | `.claude/skills/<skill-name>/`                                                    |
-| Plugin-bundled                 | `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/skills/<skill-name>/`  |
+| Plugin-bundled                 | `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/skills/<skill-name>/` |
 | Legacy human-invocable command | `~/.claude/commands/<name>.md` (flat file)                                        |
 
 ## Agents
@@ -141,15 +141,15 @@ Claude plugin mechanism:
 
 ```json
 {
-  "name": "my-agent-skills",
-  "owner": { "name": "Artis Lismanis" },
-  "plugins": [
-    {
-      "name": "plugin-name",
-      "source": "./plugins/topic/plugin-name",
-      "description": "One-line description"
-    }
-  ]
+	"name": "my-agent-skills",
+	"owner": { "name": "Artis Lismanis" },
+	"plugins": [
+		{
+			"name": "plugin-name",
+			"source": "./plugins/topic/plugin-name",
+			"description": "One-line description"
+		}
+	]
 }
 ```
 
@@ -170,9 +170,11 @@ New plugin development uses the speckit pipeline:
 1. `/speckit.specify "description"` — creates branch + `specs/<branch>/spec.md`
 2. `/speckit.clarify` — resolve spec ambiguities
 3. `/speckit.plan` — implementation plan (includes constitution check)
-4. `/speckit.tasks` — generate task list
-5. `/speckit.implement` — execute tasks
-6. `/speckit.verify` — post-implementation verification gate
+4. `/speckit.checklist` — quality checklist
+5. `/speckit.tasks` — generate task list
+6. `/speckit.analyze` — cross-artifact consistency & alignment report
+7. `/speckit.implement` — execute tasks
+8. `/speckit.verify` — post-implementation verification gate
 
 Plugin source lands in `plugins/<topic>/<plugin-name>/`; speckit artifacts live in
 `specs/<branch>/`. After implementation, update `README.md` and
@@ -221,3 +223,10 @@ Project-level defaults in `.claude/settings.json`:
 
 - **Model**: `opusplan` — uses Opus for planning/thinking, Sonnet for execution
 - **Default mode**: `plan` — Claude enters plan mode before making changes
+
+## Active Technologies
+- Dockerfile (container definition), Bash (firewall + setup scripts), YAML (pre-commit config), JSON (devcontainer.json), Markdown (documentation) + Docker/devcontainer spec, nvm, uv, Oh My Zsh, Atuin, pre-commit framework, Claude Code CLI (002-devcontainer-setup)
+- N/A — configuration files only (002-devcontainer-setup)
+
+## Recent Changes
+- 002-devcontainer-setup: Added Dockerfile (container definition), Bash (firewall + setup scripts), YAML (pre-commit config), JSON (devcontainer.json), Markdown (documentation) + Docker/devcontainer spec, nvm, uv, Oh My Zsh, Atuin, pre-commit framework, Claude Code CLI
