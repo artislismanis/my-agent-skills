@@ -45,6 +45,8 @@ plugins/
           package.json or pyproject.toml
 specs/                     # Speckit feature specs (plugin development work only)
 .specify/                  # Speckit framework
+  extensions.yml           # Extension registry config
+  extensions/              # Installed speckit extensions (e.g. verify)
 .claude/                   # Claude Code config (settings, commands, memory)
 ```
 
@@ -170,10 +172,21 @@ New plugin development uses the speckit pipeline:
 3. `/speckit.plan` — implementation plan (includes constitution check)
 4. `/speckit.tasks` — generate task list
 5. `/speckit.implement` — execute tasks
+6. `/speckit.verify` — post-implementation verification gate
 
 Plugin source lands in `plugins/<topic>/<plugin-name>/`; speckit artifacts live in
 `specs/<branch>/`. After implementation, update `README.md` and
 `.claude-plugin/marketplace.json`.
+
+### Speckit Extensions
+
+Extensions live in `.specify/extensions/` and register commands in
+`.claude/commands/speckit.<ext>*.md`. Extension config is in `.specify/extensions.yml`.
+
+Currently installed:
+
+- **verify** — post-implementation quality gate validating implementation against spec
+  artifacts. Source: <https://github.com/ismaelJimenez/spec-kit-verify>
 
 ## Branching (GitHub Flow)
 
@@ -202,9 +215,9 @@ Constitution at `.specify/memory/constitution.md` (v1.0.0). Every `plan.md` must
 a Constitution Check. Principles: Spec-First, Test-First, User Story Independence,
 MVP-First, Simplicity (YAGNI).
 
-## Active Technologies
-- Markdown (reference material) + Node.js 22+ (render script only) + Render script deps in local package.json (see research.md) (001-excalidraw-diagrams)
-- N/A — file-based output (JSON written to disk, PNG rendered on demand) (001-excalidraw-diagrams)
+## Claude Code Defaults
 
-## Recent Changes
-- 001-excalidraw-diagrams: Added Markdown (reference material) + Node.js 22+ (render script only) + Render script deps in local package.json (see research.md)
+Project-level defaults in `.claude/settings.json`:
+
+- **Model**: `opusplan` — uses Opus for planning/thinking, Sonnet for execution
+- **Default mode**: `plan` — Claude enters plan mode before making changes
