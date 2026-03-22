@@ -126,6 +126,12 @@ Lane styling:
 | Default Flow | `solid` arrow with `//` marking | Use arrow label `"[default]"` |
 | Conditional Flow | `solid` arrow with diamond marker | Use arrow label with condition |
 
+**Arrow label binding:** All flow labels (gateway branch labels like `"Yes"` /
+`"No"`, condition labels, `"[default]"`) use `containerId` binding with
+`lineHeight: 1.25` and calculated midpoint positioning. See
+`references/excalidraw-format.md` section "Arrow label rules" for the complete
+JSON pattern, sizing formulas, and readability rules.
+
 ---
 
 ## Layout

@@ -12,6 +12,13 @@ templates), a `SKILL.md` that instructs Claude how to generate valid Excalidraw
 JSON, and a self-contained Node render script for PNG validation. Delivered as a
 standard plugin package under `plugins/diagramming/excalidraw-diagrams/`.
 
+**Critical design note:** The static PNG renderer (`@excalidraw/utils`) does not
+auto-position or auto-centre text elements. The format reference includes
+explicit text positioning formulas and visual language principles so that
+generated JSON renders correctly without the interactive layout engine. Arrow
+bindings use `mode: "orbit"` with `fixedPoint` normalised coordinates (see
+R7, R8 in research.md).
+
 ## Technical Context
 
 **Language/Version**: Markdown (reference material) + Node.js 22+ (render script only)

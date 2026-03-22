@@ -198,6 +198,11 @@ elements while correctly applying the requested change.
 - **FR-012**: Claude MUST ask clarifying questions during the design session to
   understand the diagram's intent, content, and structure before generating
   the final output. The interaction should be collaborative, not single-shot.
+- **FR-013**: The format reference MUST document text binding mechanics
+  (`containerId`, text positioning formulas, `lineHeight`) so that bound
+  text labels render correctly in both the Excalidraw editor and the static
+  PNG renderer. The static renderer does not auto-position text — coordinates
+  must be calculated at generation time.
 
 ### Key Entities
 

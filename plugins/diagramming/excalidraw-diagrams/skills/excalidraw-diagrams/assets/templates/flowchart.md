@@ -48,6 +48,11 @@ Decision diamond labels:
 - Arrows come out from the **bottom** (false/no) and **right** (true/yes) — or bottom and left
 - Add a short text label on each outgoing arrow
 
+**Arrow label binding:** All arrow labels (including decision branch labels like
+`"Yes"` / `"No"`) use `containerId` binding with `lineHeight: 1.25` and calculated
+midpoint positioning. See `references/excalidraw-format.md` section "Arrow label
+rules" for the complete JSON pattern, sizing formulas, and readability rules.
+
 ---
 
 ## Layout

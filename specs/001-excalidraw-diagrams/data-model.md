@@ -133,10 +133,9 @@ Describes how an arrow connects to a shape element.
 
 | Field | Type | Description |
 |-------|------|-------------|
+| mode | string | Always `"orbit"` — connector finds shortest path to shape edge |
 | elementId | string | ID of the target shape |
-| focus | number | Position along the shape edge (-1 to 1) |
-| gap | number | Distance from shape border in pixels |
-| fixedPoint | number[] | Optional [x, y] normalized anchor point |
+| fixedPoint | number[] | Normalised `[x, y]` anchor on shape; `[0,0]`=top-left, `[1,1]`=bottom-right. Values are continuous. Values slightly outside `[0,1]` create binding gaps (see R8, R9 in research.md) |
 
 ### BoundRef
 
@@ -161,7 +160,7 @@ Reference from a shape to its bound elements.
 ExcalidrawDocument 1──* Element
 Element (shape) 1──* BoundRef ──1 Element (arrow or text)
 Element (arrow) *──1 Binding ──1 Element (shape)
-Element (text)  *──1 containerId ──1 Element (shape)
+Element (text)  *──1 containerId ──1 Element (shape or arrow)
 Element (any)   *──? frameId ──1 Element (frame)
 Element (any)   *──* groupIds (shared group membership)
 ```
@@ -171,8 +170,8 @@ Element (any)   *──* groupIds (shared group membership)
 - Every `id` must be unique within the document
 - Arrow `startBinding.elementId` and `endBinding.elementId` must reference
   existing shape elements
-- Text with `containerId` must reference an existing shape element
-- That shape's `boundElements` must include a back-reference to the text
+- Text with `containerId` must reference an existing shape or arrow element
+- That shape/arrow's `boundElements` must include a back-reference to the text
 - `frameId` must reference an existing frame element
 - `points` in arrows/lines must have at least 2 entries
 - `groupIds` arrays for grouped elements must share at least one common ID

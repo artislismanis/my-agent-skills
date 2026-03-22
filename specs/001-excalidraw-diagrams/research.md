@@ -79,8 +79,10 @@ will document the subset needed for diagram generation:
 - **Element types**: rectangle, diamond, ellipse, arrow, line, text, frame, freedraw, image, iframe
 - **Common properties**: id, type, x, y, width, height, strokeColor,
   backgroundColor, fillStyle, strokeWidth, roughness, opacity, groupIds
-- **Arrow bindings**: startBinding/endBinding with elementId, focus, gap
-- **Text labels**: boundElements on shapes, text element with containerId
+- **Arrow bindings**: startBinding/endBinding with `mode: "orbit"`,
+  `elementId`, `fixedPoint` normalised coordinates (see R8)
+- **Text labels**: boundElements on shapes, text element with containerId,
+  calculated positioning (see R7)
 - **Frames**: frameId property on child elements
 - **appState**: viewBackgroundColor, theme, gridSize
 
@@ -263,3 +265,202 @@ All 8 test cases pass with the new pipeline:
 | --help / no args | Pass |
 | Invalid JSON / wrong type / missing file | Pass — correct error messages |
 | Clean npm install | Pass — no postinstall shim needed |
+
+## R7: Static Renderer Text Positioning
+
+**Date**: 2026-03-22 (discovered during iterative testing, Changes 1–12)
+
+### Discovery: Static renderer does not auto-position text
+
+The `@excalidraw/utils` static renderer does **not** auto-centre or
+auto-position bound text elements. The `x`, `y`, `width`, and `height`
+values on text elements are rendered as-is — unlike the interactive
+Excalidraw editor, which runs a layout engine to reposition bound text
+within its container.
+
+### Observed Problem
+
+Text labels inside shapes appeared at wrong positions in rendered PNGs:
+top-left instead of centred, wrong height for multiline labels, labels
+overflowing shape boundaries. This made rendered output unusable for
+visual validation.
+
+### Root Cause: No layout engine in static export
+
+The static renderer (`exportToCanvas`) skips the interactive layout engine.
+It trusts the coordinates in the JSON. Two additional issues compounded this:
+
+1. **`lineHeight` defaults to `2.5`** when omitted — the renderer's fallback
+   produces double-spaced text that overflows containers
+2. **`containerId: null` with manual `x`/`y` + `groupIds`** does not work —
+   text positioned this way renders at incorrect locations in PNG output
+   because `groupIds` controls selection grouping, not rendering position
+
+### Resolution: Explicit positioning formulas
+
+Explicit positioning formulas added to `excalidraw-format.md`:
+
+```text
+text_height = num_lines × fontSize × lineHeight
+text_y      = parent_y + (parent_height - text_height) / 2
+text_x      = parent_x
+text_width  = parent_width
+```
+
+For arrow labels (midpoint centering):
+
+```text
+text_width  ≈ num_chars × 8  (fontSize 14 Nunito)
+text_x      = arrow_midpoint_x - text_width / 2
+text_y      = arrow_midpoint_y - text_height / 2
+```
+
+**Mandatory properties:**
+
+- `lineHeight: 1.25` — always set explicitly on every text element
+- `containerId` — must reference parent shape/arrow ID for bound text
+- `autoResize: true` — allows Excalidraw editor to reflow if edited later
+
+### Cross-cutting Impact
+
+This finding affected every task that produces JSON examples: T004 (format
+reference), T005 (styling defaults), T006 (SKILL.md), and all template
+tasks (T009–T013). All examples updated with calculated text positions.
+
+## R8: Arrow Binding Format — orbit + fixedPoint
+
+**Date**: 2026-03-22 (discovered during iterative testing, Changes 13–16)
+
+### Discovery: orbit mode replaces focus/gap
+
+The correct arrow binding format uses `mode: "orbit"` with `fixedPoint`
+normalised coordinates. The previously documented `focus`/`gap`/
+`fixedPoint: null` fields are legacy and produce inconsistent results
+with the current Excalidraw renderer.
+
+### Correct Format
+
+```json
+"startBinding": {
+  "mode": "orbit",
+  "elementId": "source-id",
+  "fixedPoint": [0.5001, 0.5001]
+}
+```
+
+### fixedPoint Coordinate System
+
+`fixedPoint` uses normalised `[x, y]` where `(0, 0)` is the top-left and
+`(1, 1)` is the bottom-right of the shape's bounding box. Values are
+**continuous** — any point along an edge is valid, not just 5 preset
+anchors.
+
+Common anchors: `[0, 0.5]` (left), `[1, 0.5]` (right), `[0.5, 0]` (top),
+`[0.5, 1]` (bottom), `[0.5001, 0.5001]` (auto/centre).
+
+**Multi-arrow distribution:** When multiple arrows connect to the same
+side, distribute them evenly (e.g., 2 arrows on left: `[0, 0.33]` and
+`[0, 0.67]`; 3 arrows: `[0, 0.25]`, `[0, 0.5]`, `[0, 0.75]`).
+
+### Legacy Fields (removed from guidance)
+
+- `focus` — position along shape edge (-1 to 1). Replaced by fixedPoint.
+- `gap` — pixel distance from shape border. Now implicit in orbit mode.
+- `fixedPoint: null` — old auto-placement. Replaced by `[0.5001, 0.5001]`.
+
+## R9: Native Elbowed Arrows
+
+**Date**: 2026-03-22 (discovered during iterative testing, Changes 17–19)
+
+### Discovery: elbowed flag required for right-angle routing
+
+Native Excalidraw elbowed arrows use `"elbowed": true` with additional
+properties. The initial approach of simulating elbows with
+`"elbowed": false` and manual 4-point paths produced diagonal lines in
+some cases because the renderer interpreted the points differently
+without the elbowed flag.
+
+### Native Format
+
+```json
+{
+  "elbowed": true,
+  "fixedSegments": null,
+  "startIsSpecial": null,
+  "endIsSpecial": null,
+  "points": [[0, 0], [bend_x, 0], [bend_x, dy_end], [dx_end, dy_end]]
+}
+```
+
+### Binding Gap for Elbowed Arrows
+
+Elbowed arrows create the binding gap via `fixedPoint` values slightly
+outside `[0, 1]`. A `~0.03` offset from the edge creates ~6px of visual
+gap:
+
+- Start from right edge: `fixedPoint: [1.03, y]`
+- End at left edge: `fixedPoint: [-0.03, y]`
+
+This differs from straight arrows, which use manual 8px offset in the
+arrow's `x`/`y` coordinates. The arrow's `x`/`y` for elbowed arrows is
+the actual start position (no manual offset needed).
+
+> **Correction (Changes 20+):** `orbit` mode handles the visual gap for
+> straight arrows too — set `x`/`y` to the shape edge. The complete
+> example confirms: arrow at `x=260` = box edge `(100+160)`, no manual
+> offset. The "8px offset for straight arrows" claim was from early
+> testing and is incorrect.
+
+### Routing Patterns
+
+Two primary patterns (4 points each):
+
+- **Right-then-up/down**: `[[0, 0], [bend_x, 0], [bend_x, dy], [dx, dy]]`
+- **Up/down-then-right**: `[[0, 0], [0, bend_y], [dx, bend_y], [dx, dy]]`
+
+Bend points must be placed in empty space — not overlapping other elements
+or arrow labels.
+
+## R10: Layout Spacing and Visual Language
+
+**Date**: 2026-03-22 (discovered during iterative testing, Changes 13–14)
+
+### Discovery: original spacing too tight for labelled arrows
+
+The original layout spacing values (80px horizontal, 60px vertical) were
+too tight for diagrams with labelled arrows. Arrow labels covered
+arrowheads and the diagrams felt cramped.
+
+### Spacing Formula
+
+Through iterative rendering and visual review, the optimal spacing was
+found to be:
+
+- **Labelled arrows**: `label_width + 160px` between shape edges (leaves
+  ~80px visible arrow line on each side of the label). Most two-line labels
+  are ~80px wide, so `240px` is a good default.
+- **Unlabelled arrows**: `160px` minimum between shape edges.
+- **Vertical spacing**: `120px` minimum between shape edges.
+
+### Centre-Line Alignment
+
+Diagonal arrows are almost always unintentional. They're eliminated by
+aligning connected shapes:
+
+- Horizontal arrows: shapes share the same `y` (vertical centres match)
+- Vertical arrows: shapes share the same `x` (horizontal centres match)
+
+When shapes cannot share an axis, use elbowed arrows (see R9) instead of
+allowing diagonal connections.
+
+### Visual Iteration
+
+First-pass layouts rarely render perfectly. A post-render review checklist
+was added to `styling-defaults.md`:
+
+1. Arrow labels covering arrowheads or arrow origins
+2. Unbalanced spacing (some gaps much larger/smaller than others)
+3. Text clipped or overflowing shape boundaries
+4. Overlapping elements
+
+2–3 iterations is normal to achieve a clean diagram.
