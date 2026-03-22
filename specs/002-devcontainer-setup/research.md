@@ -175,6 +175,12 @@ reference an existing user, which `common-utils` provides.
 so no permission issues. Pre-commit also installs per-user. The firewall script needs
 root, so sudoers is configured for just that one script.
 
+**Revised**: The `common-utils` feature was removed after initial implementation.
+zsh, Oh My Zsh, and powerlevel10k are now installed directly in the Dockerfile. This
+eliminates the two-phase user setup (Dockerfile pre-create + feature configure),
+removes the only external feature dependency, and gives 100% control over the shell
+environment. See `.devcontainer/Dockerfile` for the current implementation.
+
 ## R8: Pre-commit and Claude Code Interaction
 
 **Decision**: Document in CLAUDE.md that Claude must never use `--no-verify` to skip hooks.

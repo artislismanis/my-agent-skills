@@ -217,6 +217,71 @@ Constitution at `.specify/memory/constitution.md` (v1.0.0). Every `plan.md` must
 a Constitution Check. Principles: Spec-First, Test-First, User Story Independence,
 MVP-First, Simplicity (YAGNI).
 
+## Devcontainer Setup
+
+The repository includes a VS Code devcontainer (`.devcontainer/`) that provides a
+fully configured development environment — no manual setup required.
+
+**What the devcontainer provides:**
+
+- **Node.js 22** managed via nvm
+- **Python 3.12** managed via uv
+- **zsh** as default shell with Oh My Zsh, powerlevel10k theme, and Atuin shell history
+  (all installed directly in the Dockerfile — no devcontainer features)
+- **Claude Code CLI** installed globally via npm
+- **CLI tools**: git, GitHub CLI (gh), jq, fzf, git-delta (configured as git pager)
+- **VS Code extensions**: Claude Code, ESLint, Prettier, GitLens, markdownlint, Ruff,
+  Python, EditorConfig, Markdown All in One, Markdown Mermaid
+- **Pre-commit hooks** installed automatically on container creation
+
+**Host font requirement:** Terminal fonts render on the host machine, not inside the
+container. Install **MesloLGS NF** on your host OS for correct glyph rendering in the
+powerlevel10k prompt. Download from the
+[Powerlevel10k fonts page](https://github.com/romkatv/powerlevel10k#fonts). The
+`p10k-rainbow` preset is used with prompt layout overrides from zsh-in-docker defaults.
+MesloLGS NF is recommended — without it Nerd Font glyphs will be missing.
+
+**To rebuild the container** (after changes to `.devcontainer/Dockerfile` or
+`.devcontainer/devcontainer.json`): open the VS Code command palette and run
+**"Dev Containers: Rebuild Container"**.
+
+## Auto-mode Guardrails
+
+These rules govern Claude Code operating in autonomous (`--dangerously-skip-permissions`) mode.
+
+### Commit-per-iteration rule (advisory)
+
+Claude MUST commit changes after completing each logical unit of work before proceeding
+to the next. A logical unit of work is:
+
+- During speckit workflows: each task in `tasks.md`
+- Outside speckit: each coherent group of related file edits
+
+This rule is advisory — enforced via this CLAUDE.md guidance and Claude's system prompt,
+not technically.
+
+### No-verify prohibition
+
+Claude MUST NOT use `--no-verify` to bypass pre-commit hooks. If a hook fails, fix
+the underlying issue and recommit.
+
+### Branch protection on `main` (enforced)
+
+A `PreToolUse` hook in `.claude/settings.json` blocks `Edit`, `Write`, and
+`NotebookEdit` calls when on the `main` branch. This is a separate, technically
+enforced control — not an advisory rule.
+
+### `--dangerously-skip-permissions` safety context
+
+Inside the devcontainer, `--dangerously-skip-permissions` is safe to use due to
+defence-in-depth:
+
+1. **Firewall** — optional default-deny network boundary (activate with
+   `sudo /usr/local/share/init-firewall.sh`)
+2. **Non-root user** — container runs as `vscode` (UID 1000), limiting system access
+3. **Container isolation** — process namespace isolated from host
+4. **PreToolUse hook** — blocks writes to `main` branch
+
 ## Claude Code Defaults
 
 Project-level defaults in `.claude/settings.json`:
@@ -225,8 +290,7 @@ Project-level defaults in `.claude/settings.json`:
 - **Default mode**: `plan` — Claude enters plan mode before making changes
 
 ## Active Technologies
-- Dockerfile (container definition), Bash (firewall + setup scripts), YAML (pre-commit config), JSON (devcontainer.json), Markdown (documentation) + Docker/devcontainer spec, nvm, uv, Oh My Zsh, Atuin, pre-commit framework, Claude Code CLI (002-devcontainer-setup)
-- N/A — configuration files only (002-devcontainer-setup)
 
-## Recent Changes
-- 002-devcontainer-setup: Added Dockerfile (container definition), Bash (firewall + setup scripts), YAML (pre-commit config), JSON (devcontainer.json), Markdown (documentation) + Docker/devcontainer spec, nvm, uv, Oh My Zsh, Atuin, pre-commit framework, Claude Code CLI
+- Dockerfile (container definition), Bash (firewall + setup scripts), YAML (pre-commit
+  config), JSON (devcontainer.json), Markdown (documentation) + Docker/devcontainer
+  spec, nvm, uv, Oh My Zsh, Atuin, pre-commit framework, Claude Code CLI

@@ -34,8 +34,8 @@ A developer makes changes and commits. Pre-commit hooks automatically lint and f
 **Acceptance Scenarios**:
 
 1. **Given** pre-commit hooks are installed, **When** a developer commits a Markdown file with linting violations, **Then** markdownlint reports the issues and the commit is blocked until they are fixed.
-2. **Given** pre-commit hooks are installed, **When** a developer commits a JS/TS file, **Then** Prettier auto-formats the file (modifying it in place) and ESLint reports any errors (blocking the commit if errors are found).
-3. **Given** pre-commit hooks are installed, **When** a developer commits a Python file, **Then** Ruff auto-formats the file and blocks the commit if any lint errors remain after formatting.
+2. **Given** pre-commit hooks are installed, **When** a developer commits a JS/TS file, **Then** Prettier auto-formats the file (modifying it in place) and ESLint reports any errors (blocking the commit if errors are found); if Prettier modified files, the commit fails on first pass and the developer re-stages the modified files and commits again.
+3. **Given** pre-commit hooks are installed, **When** a developer commits a Python file, **Then** Ruff auto-formats the file and blocks the commit if any lint errors remain after formatting; if Ruff modified files, the commit fails on first pass and the developer re-stages the modified files and commits again.
 4. **Given** pre-commit hooks are installed, **When** a developer commits files with trailing whitespace or missing final newlines, **Then** the standard hooks fix these automatically (commit fails first pass; developer re-stages the fixed files and commits again).
 
 ---
@@ -50,7 +50,7 @@ A developer runs Claude Code in autonomous mode inside the devcontainer. The fir
 
 **Acceptance Scenarios**:
 
-1. **Given** the devcontainer is running with the firewall active, **When** a process attempts to connect to an unauthorized domain, **Then** the connection is blocked with immediate feedback.
+1. **Given** the devcontainer is running with the firewall active, **When** a process attempts to connect to an unauthorized domain, **Then** the connection is blocked (the attempt will time out or be immediately refused depending on firewall policy — DROP causes timeout; REJECT causes immediate refusal).
 2. **Given** the devcontainer is running with the firewall active, **When** Claude Code connects to the Claude API, GitHub, npm registry, or PyPI, **Then** the connections succeed.
 3. **Given** Claude Code is running in auto mode, **When** it completes a logical unit of work, **Then** CLAUDE.md guidance directs it to commit changes before proceeding.
 4. **Given** the devcontainer is running, **When** Claude Code attempts to write files on the `main` branch, **Then** the existing PreToolUse hook blocks the write.
@@ -86,14 +86,14 @@ A new contributor reads the README and CLAUDE.md to understand how to use the de
 
 ### Functional Requirements
 
-- **FR-001**: The devcontainer MUST build successfully from the repository root using VS Code's "Reopen in Container" or equivalent devcontainer CLI.
+- **FR-001**: The devcontainer MUST build successfully from the repository root using VS Code's "Reopen in Container" or equivalent devcontainer CLI. The container MUST run as the non-root `vscode` user; no processes run as root except the optional firewall activation via sudo.
 - **FR-002**: The devcontainer MUST provide Node.js 22 managed via nvm as the default Node runtime.
 - **FR-003**: The devcontainer MUST provide Python 3.12 managed via uv as the default Python runtime.
 - **FR-004**: The devcontainer MUST use zsh as the default shell with Oh My Zsh installed.
 - **FR-005**: The devcontainer MUST install Atuin for shell history management.
-- **FR-006**: The devcontainer MUST pre-install these CLI tools: git, GitHub CLI (gh), jq, fzf, git-delta.
+- **FR-006**: The devcontainer MUST pre-install these CLI tools: git, GitHub CLI (gh), jq, fzf, git-delta. git-delta MUST be configured as git's diff pager so that `git diff`, `git log -p`, and `git show` use delta's enhanced output automatically.
 - **FR-007**: The devcontainer MUST install Claude Code CLI globally via npm.
-- **FR-008**: The devcontainer MUST include a firewall script (`init-firewall.sh`) that restricts outbound network access to whitelisted domains only with a default-deny policy. The firewall is activated manually (not on container start) and documented in the README. It requires NET_ADMIN and NET_RAW Linux capabilities.
+- **FR-008**: The devcontainer MUST include a firewall script (`init-firewall.sh`) that enforces a default-deny policy on all traffic directions (INPUT, FORWARD, OUTPUT), permitting only whitelisted domains for outbound connections. The firewall is activated manually (not on container start) and documented in the README. It requires NET_ADMIN and NET_RAW Linux capabilities. Sudoers is configured for this script only — no other commands run as root. The firewall script MUST include self-verification tests that run at activation time. The script MUST output a clear status summary on completion: on success, the count of whitelisted domains; on failure, the step that failed with an actionable error message.
 - **FR-009**: The firewall MUST allow connections to: npm registry, GitHub (web/api/git), Claude API, Sentry, Statsig, VS Code marketplace, and PyPI.
 - **FR-010**: The devcontainer MUST pre-install these VS Code extensions: Claude Code, ESLint, Prettier, GitLens, markdownlint, Ruff, Python, EditorConfig, Markdown All in One, Markdown Mermaid.
 - **FR-011**: The devcontainer MUST configure VS Code settings for format-on-save with Prettier as default formatter, ESLint fix-on-save, Ruff as Python formatter, and zsh as default terminal.
@@ -101,11 +101,11 @@ A new contributor reads the README and CLAUDE.md to understand how to use the de
 - **FR-013**: The repository MUST include a pre-commit configuration that runs: Prettier (JS/TS/JSON/YAML), ESLint (JS/TS), Ruff (Python), markdownlint (Markdown), and standard hooks (trailing-whitespace, end-of-file-fixer, check-yaml, check-json, check-merge-conflict).
 - **FR-014**: The devcontainer MUST auto-install pre-commit hooks during container creation.
 - **FR-015**: The pre-commit configuration MUST work outside the devcontainer for contributors who install pre-commit manually.
-- **FR-016**: CLAUDE.md MUST document auto-mode guardrails including the commit-per-iteration rule. A logical unit of work is defined as each task in `tasks.md` during speckit workflows, or each coherent group of related file edits outside speckit. Claude MUST commit after completing each such unit before proceeding to the next. Claude MUST NOT use `--no-verify` to skip pre-commit hooks.
+- **FR-016**: CLAUDE.md MUST document auto-mode guardrails including the commit-per-iteration rule. A logical unit of work is defined as each task in `tasks.md` during speckit workflows, or each coherent group of related file edits outside speckit. Claude MUST commit after completing each such unit before proceeding to the next. Claude MUST NOT use `--no-verify` to skip pre-commit hooks. Note: the commit-per-iteration rule is advisory (enforced via CLAUDE.md guidance and Claude's system prompt); the branch protection on `main` is a separate, technically enforced control implemented via a pre-existing PreToolUse hook.
 - **FR-017**: CLAUDE.md MUST document the devcontainer setup and usage.
 - **FR-018**: The repository README MUST include a devcontainer quick-start section.
 - **FR-019**: The devcontainer MUST be compatible with GitHub Codespaces. Since Codespaces may not provide NET_ADMIN/NET_RAW capabilities, the firewall is optional and manually activated; Codespaces environments rely on Codespaces' own network isolation.
-- **FR-020**: The repository MUST include an `.editorconfig` file defining consistent editor settings across all file types: `indent_style: space`, `indent_size: 2` (4 for Python per PEP 8), `end_of_line: lf`, `insert_final_newline: true`, `charset: utf-8`, and `trim_trailing_whitespace: true` (false for Markdown where trailing whitespace is significant).
+- **FR-020**: The repository MUST include an `.editorconfig` file defining consistent editor settings: `indent_style: space`, `indent_size: 2` (4 for Python per PEP 8), `end_of_line: lf`, `insert_final_newline: true`, `charset: utf-8`, and `trim_trailing_whitespace: true` (false for Markdown where trailing whitespace is significant).
 
 ### Key Entities
 
@@ -121,18 +121,19 @@ A new contributor reads the README and CLAUDE.md to understand how to use the de
 - **SC-001**: A developer can go from fresh clone to fully working environment in under 10 minutes (container build + start).
 - **SC-002**: All 10 specified VS Code extensions are installed and active when the container starts.
 - **SC-003**: Pre-commit hooks catch 100% of trailing whitespace, missing newlines, invalid YAML, and invalid JSON in staged files (pre-commit operates on staged files only).
-- **SC-004**: The firewall blocks connections to unauthorized domains (verified by test against a known-blocked domain at startup).
-- **SC-005**: The firewall permits connections to all whitelisted services (verified by test against a known-allowed domain at startup).
+- **SC-004**: The firewall blocks connections to unauthorized domains (verified by test against `example.com` at activation time — connection must fail).
+- **SC-005**: The firewall permits connections to all whitelisted services (verified by test against `api.github.com` at activation time — connection must succeed).
 - **SC-006**: Contributors outside the devcontainer can install and use pre-commit hooks with a single command documented in the README.
 
 ## Assumptions
 
 - Docker (or a compatible container runtime) is available on the developer's machine.
 - Contributors have VS Code with the Remote-Containers extension (or use GitHub Codespaces).
-- The `debian:bookworm` base image is used with the `common-utils` devcontainer feature (which creates a `vscode` non-root user and installs zsh + Oh My Zsh), nvm for Node.js, and uv for Python — providing precise version pinning for both runtimes.
+- The `debian:trixie` base image is used (Debian 13 LTS). zsh, Oh My Zsh, and powerlevel10k are installed directly in the Dockerfile (no devcontainer features). nvm manages Node.js and uv manages Python — providing precise version pinning for both runtimes.
 - Docker image builds have unrestricted network access; the firewall only applies at container runtime when manually activated.
-- `--dangerously-skip-permissions` for Claude Code is made safe by the container's network isolation (firewall) and existing PreToolUse hook (blocks writes on `main`). The firewall is the primary runtime security boundary.
+- `--dangerously-skip-permissions` for Claude Code is made safe by defence-in-depth: the firewall (primary runtime network boundary), the non-root `vscode` user (limits system access), container isolation (process namespace), and the existing PreToolUse hook (blocks writes on `main`). The PreToolUse hook is a pre-existing control implemented in `.claude/settings.json` — it is not created by this feature.
+- The `.claude` bind mount gives the container access to the developer's host `~/.claude` directory, which may include API credentials and session tokens. This is intentional — it allows Claude Code to use existing credentials. Developers are responsible for not committing credential files to the repository.
 - PyPI (pypi.org, files.pythonhosted.org) is added to the firewall whitelist beyond the reference implementation's defaults, to support uv/pip operations.
 - Atuin installation uses the official install script; if it fails, the container still starts successfully with standard zsh history as fallback.
-- The pre-commit framework is installed via uv/pip inside the devcontainer and via contributor's own Python environment outside it.
+- The pre-commit framework is installed via uv/pip inside the devcontainer and via contributor's own Python environment outside it. Contributors using pre-commit outside the devcontainer are assumed to have Python 3 and pip available on their host machine (required to run the single-command install documented in the README).
 - Prettier respects `.editorconfig` by default (since Prettier v2.0), so `.editorconfig` and Prettier configuration work in concert without conflicts.

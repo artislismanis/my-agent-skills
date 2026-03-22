@@ -61,7 +61,7 @@ specs/002-devcontainer-setup/
 
 ```text
 .devcontainer/
-├── devcontainer.json    # Container config, common-utils feature, extensions, settings, mounts
+├── devcontainer.json    # Container config, extensions, settings, mounts (no features)
 ├── Dockerfile           # debian:bookworm + nvm (Node 22) + uv (Python 3.12) + tools
 └── init-firewall.sh     # iptables/ipset firewall (manually activated)
 
@@ -74,3 +74,31 @@ README.md                # Updated: devcontainer quick-start section
 ```
 
 **Structure Decision**: Follows the Claude Code reference 3-file devcontainer pattern. Pre-commit config lives at repo root (standard convention). Documentation updates are in existing files. No new source directories — this is purely config + docs.
+
+## Implementation Phases
+
+Tasks must be executed in this order (each phase can be independently verified before proceeding):
+
+### Phase 1 — Core Container (P1, blocker for all other phases)
+
+1. `.nvmrc` — Node.js version pin (content: `22`)
+2. `.devcontainer/Dockerfile` — all layers in order per data-model: base image → system packages → GitHub CLI → uv binary → git-delta → vscode user → firewall script + sudoers → `USER vscode` (+ PATH for ~/.local/bin) → Oh My Zsh → powerlevel10k → p10k config → shell history → nvm → Python → pre-commit (via `uv tool install`) → Atuin → git-delta pager → Claude Code
+3. `.devcontainer/devcontainer.json` — runArgs, remoteUser, extensions, settings, mounts, containerEnv, postCreateCommand (no features — all shell setup in Dockerfile)
+4. **Verify**: container builds and all runtimes/tools are available in interactive terminal (US1 acceptance scenarios)
+
+### Phase 2 — Firewall (P1, depends on Phase 1)
+
+1. `.devcontainer/init-firewall.sh` — full script per data-model firewall spec (DNS preservation, ipset, GitHub CIDRs, static resolution, default-deny, verification tests)
+2. **Verify**: firewall activates cleanly; SC-004 (example.com blocked) and SC-005 (api.github.com allowed) pass
+
+### Phase 3 — Pre-commit & Editor Config (P2, independent of Phase 2)
+
+1. `.editorconfig` — all globs and settings per data-model
+2. `.pre-commit-config.yaml` — all hooks with pinned revs and ESLint additional_dependencies per data-model
+3. **Verify**: `pre-commit run --all-files` passes on current repo state (US2 acceptance scenarios)
+
+### Phase 4 — Documentation (P4, depends on Phases 1–3)
+
+1. `CLAUDE.md` — add devcontainer section (FR-017) and auto-mode guardrails section (FR-016) per data-model documentation scope
+2. `README.md` — add devcontainer quick-start section (FR-018) per data-model documentation scope
+3. **Verify**: US4 acceptance scenarios pass (sections findable and complete)

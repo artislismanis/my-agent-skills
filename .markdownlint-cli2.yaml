@@ -1,0 +1,36 @@
+# markdownlint-cli2 configuration
+# https://github.com/DavidAnson/markdownlint-cli2
+
+# Ignore framework/generated files and external content
+ignores:
+  - ".claude/commands/**"
+  - ".specify/**"
+  - "node_modules/**"
+  # Excalidraw plugin template files use intentional markdown patterns:
+  # unlabelled JSON code fences, duplicate section headings per diagram type
+  - "plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/assets/**"
+  - "plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/references/**"
+  - "plugins/diagramming/excalidraw-diagrams/skills/excalidraw-diagrams/SKILL.md"
+
+config:
+  default: true
+
+  # Hard tabs — allow in code blocks (JSON examples use tab indentation)
+  MD010:
+    code_blocks: false
+
+  # Line length — disabled: instruction documents and tables often exceed 80 chars
+  MD013: false
+
+  # First-line heading — disabled: not all markdown files are documents requiring h1
+  MD041: false
+
+  # Ordered list prefix — disabled: sequential numbering across sections is intentional
+  MD029: false
+
+  # Duplicate headings — disabled: research and spec documents repeat section
+  # names (Rationale, Alternatives Considered) intentionally under different parents
+  MD024: false
+
+  # Table column style — disabled: mixed table styles used across files
+  MD060: false

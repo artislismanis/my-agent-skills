@@ -49,6 +49,7 @@ intercepted via `document.createElement('canvas')` override to route through `@n
 ### Font Handling
 
 Excalidraw has both legacy and modern font families:
+
 - **Legacy**: Virgil (deprecated), Helvetica, Cascadia (hidden)
 - **Modern**: Excalifont (hand-drawn default, ID 5), Nunito (body text, ID 6), Lilita One (headings, ID 7), Comic Shanns (code, ID 8)
 
@@ -129,6 +130,7 @@ this reference and applies the values when generating diagrams. This is simpler
 than a separate JSON config file that would need parsing logic.
 
 The configuration defines:
+
 - Colour palette (5-7 colours for backgrounds, strokes, text)
 - Font family defaults (Excalifont for hand-drawn labels, Nunito for body text, Comic Shanns for code annotations)
 - Stroke width, roughness, and opacity defaults
@@ -194,6 +196,7 @@ script must `process.chdir()` to the scripts directory to ensure these paths
 resolve correctly regardless of where the script is invoked from.
 
 **Resolution**: Updated `render.mjs` with:
+
 - Default import instead of named import
 - `process.chdir(scriptDir)` at startup
 - Pass full `doc` object (with merged `appState`) to `exportToSvg()`
@@ -240,6 +243,7 @@ Replaced the two-stage pipeline (JSON → SVG → PNG) with direct PNG rendering
 as excalidraw.com, producing correct text positioning.
 
 **Polyfills required** (set up as globals before dynamic import):
+
 - `jsdom` — provides `window`, `document`, `HTMLElement`, `DOMParser`, etc.
 - `@napi-rs/canvas` — provides real canvas via `document.createElement('canvas')` override
 - `FontFace` stub — CSS Font Loading API polyfill (non-functional, allows library to load)
@@ -248,6 +252,7 @@ as excalidraw.com, producing correct text positioning.
   `@excalidraw/utils/dist/prod/assets/`
 
 **Dependencies changed**:
+
 - Removed: `excalidraw-to-svg`, `@resvg/resvg-js`
 - Added: `@excalidraw/utils`, `jsdom`
 - Kept: `@napi-rs/canvas`

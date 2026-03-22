@@ -53,6 +53,7 @@ Ask Claude to create a diagram:
 > payment gateway, and inventory service."
 
 Claude will:
+
 1. Ask clarifying questions about the diagram's content and structure
 2. Generate a `.excalidraw` file with professional styling
 3. Render a PNG preview for visual inspection
@@ -66,6 +67,7 @@ node render.mjs /path/to/diagram.excalidraw
 ```
 
 Options:
+
 ```bash
 node render.mjs input.excalidraw output.png --width 1600
 ```
