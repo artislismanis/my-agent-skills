@@ -76,6 +76,16 @@ message and proceed.
    - A `boundElements` entry on the shape referencing the text element
 6. Every arrow that connects two shapes needs BOTH shapes' `boundElements` to
    reference the arrow
+7. Every arrow that has a label needs BOTH:
+   - A bound `text` element with `containerId` set to the arrow's `id`
+   - A `boundElements` entry on the arrow referencing the text element
+8. Multi-line labels (e.g. name + type) use literal `\n` in both `text` and
+   `originalText` fields: `"Customer\n[Person]"`
+
+> **NEVER** use `containerId: null` with manual `x`/`y` positioning and `groupIds`
+> for text inside shapes or on arrows. This renders incorrectly in PNG output.
+> Always use proper `containerId` binding with calculated `x`/`y`/`width`/`height`
+> per the positioning formulas in `references/excalidraw-format.md`.
 
 ### Styling
 
@@ -96,6 +106,10 @@ Follow the Font Sizes table in `references/styling-defaults.md` for element
 labels, sub-labels, frame names, and arrow labels. Text outside shapes MUST be
 shown in full. Text inside shapes MAY be truncated only when necessary — if
 truncated, flag this to the user and ask for a decision.
+
+Arrow labels are bound text — use `containerId` pointing to the arrow's `id`,
+exactly as with shape labels. Calculate the label's `x`/`y`/`width`/`height`
+using the arrow midpoint formulas in `references/excalidraw-format.md`.
 
 ### Validation Before Output
 

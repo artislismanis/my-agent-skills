@@ -87,7 +87,11 @@ Each arrow carries a label describing the data being transferred.
 }
 ```
 
-Arrow label: standalone `text` element near midpoint, `fontSize: 14`, `fontFamily: 6`.
+**Arrow label binding:** Data flow labels (e.g. `"Order Data"`, `"Payment Info"`)
+use `containerId` binding with `lineHeight: 1.25` and calculated midpoint
+positioning. See `references/excalidraw-format.md` section "Arrow label rules"
+for the complete JSON pattern, sizing formulas, and readability rules.
+
 Use `"strokeStyle": "dashed"` for async or event-driven flows.
 
 ---
@@ -152,10 +156,10 @@ at the bottom.
       "boundElements": [{"id": "lbl-ext1", "type": "text"}, {"id": "flow1", "type": "arrow"}],
       "strokeColor": "#1e1e1e", "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null },
-    { "id": "lbl-ext1", "type": "text", "x": 60, "y": 200, "width": 140, "height": 70,
+    { "id": "lbl-ext1", "type": "text", "x": 60, "y": 225, "width": 140, "height": 20,
       "text": "Customer", "fontSize": 16, "fontFamily": 6,
       "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "ext1", "originalText": "Customer", "autoResize": true,
+      "containerId": "ext1", "originalText": "Customer", "autoResize": true, "lineHeight": 1.25,
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] },
@@ -165,23 +169,31 @@ at the bottom.
       "strokeColor": "#1e1e1e", "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null,
       "roundness": {"type": 2} },
-    { "id": "lbl-p1", "type": "text", "x": 300, "y": 180, "width": 180, "height": 110,
+    { "id": "lbl-p1", "type": "text", "x": 300, "y": 215, "width": 180, "height": 40,
       "text": "1.0\nValidate Order", "fontSize": 16, "fontFamily": 6,
       "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "proc1", "originalText": "1.0\nValidate Order", "autoResize": true,
+      "containerId": "proc1", "originalText": "1.0\nValidate Order", "autoResize": true, "lineHeight": 1.25,
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] },
     { "id": "flow1", "type": "arrow",
       "x": 200, "y": 235, "width": 100, "height": 0,
       "points": [[0, 0], [100, 0]],
-      "startBinding": { "elementId": "ext1", "focus": 0, "gap": 8, "fixedPoint": null },
-      "endBinding": { "elementId": "proc1", "focus": 0, "gap": 8, "fixedPoint": null },
+      "startBinding": { "mode": "orbit", "elementId": "ext1", "fixedPoint": [0.5001, 0.5001] },
+      "endBinding": { "mode": "orbit", "elementId": "proc1", "fixedPoint": [0.5001, 0.5001] },
       "startArrowhead": null, "endArrowhead": "arrow",
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0, "elbowed": false,
-      "groupIds": [], "frameId": null, "boundElements": [] }
+      "groupIds": [], "frameId": null, "boundElements": [{"id": "lbl-flow1", "type": "text"}] },
+    { "id": "lbl-flow1", "type": "text",
+      "x": 210, "y": 226, "width": 80, "height": 17.5,
+      "text": "Order Data", "fontSize": 14, "fontFamily": 6,
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "flow1", "originalText": "Order Data", "autoResize": true, "lineHeight": 1.25,
+      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "groupIds": [], "frameId": null, "boundElements": [] }
   ]
 }
 ```

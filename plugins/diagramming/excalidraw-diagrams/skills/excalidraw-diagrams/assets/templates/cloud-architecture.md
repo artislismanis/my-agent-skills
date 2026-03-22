@@ -81,6 +81,12 @@ Use `fontFamily: 6` (Nunito), `fontSize: 16` for the main label.
 
 Always add brief labels to arrows for protocol/port clarity.
 
+**Arrow label binding:** All connection labels (protocol names like `"HTTPS"`,
+`"gRPC"`, `"TCP/5432"`) use `containerId` binding with `lineHeight: 1.25` and
+calculated midpoint positioning. See `references/excalidraw-format.md` section
+"Arrow label rules" for the complete JSON pattern, sizing formulas, and
+readability rules.
+
 ---
 
 ## Layout Guidelines

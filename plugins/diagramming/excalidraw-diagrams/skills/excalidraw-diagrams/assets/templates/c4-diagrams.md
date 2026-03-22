@@ -38,8 +38,13 @@ Use `\n` within the text string:
 
 - Use `arrow` elements with `endArrowhead: "arrow"`
 - Label arrows with a short description of the interaction
-- Arrow label: standalone `text` element near the arrow midpoint, `fontSize: 14`
+- Arrow labels use `containerId` binding to the arrow (bound text, `fontSize: 14`)
 - Use `"strokeStyle": "dashed"` for async or future relationships
+
+**Arrow label binding:** All relationship labels use `containerId` binding with
+`lineHeight: 1.25` and calculated midpoint positioning. See
+`references/excalidraw-format.md` section "Arrow label rules" for the complete
+JSON pattern, sizing formulas, and readability rules.
 
 ### Layout
 
@@ -67,10 +72,10 @@ Use `\n` within the text string:
     },
     {
       "id": "lbl-user1", "type": "text",
-      "x": 100, "y": 205, "width": 160, "height": 70,
+      "x": 100, "y": 220, "width": 160, "height": 40,
       "text": "Customer\n[Person]", "fontSize": 16, "fontFamily": 6,
       "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "user1", "originalText": "Customer\n[Person]", "autoResize": true,
+      "containerId": "user1", "originalText": "Customer\n[Person]", "autoResize": true, "lineHeight": 1.25,
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0,
@@ -87,10 +92,10 @@ Use `\n` within the text string:
     },
     {
       "id": "lbl-sys1", "type": "text",
-      "x": 380, "y": 215, "width": 200, "height": 70,
+      "x": 380, "y": 230, "width": 200, "height": 40,
       "text": "E-Commerce System\n[Software System]", "fontSize": 16, "fontFamily": 6,
       "textAlign": "center", "verticalAlign": "middle",
-      "containerId": "sys1", "originalText": "E-Commerce System\n[Software System]", "autoResize": true,
+      "containerId": "sys1", "originalText": "E-Commerce System\n[Software System]", "autoResize": true, "lineHeight": 1.25,
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0,
@@ -109,10 +114,22 @@ Use `\n` within the text string:
       "id": "arr1", "type": "arrow",
       "x": 260, "y": 240, "width": 120, "height": 0,
       "points": [[0, 0], [120, 0]],
-      "startBinding": { "elementId": "user1", "focus": 0, "gap": 8, "fixedPoint": null },
-      "endBinding": { "elementId": "sys1", "focus": 0, "gap": 8, "fixedPoint": null },
+      "startBinding": { "mode": "orbit", "elementId": "user1", "fixedPoint": [0.5001, 0.5001] },
+      "endBinding": { "mode": "orbit", "elementId": "sys1", "fixedPoint": [0.5001, 0.5001] },
       "startArrowhead": null, "endArrowhead": "arrow",
       "elbowed": false,
+      "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0,
+      "groupIds": [], "frameId": null,
+      "boundElements": [{ "id": "lbl-arr1", "type": "text" }]
+    },
+    {
+      "id": "lbl-arr1", "type": "text",
+      "x": 290, "y": 231, "width": 60, "height": 17.5,
+      "text": "Browses", "fontSize": 14, "fontFamily": 6,
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "arr1", "originalText": "Browses", "autoResize": true, "lineHeight": 1.25,
       "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 0, "opacity": 100, "angle": 0,
