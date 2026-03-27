@@ -84,7 +84,11 @@ in cloud architecture, etc.
   face closest to the other frame (top/bottom for vertical travel). Never
   enter a side face with a vertical cross-frame arrow
 - **Gap symmetry**: Cross-frame arrows pass through the gap between frames at
-  the midpoint: `(bottom of upper frame + top of lower frame) / 2`
+  the midpoint: `(bottom of upper frame + top of lower frame) / 2`. Labels
+  on cross-frame arrows must sit entirely within the inter-frame gap —
+  centred at the gap midpoint with at least 10px clearance from each frame
+  border. If the gap is too narrow for the label, increase the frame spacing
+  beyond the 60px minimum (label_height + 20px is the minimum viable gap)
 
 ### Labels
 
@@ -228,8 +232,13 @@ the frame via `frameId`.
   carry labels. **Frame crossings:** when an arrow exits a frame, ensure the
   source shape sits at least 20px from the frame edge so the crossing is clearly
   visible (increase frame padding if needed)
-- **Vertical spacing (top-to-bottom layouts)**: `120px` minimum between shape edges.
-  Increase for labelled vertical arrows where the label sits beside the arrow
+- **Vertical spacing (top-to-bottom layouts)**: `120px` minimum between shape
+  edges for unlabelled arrows. For labelled vertical arrows, use
+  `label_height + 120px` — this is the vertical equivalent of the horizontal
+  labelled-arrow rule. A single-line label at fontSize 14 has
+  `label_height` = 17.5px, giving a minimum of **140px**. Templates may
+  specify smaller spacing for unlabelled arrows (e.g. 60px in compact
+  flowcharts) but must use at least 140px when vertical arrows carry labels
 - **Centre-line alignment**: When two shapes are connected by a horizontal arrow,
   set them to the same `y` value (or offset so their vertical centres match). When
   connected by a vertical arrow, use the same `x` value. This eliminates diagonal arrows

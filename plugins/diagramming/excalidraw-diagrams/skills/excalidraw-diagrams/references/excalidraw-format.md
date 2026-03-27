@@ -375,8 +375,20 @@ using the number of lines.
 > 2. If splitting is insufficient, increase spacing between the connected shapes
 >
 > **Vertical arrows:** The same rule applies using `label_height` instead of
-> `label_width`. Position the label beside the arrow (offset `text_x` to the
-> right of the arrow's x-coordinate) rather than centred on it.
+> `label_width`:
+>
+> ```
+> min_arrow_length = label_height + 2 × 60
+> ```
+>
+> For a single-line label at fontSize 14: `label_height` = 1 × 14 × 1.25 =
+> 17.5, so `min_arrow_length` = 17.5 + 120 = 137.5 → round up to **140px**.
+> This means shapes connected by a labelled vertical arrow need at least
+> **140px edge-to-edge vertical spacing**.
+>
+> Position the label beside the arrow (offset `text_x` to the right of the
+> arrow's x-coordinate) rather than centred on it, so the label does not
+> cover the vertical arrow line.
 
 Labels must not cover arrowheads — the arrowhead and at least 60px of arrow
 line at each end must remain visible.
@@ -425,6 +437,15 @@ must be present on each side of the crossing point:
 A crossing arrow that appears to terminate at the frame boundary (less than 20px
 inside) is visually ambiguous — viewers cannot tell if the arrow exits or stops
 at the boundary.
+
+**Cross-frame arrow label clearance:**
+
+When a labelled arrow crosses a frame boundary, the label must not overlap
+either frame's edge. Position the label within the inter-frame gap, centred
+at the gap midpoint: `(bottom of upper frame + top of lower frame) / 2`.
+If the gap is too narrow for the label (label_height + 20px > gap), increase
+the frame spacing beyond the 60px minimum until the label fits entirely
+between the two frame edges with at least 10px clearance from each border.
 
 ---
 

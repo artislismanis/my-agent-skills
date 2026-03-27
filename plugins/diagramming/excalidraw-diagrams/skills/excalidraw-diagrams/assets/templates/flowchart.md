@@ -55,10 +55,17 @@ focal emphasis, not errors.
 - **Process**: Imperative verb phrase — `"Validate Input"`, `"Send Email"`
 - **Decision**: Question form ending with `?` — `"Authenticated?"`, `"Payment valid?"`
   Keep labels short: 1–2 words + `?`. If a natural phrasing is too long, shorten
-  it (e.g. `"Discount Code?"` not `"Apply Discount Code?"`). As an alternative,
-  place the label as standalone text beside an unlabeled diamond and reduce the
-  diamond size — but if you use this approach, apply it consistently to ALL
-  diamonds in the diagram.
+  it (e.g. `"Discount Code?"` not `"Apply Discount Code?"`).
+
+  **Diamond label fit rule**: The usable text area inside a diamond is roughly
+  half its width by half its height (the diagonal sides cut into the corners).
+  A 120×120 diamond fits approximately 60×60px of text — about 6 characters
+  per line at fontSize 16, up to 3 lines. If the label exceeds this (e.g.
+  `"Needs More Info?"` is 15 characters — too long), use the external label
+  approach: place the label as a standalone text element beside an unlabelled
+  diamond. When using external labels, apply the approach consistently to ALL
+  diamonds in the diagram and always use the template diamond size (120×120),
+  never smaller.
 - **Decision branches**: Label arrows exiting a diamond with `"Yes"` / `"No"` or `"True"` / `"False"`
 - **Input/Output**: Noun phrase — `"User Credentials"`, `"Order Confirmation"`
 
@@ -96,7 +103,9 @@ Apply the axis alignment, arrow routing, and multi-frame layout rules from
 Standard flow direction: start at top, end at bottom. Decision branches go
 to the side; the main (happy) path continues down.
 
-Vertical spacing: 60px between shapes (edge to edge).
+Vertical spacing: 60px between shapes for unlabelled arrows. For labelled
+vertical arrows (including Yes/No decision branches), use **140px minimum** —
+see the vertical arrow minimum length rule in `references/excalidraw-format.md`.
 Horizontal spacing: 120px for branches.
 Decision branches: go right for one outcome, continue down for the other —
 be consistent within the diagram.
@@ -161,6 +170,9 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 - [ ] Exactly one Start node and at least one End node (unlabeled circles)
 - [ ] No dead ends (every non-terminal shape has an outgoing arrow)
 - [ ] Error/failure states use Rare Highlight (red), not Occasional Highlight
+- [ ] Decision diamond labels fit within usable text area (~6 chars × 3 lines at 120×120); longer labels use external placement beside the diamond
+- [ ] Labelled vertical arrows use ≥140px spacing; unlabelled arrows may use 60px
+- [ ] (Swim lanes) Cross-frame arrow labels sit within the inter-frame gap, not overlapping frame borders
 
 **From `references/styling-defaults.md` (apply to all diagrams):**
 - [ ] Connected shapes share the same axis coordinate (straight arrows, no diagonal)
