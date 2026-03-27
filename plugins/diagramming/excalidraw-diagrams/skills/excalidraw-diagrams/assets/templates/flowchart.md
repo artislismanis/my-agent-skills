@@ -190,5 +190,8 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 - [ ] No arrow crosses any shape
 - [ ] No arrow uses more elbows than the geometry requires (prefer zero, max one for reconnection)
 - [ ] Arrows enter/exit shapes perpendicular to the face (vertical arrows → top/bottom, horizontal → left/right)
+- [ ] Binding face chosen to minimise elbows — pick the face pair that produces the fewest bends, not just the "facing" side
+- [ ] No arrow segment runs along or overlaps any shape edge or frame border (routing is through open space)
 - [ ] (Swim lanes) Cross-frame connected pairs share the same axis — plan columns before placing shapes
 - [ ] (Swim lanes) 60px gap between consecutive lane frames
+- [ ] (Swim lanes) Loop-back arrows route through open margin outside all frames, not along frame borders

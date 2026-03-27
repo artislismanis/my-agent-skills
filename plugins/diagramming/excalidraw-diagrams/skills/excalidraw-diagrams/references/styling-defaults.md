@@ -60,12 +60,24 @@ templates may override or extend these with diagram-type-specific conventions.
   Never add extra bends for visual padding
 - **Perpendicular entry** — arrows always enter and exit shapes perpendicular
   to the face they connect to. Vertical arrows enter top or bottom faces;
-  horizontal arrows enter left or right faces. An arrow must never run along
-  a shape's edge
+  horizontal arrows enter left or right faces
+- **Choose binding faces to minimise elbows** — when connecting two shapes,
+  pick the face on each shape that produces the fewest bends. If the target
+  is directly below, bind source bottom → target top (straight, zero elbows).
+  If the target is below-and-right, choose the pair (bottom→top or
+  right→left) that needs fewer bends. Always prefer the combination that
+  eliminates elbows over one that feels "natural" but adds a bend
+- **No arrow may overlap a shape edge or frame border** — an arrow segment
+  must never be collinear with, run along, or visually overlap any edge of a
+  shape or any frame boundary line. Route arrow segments through open space
+  between elements — not along their perimeters. This is distinct from the
+  "never cross shapes" rule: crossing means passing *through*; overlapping
+  means running *along*. Both are prohibited
 - **Return / loop-back arrows** — when an arrow loops back to an earlier point
-  in the flow, route it through empty margin space (outside all shapes). Place
-  the loop-back target near a diagram edge so the return arrow travels through
-  the margin where there are no shapes to cross
+  in the flow, route it through empty margin space (outside all shapes and
+  outside all frame borders). Place the loop-back target near a diagram edge
+  so the return arrow travels through the margin where there are no shapes or
+  frame edges to overlap
 
 #### Multi-frame layouts (swim lanes, boundaries, nested frames)
 

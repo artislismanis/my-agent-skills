@@ -206,7 +206,11 @@ look — these are starting points, not rigid rules.
 
 **Choosing sides and points:**
 
-- Default to the side facing the connected shape (left/right for horizontal arrows,
+- **Minimise elbows first** — choose the face on each shape that produces the
+  fewest bends in the connecting arrow. A straight (zero-elbow) connection is
+  always better than a single-elbow one, regardless of which faces it uses
+- When two face combinations produce the same number of elbows, default to
+  the side facing the connected shape (left/right for horizontal arrows,
   top/bottom for vertical)
 - When a new arrow would overlap an existing one on the same side, either distribute
   both arrows along that side or route the new arrow to a different side entirely
