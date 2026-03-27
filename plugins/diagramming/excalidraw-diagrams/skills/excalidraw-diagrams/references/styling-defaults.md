@@ -307,6 +307,28 @@ Before writing any Excalidraw JSON, plan the layout as prose and verify it
 satisfies all rules. **Do not skip this step** — it is faster to fix a prose
 plan than to debug coordinate-level JSON.
 
+### Step 0: Clarify requirements
+
+Before designing, read the prompt and identify anything ambiguous or
+underspecified. Common questions to resolve:
+
+- **Flow ambiguity**: Which element initiates a loop or cross-lane connection?
+  (e.g. "needs more info loop" — from which lane?)
+- **Decision outcomes**: How many exits does each decision have? What are the
+  exact branch labels? (e.g. "success/retry/cancel" — is that 3 exits from
+  one diamond or 2 diamonds?)
+- **Terminal paths**: How many distinct paths reach End? Which paths merge?
+- **Element scope**: Does a lane description list flow steps or just describe
+  the lane's role? (e.g. "Customer lane: submit ticket, receive updates" —
+  are both boxes in the flow, or is "receive updates" a role description?)
+- **Style decisions**: Are any elements error/failure states that warrant Rare
+  Highlight? Which elements are I/O vs process?
+
+If generating for a user: ask clarifying questions and wait for answers
+before proceeding. If generating examples from a test prompt: document
+the interpretation chosen for each ambiguity in the prose plan so reviewers
+can evaluate whether the choice was reasonable.
+
 ### Step 1: Element inventory
 
 List every element with: type, label text, size, style tier.

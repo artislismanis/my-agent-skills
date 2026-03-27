@@ -53,6 +53,10 @@ conversation to understand the diagram's intent and content:
    - Any groupings, boundaries, or swim lanes needed
    - The level of detail (high-level overview vs. detailed component view)
    - Any specific technology labels or annotations required
+   - **Flow logic** (see Step 0 in `references/styling-defaults.md`): which
+     lane owns each loop or cross-lane connection, how many exits each
+     decision has, which paths merge vs terminate independently, and whether
+     listed items are flow steps or role descriptions
 3. **Confirm your understanding** by summarising the planned diagram before
    generating JSON
 4. Only proceed to generation once the user confirms the scope and content
