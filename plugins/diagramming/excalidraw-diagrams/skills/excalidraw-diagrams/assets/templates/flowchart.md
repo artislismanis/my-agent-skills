@@ -57,19 +57,18 @@ focal emphasis, not errors.
   Keep labels short: 1–2 words + `?`. If a natural phrasing is too long, shorten
   it (e.g. `"Discount Code?"` not `"Apply Discount Code?"`).
 
-  **Diamond label fit rule**: The usable text area inside a diamond is roughly
-  half its width by half its height (the diagonal sides cut into the corners).
-  A 120×120 diamond fits approximately 60×60px of text — about 6 characters
-  per line at fontSize 16, up to 3 lines. If the label exceeds this (e.g.
-  `"Needs More Info?"` is 15 characters — too long), use the external label
-  approach: place the label as a standalone text element beside an unlabelled
-  diamond.
+  **Diamond label sizing**: A 120×120 diamond can fit labels up to ~8
+  characters per line at fontSize 16, up to 3 lines. Most short decision
+  labels fit inside: `"Authenticated?"`, `"Discount Code?"`, `"Payment
+  Valid?"`. If a label genuinely exceeds this — e.g. `"Needs More Info?"`
+  needs two lines of 8+ characters — use the external label approach.
 
-  **Consistency rule**: All diamonds in a diagram must use the same label
-  approach — either all labels inside or all labels outside. If ANY diamond
-  in the diagram needs external labels, switch ALL diamonds to external
-  labels. When using external labels, reduce diamonds to `60 × 60` (compact
-  — similar to terminator circles) and place the label text to one side.
+  **Consistency rule**: All diamonds must use the same label approach. If
+  ANY diamond needs external labels, ALL diamonds switch to external labels
+  with reduced size (`60 × 60`). When placing external labels, position
+  the text on the face that has **no connecting arrows** — typically
+  **above** the diamond when arrows enter from the left and exit from the
+  right and/or bottom. The label must not overlap any arrow line.
 - **Decision branches**: Label arrows exiting a diamond with `"Yes"` / `"No"` or `"True"` / `"False"`
 - **Input/Output**: Noun phrase — `"User Credentials"`, `"Order Confirmation"`
 
@@ -180,7 +179,7 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 - [ ] Exactly one Start node and one End node (unlabeled circles) — route all terminal paths to the single End
 - [ ] No dead ends (every non-terminal shape has an outgoing arrow)
 - [ ] Error/failure states use Rare Highlight (red), not Occasional Highlight
-- [ ] Diamond labels are consistent: all inside (120×120) or all outside (60×60) — if any label doesn't fit, all diamonds use external labels
+- [ ] Diamond labels consistent: all inside (≤8 chars/line → 120×120) or all outside (60×60); external labels placed on the arrow-free face
 - [ ] Labelled vertical arrows use ≥140px spacing; unlabelled arrows may use 60px
 - [ ] (Swim lanes) Cross-frame arrow labels sit within the inter-frame gap, not overlapping frame borders
 
@@ -195,3 +194,10 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 - [ ] (Swim lanes) Cross-frame connected pairs share the same axis — plan columns before placing shapes
 - [ ] (Swim lanes) 60px gap between consecutive lane frames
 - [ ] (Swim lanes) Loop-back arrows route through open margin outside all frames, not along frame borders
+
+**Style and label compliance (apply to all diagrams):**
+- [ ] Decision branch labels (Yes/No/Cancel/Retry) use `containerId` binding, not standalone text
+- [ ] Arrow `strokeStyle` matches the Arrow Conventions table — `solid` for all decision branches, `dashed` only for error/exception
+- [ ] Loop-back arrows have no label unless the loop target is genuinely ambiguous
+- [ ] No label (bound or standalone) overlaps any frame border
+- [ ] Style tier matches element kind from the Shape Conventions table (process=Standard, I/O=Standard Light, error=Rare Highlight) — not path importance

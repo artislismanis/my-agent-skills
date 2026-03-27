@@ -1,5 +1,9 @@
 # Styling Defaults: Excalidraw Diagram Brand
 
+> **Rule severity**: **MUST / MUST NOT** = absolute requirement, no exceptions.
+> **SHOULD / SHOULD NOT** = strong default, override only with explicit
+> justification documented in the prose plan. **MAY** = truly optional.
+
 **Purpose**: Apply these defaults to ALL generated diagrams for a consistent, professional appearance.
 **Rule**: Use these values unless the user explicitly requests a different style, or a template defines its own overrides. When overriding, keep all other defaults intact.
 
@@ -26,7 +30,7 @@ templates may override or extend these with diagram-type-specific conventions.
 #### Axis alignment
 
 - **Align connected shapes on the same axis** — shapes connected by a direct
-  arrow should share the same centre coordinate on the axis perpendicular to
+  arrow MUST share the same centre coordinate on the axis perpendicular to
   the arrow: same centre x for vertical arrows, same centre y for horizontal
   arrows. This produces straight arrows with zero elbows
 - **Align branch targets with their branch origin** — when a decision or fork
@@ -46,11 +50,11 @@ templates may override or extend these with diagram-type-specific conventions.
   arrow intersections. When arrows must share a target shape, bind them to
   different sides or different points on the same side using `fixedPoint`
   (see `excalidraw-format.md`)
-- **Straight arrows first, then single-elbow** — avoid diagonal arrows;
-  restructure the layout so connectors run horizontally or vertically. Every
-  arrow should use the fewest bends possible. Multi-elbow routes (2+ bends)
-  are a last resort — before adding a second elbow, restructure the layout or
-  choose a different binding side that eliminates the bend
+- **Straight arrows first, then single-elbow** — MUST NOT produce diagonal
+  arrows; restructure the layout so connectors run horizontally or vertically.
+  Every arrow MUST use the fewest bends possible. Multi-elbow routes (2+
+  bends) are a last resort — before adding a second elbow, restructure the
+  layout or choose a different binding side that eliminates the bend
 - **Reconnection arrows — one elbow maximum** — when a branch reconnects to the
   main flow (e.g. an error path connecting to the end, an optional step
   merging back), use at most one elbow: one straight segment to reach the
@@ -187,6 +191,15 @@ All shapes use: `strokeWidth: 2`, `opacity: 100`.
 - **Occasional Highlight** — key focal points; use for at most 1-2 elements per diagram
 - **Rare Highlight** — errors, critical warnings, blockers; use only when essential
 
+Style tier is determined by element **kind** (from the template shape conventions
+table), MUST NOT be chosen based on path importance or "optional" status.
+
+> **WRONG** — Standard Light for a process box on a cancel/optional path:
+> The cancel path is still a primary process step.
+>
+> **CORRECT** — Standard for ALL process boxes regardless of which path they
+> are on. Only the template shape conventions table determines the tier.
+
 ### Deprecated or future items
 
 Apply any style above but set `opacity: 50` to visually de-emphasise the element.
@@ -219,6 +232,18 @@ Arrows inherit from the shape styling aesthetic:
 - Use `"strokeStyle": "dotted"` for weaker associations (matches Standard Lighter)
 
 Arrow labels use the same font as shape labels: `fontFamily: 5`, `fontSize: 16` (or 14 for sub-labels).
+
+**Important**: The `strokeStyle` values above are general defaults. Templates
+may define stricter conventions — e.g. the flowchart template specifies that
+ALL decision branch arrows (Yes/No/Cancel/Retry) MUST use `"solid"`, with
+`"dashed"` reserved exclusively for error/exception arrows. Always check the
+template arrow conventions table.
+
+> **WRONG** — dashed arrow for a cancel or reject branch from a decision
+> diamond. Cancel is a normal decision outcome, not an error.
+>
+> **CORRECT** — `"strokeStyle": "solid"` for all decision branch arrows.
+> Only error/exception paths use `"dashed"`.
 
 ---
 
@@ -276,18 +301,96 @@ the frame via `frameId`.
 
 ---
 
+## Layout Planning (mandatory before generating JSON)
+
+Before writing any Excalidraw JSON, plan the layout as prose and verify it
+satisfies all rules. **Do not skip this step** — it is faster to fix a prose
+plan than to debug coordinate-level JSON.
+
+### Step 1: Element inventory
+
+List every element with: type, label text, size, style tier.
+
+For each decision diamond: determine whether the label fits inside (≤8 chars
+per line at the template diamond size) or requires external placement. If ANY
+diamond needs external labels, mark ALL diamonds as external.
+
+### Step 2: Coordinate grid
+
+Write a table: element | center x | center y | width | height.
+
+Verify:
+- Connected shapes on same axis (vertical arrows → same center x; horizontal → same center y)
+- Labelled arrows: ≥140px gap between shapes; unlabelled: ≥60px (flowcharts)
+- 40px minimum edge-to-edge gap between every adjacent shape pair
+
+### Step 3: Arrow routing table
+
+For every arrow write one row: source | source face | target | target face | segments | label.
+
+Verify each row:
+- Faces chosen to minimise elbows (zero preferred, one for reconnections, ≤1 for
+  reconnection arrows — choose the face pair that eliminates bends, not just the
+  "facing" side)
+- Entry/exit perpendicular to face (vertical → top/bottom; horizontal → left/right)
+- No segment overlaps any shape edge or frame border
+- Loop-back arrows travel entirely through open margin outside all shapes and frames
+
+### Step 4: Label placement check
+
+For every label (shape, arrow, or external diamond label):
+- Shape labels: text fits within shape bounds
+- Arrow labels: centred at midpoint with ≥60px visible arrow each side; label
+  does not overlap any other arrow line, shape edge, or other label
+- External diamond labels: placed on the face that has NO connecting arrows
+  (typically **above** the diamond when arrows enter from the left and exit
+  from the right and/or bottom)
+- Loop-back arrows: MUST NOT have a label when the source and target shapes
+  provide sufficient context (e.g. "Review Ticket" → "Submit Ticket" is
+  self-explanatory). Only add a label if the loop target is genuinely ambiguous
+- Arrow `strokeStyle`: matches the template arrow conventions table — solid
+  for all decision branches (Yes/No/Cancel), dashed only for error/exception
+- Style tier: matches element kind from the template shape conventions table
+  (process = Standard, I/O = Standard Light, etc.) — MUST NOT be chosen
+  based on path importance or "optional" status
+- No label (bound or standalone) overlaps any frame border — labels on
+  cross-frame arrows MUST sit entirely in the inter-frame gap
+
+### Step 5: Checklist pass
+
+Walk through the template checklist item by item against the prose plan. Fix
+any violations before generating JSON — this is the last gate before coding.
+
+### Step 6: Iterate until clean
+
+If Steps 2–5 produced any fixes, repeat from Step 2. Layout changes in one
+step can introduce violations in another (e.g. moving a shape to fix spacing
+may break axis alignment). Continue until a full pass through Steps 2–5
+produces **zero violations**.
+
+Only proceed to JSON generation after a clean pass.
+
+---
+
 ## Visual Iteration
 
-After generating a diagram, render it to PNG and review the output. Check for:
+After generating a diagram, render it to PNG and review against two categories:
 
-1. Arrow labels covering arrowheads or arrow origins
-2. Unbalanced spacing (some gaps much larger/smaller than others)
-3. Text clipped or overflowing shape boundaries
-4. Overlapping elements
+**Category A — Rule violations** (any item from the template checklist or
+Steps 2–5 above): Do NOT patch the JSON. Return to the prose plan (Step 1),
+fix the violation there, re-run Steps 2–6 until clean, then **regenerate the
+full JSON** from the corrected plan.
 
-If any issues are found, adjust the layout (spacing, label line breaks, element
-positions) and re-render. Repeat until the diagram looks clean and balanced. It
-is normal to need 2–3 iterations.
+**Category B — Visual fine-tuning** (spacing balance, label readability,
+aesthetic polish that does not involve rule violations): Adjust the JSON
+directly, re-render, and repeat. These are coordinate-level tweaks, not
+structural changes. Examples:
+1. Arrow labels slightly covering arrowheads → adjust label position
+2. Unbalanced spacing → adjust coordinates
+3. Text clipped at shape edge → widen shape or shrink text
+
+It is normal to need 1–2 Category B iterations. Category A iterations
+should be zero if the prose planning loop was thorough.
 
 ---
 

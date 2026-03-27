@@ -410,6 +410,19 @@ The arrow must reference this label in its `boundElements`:
 > **Do not** position arrow label text manually with `containerId: null` — the label
 > will not move with the arrow and will render at incorrect positions in PNG output.
 
+> **WRONG** — standalone text as a decision branch label:
+> ```json
+> { "type": "text", "containerId": null, "text": "Yes" }
+> ```
+> Decision branch labels (Yes/No/Cancel/Retry) MUST use `containerId` binding
+> to their arrow. Standalone text is only acceptable for loop-back annotations
+> where the target is ambiguous.
+>
+> **CORRECT** — bound label on the arrow:
+> ```json
+> { "type": "text", "containerId": "arr-decision-yes", "text": "Yes" }
+> ```
+
 **Loop-back and multi-segment arrow labels:**
 
 For arrows that travel through the diagram margin (long L-shaped or Z-shaped paths
@@ -417,13 +430,16 @@ spanning multiple frames), the midpoint label will appear at the midpoint of the
 entire path length — often in an awkward position at the corner or along a long
 segment far from either endpoint. To avoid this:
 
-- **Prefer no label** on loop-back arrows when the context is clear from the
-  diamond or source element (e.g. the "Needs More Info" loop in a support flow)
-- **Use a standalone text annotation** positioned beside the relevant segment
-  instead of a bound arrow label (`containerId: null`, placed manually near the
-  arrow segment that needs labelling)
-- As a last resort, manually offset `text_x` / `text_y` to reposition the label
-  to a more readable location near the arrow's start or a clearly visible segment
+- **MUST NOT add a label** to loop-back arrows when the source and target
+  shapes provide sufficient context (e.g. "Review Ticket" → "Submit Ticket"
+  is self-explanatory — the loop's purpose is obvious from the shape labels)
+- If the loop target is genuinely ambiguous (multiple possible destinations),
+  use a **standalone text annotation** positioned beside the relevant segment
+  (`containerId: null`, placed in open margin space with no frame border
+  overlap). This is the only case where standalone text for an arrow is
+  acceptable
+- As a last resort, manually offset `text_x` / `text_y` to reposition a bound
+  label to a more readable location near the arrow's start
 
 **Frame/boundary crossing rule:**
 
@@ -450,6 +466,14 @@ at the gap midpoint: `(bottom of upper frame + top of lower frame) / 2`.
 If the gap is too narrow for the label (label_height + 20px > gap), increase
 the frame spacing beyond the 60px minimum until the label fits entirely
 between the two frame edges with at least 10px clearance from each border.
+
+> **WRONG** — label overlapping a frame border:
+> A standalone text at x=70 overlapping a frame left border at x=100.
+> Any label (bound or standalone) that crosses a frame boundary line is a
+> rule violation.
+>
+> **CORRECT** — label positioned entirely within the inter-frame gap (for
+> cross-frame arrows) or in open margin space with no frame border overlap.
 
 ---
 
