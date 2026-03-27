@@ -388,6 +388,23 @@ For every label (shape, arrow, or external diamond label):
 - No label (bound or standalone) overlaps any frame border — labels on
   cross-frame arrows MUST sit entirely in the inter-frame gap
 
+### Step 4b: Spatial collision check
+
+For every elbowed arrow, compute the bounding box of each segment (a thin
+rectangle along the segment path). Then verify against every label bounding
+box in the diagram (from Step 4):
+
+- **Arrow segment vs label**: no segment may overlap any label bounding box.
+  Check: `seg_min_y < lbl_max_y AND seg_max_y > lbl_min_y AND seg_min_x <
+  lbl_max_x AND seg_max_x > lbl_min_x`. If true → collision, reroute the
+  bend below (or above) the label area.
+- **Minimum clearance**: arrow segments MUST maintain **≥30px** clearance
+  from any label bounding box edge. This prevents visual merging at lower
+  render resolutions.
+
+Write the check as a table: arrow segment | segment y | nearest label |
+label y-range | clearance | pass/fail. Fix any failures before proceeding.
+
 ### Step 5: Checklist pass
 
 Walk through the template checklist item by item against the prose plan. Fix
