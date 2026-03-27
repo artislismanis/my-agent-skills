@@ -76,7 +76,9 @@ Label incoming arrow with the condition; label outgoing arrows with outcomes.
 ## Swim Lanes (Pools and Lanes)
 
 BPMN processes are organised into **Pools** (participants) and **Lanes** (roles/systems
-within a participant).
+within a participant). Apply the multi-frame layout rules from
+`references/styling-defaults.md` for spacing, cross-lane axis alignment, and
+arrow routing.
 
 ### Pool
 
@@ -90,19 +92,19 @@ A `frame` element representing one process participant.
 
 Horizontal bands within a pool, each representing a role or system.
 
-Implement lanes as `rectangle` elements stacked vertically inside the pool frame.
+Implement lanes as nested `frame` elements stacked vertically inside the pool frame.
+Minimum lane height: 200px. Leave 60px gap between consecutive lane frames.
 
 ```
 Pool frame (full width)
-├── Lane: Customer     (top strip, height: 140)
-├── Lane: Order System (middle strip, height: 140)
-└── Lane: Warehouse    (bottom strip, height: 140)
+├── Lane: Customer     (frame, height: 200)
+├── 60px gap
+├── Lane: Order System (frame, height: 200)
+├── 60px gap
+└── Lane: Warehouse    (frame, height: 200)
 ```
 
-Lane label: horizontal label at the top-left of each lane rectangle.
-
-Lane styling: use Standard Lighter style (`fillStyle: "hachure"`, `strokeStyle: "dotted"`) to keep lanes visually
-subordinate to the process elements they contain.
+Lane label: set via the frame's `name` field.
 
 ---
 
@@ -150,9 +152,9 @@ Horizontal spacing between elements: `60px`
 
 ### Spacing Within Lanes
 
-- Elements within a lane: `y = lane.y + (lane.height / 2) - (element.height / 2)` to centre vertically
+- Elements within a lane: centre vertically — `y = lane.y + (lane.height / 2) - (element.height / 2)`
 - Horizontal gap between tasks: `60px` between right edge of one and left edge of next
-- Cross-lane arrows: keep as vertical as possible; use `elbowed: false` and set `points` to route clearly
+- Cross-lane arrows: follow cross-frame arrow rules in `references/styling-defaults.md` — straight vertical, perpendicular entry (top/bottom faces), gap symmetry
 
 ---
 

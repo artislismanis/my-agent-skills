@@ -20,22 +20,71 @@ templates may override or extend these with diagram-type-specific conventions.
 ### Flow and Layout
 
 - Establish a **clear directional flow**: left-to-right or top-to-bottom
-- **Align elements** on a consistent grid — shapes at the same level share the same
-  x-coordinate (vertical layout) or y-coordinate (horizontal layout)
 - Use **generous whitespace** between elements — crowded diagrams are hard to read
+- For large diagrams, group related elements into **distinct spatial regions**
+
+#### Axis alignment
+
+- **Align connected shapes on the same axis** — shapes connected by a direct
+  arrow should share the same centre coordinate on the axis perpendicular to
+  the arrow: same centre x for vertical arrows, same centre y for horizontal
+  arrows. This produces straight arrows with zero elbows
+- **Align branch targets with their branch origin** — when a decision or fork
+  creates a side branch, place the branch target at the same coordinate as
+  the origin on the perpendicular axis (e.g. same y for a horizontal branch
+  off a vertical flow). This makes branch arrows straight horizontal or
+  vertical lines
+- Think of the layout as an **implicit grid** — elements at the same depth in
+  the flow share one axis coordinate, branches share the other
+
+#### Arrow routing
+
+- **Arrows must never cross shapes** — if an arrow's natural route passes
+  through an intermediate shape, reroute it around all shapes through empty
+  space (margin areas, gaps between regions). Absolute rule, no exceptions
 - **Minimise crossing and overlapping lines** — rearrange elements to reduce
   arrow intersections. When arrows must share a target shape, bind them to
   different sides or different points on the same side using `fixedPoint`
-  (see `excalidraw-format.md`). Route multi-segment arrows through empty
-  space — never along the same path as an existing arrow
-- Use **straight or single-elbow arrows** — avoid diagonal arrows; restructure the
-  layout so connectors run horizontally or vertically
-- To achieve straight horizontal arrows, align connected shapes on the **same
-  y-coordinate** (matching vertical centres). For straight vertical arrows, align
-  on the **same x-coordinate**. When shapes cannot share an axis (e.g. different
-  rows and columns), use multi-segment arrows with explicit intermediate points
   (see `excalidraw-format.md`)
-- For large diagrams, group related elements into **distinct spatial regions**
+- **Straight arrows first, then single-elbow** — avoid diagonal arrows;
+  restructure the layout so connectors run horizontally or vertically. Every
+  arrow should use the fewest bends possible. Multi-elbow routes (2+ bends)
+  are a last resort — before adding a second elbow, restructure the layout or
+  choose a different binding side that eliminates the bend
+- **Reconnection arrows — one elbow maximum** — when a branch reconnects to the
+  main flow (e.g. an error path connecting to the end, an optional step
+  merging back), use at most one elbow: one straight segment to reach the
+  correct axis, then one straight segment to the target
+- **Perpendicular entry** — arrows always enter and exit shapes perpendicular
+  to the face they connect to. Vertical arrows enter top or bottom faces;
+  horizontal arrows enter left or right faces. An arrow must never run along
+  a shape's edge
+- **Return / loop-back arrows** — when an arrow loops back to an earlier point
+  in the flow, route it through empty margin space (outside all shapes). Place
+  the loop-back target near a diagram edge so the return arrow travels through
+  the margin where there are no shapes to cross
+
+#### Multi-frame layouts (swim lanes, boundaries, nested frames)
+
+These rules apply to ANY diagram using `frame` elements to group content —
+swim lanes in flowcharts/BPMN, system boundaries in C4, VPC/subnet boundaries
+in cloud architecture, etc.
+
+- **Frame spacing**: Leave at least **60px vertical gap** between consecutive
+  stacked frames. This provides breathing room and visible space for
+  cross-frame arrows
+- **Cross-frame axis alignment**: Elements in different frames that are
+  directly connected should share the same axis coordinate so the connecting
+  arrow is straight. Plan this before placing shapes — identify which elements
+  connect across frame boundaries and assign them to the same column (vertical
+  layout) or row (horizontal layout)
+- **Cross-frame arrow direction**: Cross-frame arrows travel perpendicular to
+  the frame boundary — vertically between horizontally-stacked frames,
+  horizontally between vertically-stacked frames. They enter/exit from the
+  face closest to the other frame (top/bottom for vertical travel). Never
+  enter a side face with a vertical cross-frame arrow
+- **Gap symmetry**: Cross-frame arrows pass through the gap between frames at
+  the midpoint: `(bottom of upper frame + top of lower frame) / 2`
 
 ### Labels
 
@@ -43,13 +92,13 @@ templates may override or extend these with diagram-type-specific conventions.
   arrows ("sends order", "validates"), noun phrases for shapes ("Order Service")
 - Size text boxes to fit their content — avoid oversized empty shapes
 - Every shape and every arrow carrying meaning should have a label
-- **Arrow labels must not obscure the arrow** — the arrowhead and at least ~30px
-  of arrow line at each end should remain visible
-- **Use multiline labels** to reduce label width when the label would cover most
-  of the arrow — split into 2 lines with `\n` (e.g. `"Browses &\npurchases"`
-  instead of `"Browses & purchases"`)
-- If a label still covers too much of the arrow, increase spacing between the
-  connected elements
+- **Arrow labels must not obscure the arrow** — every labelled arrow must satisfy
+  `min_arrow_length = label_width + 120` (60px visible per side). See the
+  minimum arrow length rule in `references/excalidraw-format.md`
+- **Use multiline labels** to reduce label width when the label would violate
+  the minimum arrow length — split into 2 lines with `\n` (e.g.
+  `"Browses &\npurchases"` instead of `"Browses & purchases"`)
+- If splitting is insufficient, increase spacing between the connected elements
 
 ### Structure
 
@@ -164,15 +213,21 @@ the frame via `frameId`.
 
 ## Layout Spacing Guidelines
 
-- **Minimum gap between elements**: `40px`
+- **Minimum gap between elements**: `40px` — this applies to ALL pairs of
+  adjacent shapes, including shapes stacked vertically within the same lane.
+  No two shapes may touch or overlap; always verify a 40px minimum edge-to-edge
+  gap in both the x and y dimensions before finalising a layout
 - **Arrow gap from shape border**: `8px` (implicit in `orbit` mode bindings)
 - **Standard shape size**: `160 × 80` for boxes, `80 × 80` for circles/diamonds
 - **Frame padding**: `40px` inside frame boundary around child elements
-- **Horizontal spacing (left-to-right layouts)**: `160px` minimum between shape
-  edges for unlabelled arrows. For labelled arrows, use `label_width + 160px`
-  — this leaves ~80px of visible arrow line on each side of the label. Most
-  two-line labels are ~80px wide, so `240px` is a good default when arrows
-  carry labels
+- **Horizontal spacing (left-to-right layouts)**: `120px` minimum between shape
+  edges for unlabelled arrows. For labelled arrows, use `label_width + 120px`
+  — this leaves 60px of visible arrow line on each side of the label, satisfying
+  the minimum arrow length rule in `references/excalidraw-format.md`. Most
+  two-line labels are ~80px wide, so `200px` is a good default when arrows
+  carry labels. **Frame crossings:** when an arrow exits a frame, ensure the
+  source shape sits at least 20px from the frame edge so the crossing is clearly
+  visible (increase frame padding if needed)
 - **Vertical spacing (top-to-bottom layouts)**: `120px` minimum between shape edges.
   Increase for labelled vertical arrows where the label sits beside the arrow
 - **Centre-line alignment**: When two shapes are connected by a horizontal arrow,

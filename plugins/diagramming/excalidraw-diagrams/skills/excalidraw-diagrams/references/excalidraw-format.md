@@ -257,9 +257,38 @@ For straight arrows, `orbit` mode also handles the visual gap — set the arrow'
 **Rules:**
 
 - Place bend points in empty space — not on top of other elements or arrow labels
+- **Label-to-elbow clearance**: When multiple arrows originate from the same shape
+  face, ensure at least **40 px** between any arrow label edge and the nearest
+  elbow/bend point of an adjacent arrow. If the natural layout violates this,
+  spread the `fixedPoint` departure points further apart on the source face
+  (e.g. use `[0.1, 1.03]` / `[0.9, 1.03]` instead of `[0.25, 1.03]` / `[0.75, 1.03]`),
+  or use an **early bend** — place the bend close to the source shape (e.g. 25–30 px
+  from the source face) so the elbow sits well above or beside the label midpoint
+  of the adjacent straight arrow.
 - Choose the route that avoids crossing or overlapping existing arrows
 - Set the arrow's `width` to the maximum absolute x-offset and `height` to the
   maximum absolute y-offset across all points
+- **Perpendicular binding rule**: the first segment (from source) and last segment
+  (into target) must be perpendicular to the face they connect to:
+  - Binding to a **left or right** face → terminal segment must be **horizontal**
+  - Binding to a **top or bottom** face → terminal segment must be **vertical**
+  - When the natural route requires a direction change near the target, add a fourth
+    point to make the approach perpendicular. Never end with a horizontal segment
+    into a top/bottom face, or a vertical segment into a left/right face.
+
+**Wrong** (3 points — horizontal last segment enters top face):
+
+```
+"points": [[0, 0], [0, 120], [-166, 120]]
+"endBinding": { "fixedPoint": [0.5, -0.03] }  ← top face
+```
+
+**Correct** (4 points — vertical last segment enters top face perpendicularly):
+
+```
+"points": [[0, 0], [0, 60], [-166, 60], [-166, 120]]
+"endBinding": { "fixedPoint": [0.5, -0.03] }  ← top face ✓
+```
 
 **Arrow label rules (text on an arrow):**
 
@@ -273,12 +302,32 @@ renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`,
 
 **Sizing formulas for arrow labels:**
 
-- `text_height` = `num_lines × fontSize × lineHeight` (e.g. 1 × 14 × 1.25 = 17.5)
-- `text_width` — estimate from text content: **~9px per character** for fontSize 14
-  Excalifont, **~10px per character** for fontSize 16. Round up generously to avoid
-  clipping — the Excalidraw app measures precisely but we must overestimate.
+- `text_height` = `num_lines × fontSize × lineHeight` — lineHeight is always `1.25`
+  (e.g. 1 × 14 × 1.25 = 17.5; 2 × 16 × 1.25 = 40)
+- `text_width` = `max_line_length × char_width` — use the Excalifont character
+  width table below. Round up generously to avoid clipping.
 - `text_x` = arrow midpoint x − text_width / 2
 - `text_y` = arrow midpoint y − text_height / 2
+
+**Excalifont (fontFamily 5) character width reference:**
+
+| fontSize | px/char | Notes |
+|----------|---------|-------|
+| 12 | ~8px | Small sub-labels |
+| 14 | ~9px | Arrow labels (default) |
+| 16 | ~10px | Shape labels (default) |
+| 20 | ~10px | Subtitle text — Excalifont scales sub-linearly at body sizes |
+| 36 | ~22px | Title text |
+
+Formula: `text_width = max_line_length × char_width`
+
+For multi-line text, use the longest line's character count. Always round up and
+add a generous buffer (at least 10px) — the Excalidraw app measures font metrics
+precisely but we must overestimate to avoid truncation. For standalone text
+elements (`containerId: null`), be especially generous: the app does not
+auto-resize standalone text the same way it does bound text, so an undersized
+`width` causes visible truncation in the Excalidraw UI even when the static
+renderer displays it correctly.
 
 Example: "Uses" (4 chars, fontSize 14) on a horizontal arrow from x=260 to x=400, y=240:
 
@@ -309,10 +358,28 @@ Arrow labels can use `\n` for multiline text, just like shape labels. This is
 useful for compact labels like `"REST/HTTPS\nJSON"`. Calculate `text_height`
 using the number of lines.
 
-**Readability rule:** Labels should not cover arrowheads. For horizontal arrows,
-ensure the label doesn't extend to the arrow endpoints — leave at least ~30px
-of visible arrow line at each end. For vertical arrows, position the label
-beside the arrow (offset `text_x` to the right) rather than centred on it.
+> **Minimum arrow length rule:**
+>
+> Every labelled arrow must satisfy:
+>
+> ```
+> min_arrow_length = label_width + 2 × 60
+> ```
+>
+> This ensures **60px of visible arrow line on each side** of the label —
+> enough for the arrow to read as a connector, not a floating text label.
+>
+> **When the arrow cannot be lengthened** (shapes are too close together):
+> 1. Split the label to multiple lines with `\n` to reduce `label_width`
+>    (e.g. `"Writes\nposts"` instead of `"Writes posts"`)
+> 2. If splitting is insufficient, increase spacing between the connected shapes
+>
+> **Vertical arrows:** The same rule applies using `label_height` instead of
+> `label_width`. Position the label beside the arrow (offset `text_x` to the
+> right of the arrow's x-coordinate) rather than centred on it.
+
+Labels must not cover arrowheads — the arrowhead and at least 60px of arrow
+line at each end must remain visible.
 
 The arrow must reference this label in its `boundElements`:
 
@@ -326,6 +393,38 @@ The arrow must reference this label in its `boundElements`:
 
 > **Do not** position arrow label text manually with `containerId: null` — the label
 > will not move with the arrow and will render at incorrect positions in PNG output.
+
+**Loop-back and multi-segment arrow labels:**
+
+For arrows that travel through the diagram margin (long L-shaped or Z-shaped paths
+spanning multiple frames), the midpoint label will appear at the midpoint of the
+entire path length — often in an awkward position at the corner or along a long
+segment far from either endpoint. To avoid this:
+
+- **Prefer no label** on loop-back arrows when the context is clear from the
+  diamond or source element (e.g. the "Needs More Info" loop in a support flow)
+- **Use a standalone text annotation** positioned beside the relevant segment
+  instead of a bound arrow label (`containerId: null`, placed manually near the
+  arrow segment that needs labelling)
+- As a last resort, manually offset `text_x` / `text_y` to reposition the label
+  to a more readable location near the arrow's start or a clearly visible segment
+
+**Frame/boundary crossing rule:**
+
+When an arrow crosses a frame or boundary line, at least **20px of visible arrow**
+must be present on each side of the crossing point:
+
+- The source shape must be far enough from the frame edge that the arrow has at
+  least 20px of line inside the frame before crossing
+- The arrow must extend at least 20px past the frame edge before reaching the
+  target shape (or the next element)
+- If the source shape is too close to the frame edge, either move the shape away
+  from the edge (increase internal frame padding) or reposition it so the
+  crossing is clearly visible
+
+A crossing arrow that appears to terminate at the frame boundary (less than 20px
+inside) is visually ambiguous — viewers cannot tell if the arrow exits or stops
+at the boundary.
 
 ---
 
@@ -543,7 +642,10 @@ Text positions are calculated using the formulas from the text section above:
 
 - "System A" (1 line, fontSize 16) in 160×80 box at y=200: `text_y` = 200 + (80 − 20) / 2 = 230
 - "System B" same calculation: `text_y` = 230
-- "Calls" (5 chars, fontSize 14) on arrow at midpoint (330, 240): `width` = 5 × 9 = 45 → round up to 55, `height` = 17.5, `x` = 330 − 55/2 ≈ 302, `y` = 231
+- "Calls" (5 chars, fontSize 14): `label_width` = 5 × 9 = 45 → round up to 55
+- Arrow length check: `min_arrow_length` = 55 + 120 = 175 → gap between shapes = 175px minimum; example uses 215px ✓
+- Arrow midpoint: x = 260 + 215/2 = 367, y = 240
+- Label position: `x` = 367 − 55/2 ≈ 340, `y` = 240 − 17.5/2 ≈ 231
 
 Style values below use the Standard shape style from `references/styling-defaults.md`.
 
@@ -580,7 +682,7 @@ Style values below use the Standard shape style from `references/styling-default
     {
       "id": "box-b",
       "type": "rectangle",
-      "x": 400, "y": 200, "width": 160, "height": 80,
+      "x": 475, "y": 200, "width": 160, "height": 80,
       "strokeColor": "#01190e", "backgroundColor": "#d9fce3",
       "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
       "roughness": 1, "opacity": 100, "angle": 0,
@@ -593,7 +695,7 @@ Style values below use the Standard shape style from `references/styling-default
     {
       "id": "txt-b",
       "type": "text",
-      "x": 400, "y": 230, "width": 160, "height": 20,
+      "x": 475, "y": 230, "width": 160, "height": 20,
       "text": "System B", "fontSize": 16, "fontFamily": 5,
       "textAlign": "center", "verticalAlign": "middle",
       "containerId": "box-b", "originalText": "System B", "autoResize": true, "lineHeight": 1.25,
@@ -605,8 +707,8 @@ Style values below use the Standard shape style from `references/styling-default
     {
       "id": "arr-1",
       "type": "arrow",
-      "x": 260, "y": 240, "width": 140, "height": 0,
-      "points": [[0, 0], [140, 0]],
+      "x": 260, "y": 240, "width": 215, "height": 0,
+      "points": [[0, 0], [215, 0]],
       "startBinding": { "mode": "orbit", "elementId": "box-a", "fixedPoint": [0.5001, 0.5001] },
       "endBinding": { "mode": "orbit", "elementId": "box-b", "fixedPoint": [0.5001, 0.5001] },
       "startArrowhead": null, "endArrowhead": "arrow",
@@ -620,7 +722,7 @@ Style values below use the Standard shape style from `references/styling-default
     {
       "id": "lbl-arr1",
       "type": "text",
-      "x": 302, "y": 231, "width": 55, "height": 17.5,
+      "x": 340, "y": 231, "width": 55, "height": 17.5,
       "text": "Calls", "fontSize": 14, "fontFamily": 5,
       "textAlign": "center", "verticalAlign": "middle",
       "containerId": "arr-1", "originalText": "Calls", "autoResize": true, "lineHeight": 1.25,
