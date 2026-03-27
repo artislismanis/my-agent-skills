@@ -46,6 +46,11 @@ templates may override or extend these with diagram-type-specific conventions.
 - **Arrows must never cross shapes** — if an arrow's natural route passes
   through an intermediate shape, reroute it around all shapes through empty
   space (margin areas, gaps between regions). Absolute rule, no exceptions
+- **Arrow segments must never cross labels** — no arrow segment may pass
+  through the bounding box of another arrow's label. When routing elbowed
+  arrows through a region that contains labels on other arrows, place the
+  bend below (or above) the label area. Verify this in Step 4 by checking
+  each elbowed arrow's segments against all label positions in the diagram
 - **Minimise crossing and overlapping lines** — rearrange elements to reduce
   arrow intersections. When arrows must share a target shape, bind them to
   different sides or different points on the same side using `fixedPoint`
@@ -367,7 +372,8 @@ Verify each row:
 For every label (shape, arrow, or external diamond label):
 - Shape labels: text fits within shape bounds
 - Arrow labels: centred at midpoint with ≥60px visible arrow each side; label
-  does not overlap any other arrow line, shape edge, or other label
+  does not overlap any other arrow line, shape edge, or other label. Also
+  verify no OTHER arrow's segment crosses through this label's bounding box
 - External diamond labels: placed on the face that has NO connecting arrows
   (typically **above** the diamond when arrows enter from the left and exit
   from the right and/or bottom)
