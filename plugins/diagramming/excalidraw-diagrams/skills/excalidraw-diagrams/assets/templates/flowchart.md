@@ -63,9 +63,13 @@ focal emphasis, not errors.
   per line at fontSize 16, up to 3 lines. If the label exceeds this (e.g.
   `"Needs More Info?"` is 15 characters — too long), use the external label
   approach: place the label as a standalone text element beside an unlabelled
-  diamond. When using external labels, apply the approach consistently to ALL
-  diamonds in the diagram and always use the template diamond size (120×120),
-  never smaller.
+  diamond.
+
+  **Consistency rule**: All diamonds in a diagram must use the same label
+  approach — either all labels inside or all labels outside. If ANY diamond
+  in the diagram needs external labels, switch ALL diamonds to external
+  labels. When using external labels, reduce diamonds to `60 × 60` (compact
+  — similar to terminator circles) and place the label text to one side.
 - **Decision branches**: Label arrows exiting a diamond with `"Yes"` / `"No"` or `"True"` / `"False"`
 - **Input/Output**: Noun phrase — `"User Credentials"`, `"Order Confirmation"`
 
@@ -102,6 +106,12 @@ Apply the axis alignment, arrow routing, and multi-frame layout rules from
 
 Standard flow direction: start at top, end at bottom. Decision branches go
 to the side; the main (happy) path continues down.
+
+**Single End terminator**: Use exactly one End node per diagram. Route all
+terminal paths (success, cancel, error reconnection) to the same End node at
+the bottom of the main flow. This keeps the diagram clean and avoids multiple
+disconnected endpoints. The only exception is swim lane diagrams where a lane
+has an isolated terminal path that cannot reasonably reach the main End node.
 
 Vertical spacing: 60px between shapes for unlabelled arrows. For labelled
 vertical arrows (including Yes/No decision branches), use **140px minimum** —
@@ -167,10 +177,10 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 **Flowchart-specific:**
 - [ ] Every decision diamond has exactly one incoming arrow and at least two outgoing arrows
 - [ ] Every outgoing arrow from a decision has a label (Yes/No or condition)
-- [ ] Exactly one Start node and at least one End node (unlabeled circles)
+- [ ] Exactly one Start node and one End node (unlabeled circles) — route all terminal paths to the single End
 - [ ] No dead ends (every non-terminal shape has an outgoing arrow)
 - [ ] Error/failure states use Rare Highlight (red), not Occasional Highlight
-- [ ] Decision diamond labels fit within usable text area (~6 chars × 3 lines at 120×120); longer labels use external placement beside the diamond
+- [ ] Diamond labels are consistent: all inside (120×120) or all outside (60×60) — if any label doesn't fit, all diamonds use external labels
 - [ ] Labelled vertical arrows use ≥140px spacing; unlabelled arrows may use 60px
 - [ ] (Swim lanes) Cross-frame arrow labels sit within the inter-frame gap, not overlapping frame borders
 

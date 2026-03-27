@@ -54,7 +54,10 @@ templates may override or extend these with diagram-type-specific conventions.
 - **Reconnection arrows — one elbow maximum** — when a branch reconnects to the
   main flow (e.g. an error path connecting to the end, an optional step
   merging back), use at most one elbow: one straight segment to reach the
-  correct axis, then one straight segment to the target
+  correct axis, then one straight segment to the target. For example, an
+  error box reconnecting to the End node: go straight down from the error
+  box, then straight left/right to the End — exactly two segments, one bend.
+  Never add extra bends for visual padding
 - **Perpendicular entry** — arrows always enter and exit shapes perpendicular
   to the face they connect to. Vertical arrows enter top or bottom faces;
   horizontal arrows enter left or right faces. An arrow must never run along

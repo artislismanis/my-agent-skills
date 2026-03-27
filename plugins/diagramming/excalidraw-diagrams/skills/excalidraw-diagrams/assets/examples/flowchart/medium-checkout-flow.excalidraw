@@ -4,10 +4,10 @@
   "source": "https://excalidraw.com",
   "elements": [
     {
-      "id": "s-start",
+      "id": "start",
       "type": "ellipse",
-      "x": 280,
-      "y": 100,
+      "x": 260,
+      "y": 60,
       "width": 40,
       "height": 40,
       "angle": 0,
@@ -20,18 +20,18 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": { "type": 2 },
       "boundElements": [
         { "id": "arr-start-cart", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": { "type": 2 }
     },
     {
-      "id": "s-cart",
+      "id": "view-cart",
       "type": "rectangle",
-      "x": 220,
-      "y": 200,
+      "x": 200,
+      "y": 160,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -44,20 +44,20 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-cart", "type": "text" },
+        { "id": "txt-view-cart", "type": "text" },
         { "id": "arr-start-cart", "type": "arrow" },
         { "id": "arr-cart-disc", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-cart",
+      "id": "txt-view-cart",
       "type": "text",
-      "x": 220,
-      "y": 230,
+      "x": 200,
+      "y": 190,
       "width": 160,
       "height": 20,
       "angle": 0,
@@ -79,15 +79,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-cart",
+      "containerId": "view-cart",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-disc",
+      "id": "disc-diamond",
       "type": "diamond",
-      "x": 240,
-      "y": 340,
+      "x": 220,
+      "y": 300,
       "width": 120,
       "height": 120,
       "angle": 0,
@@ -100,21 +100,21 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-disc", "type": "text" },
+        { "id": "txt-disc-diamond", "type": "text" },
         { "id": "arr-cart-disc", "type": "arrow" },
-        { "id": "arr-disc-apply", "type": "arrow" },
-        { "id": "arr-disc-calc", "type": "arrow" }
+        { "id": "arr-disc-yes", "type": "arrow" },
+        { "id": "arr-disc-no", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-disc",
+      "id": "txt-disc-diamond",
       "type": "text",
-      "x": 240,
-      "y": 382.5,
+      "x": 220,
+      "y": 343,
       "width": 120,
       "height": 35,
       "angle": 0,
@@ -132,19 +132,19 @@
       "locked": false,
       "text": "Discount\nCode?",
       "originalText": "Discount\nCode?",
-      "fontSize": 16,
+      "fontSize": 14,
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-disc",
+      "containerId": "disc-diamond",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-apply",
+      "id": "apply-discount",
       "type": "rectangle",
       "x": 460,
-      "y": 360,
+      "y": 320,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -157,20 +157,20 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-apply", "type": "text" },
-        { "id": "arr-disc-apply", "type": "arrow" },
+        { "id": "txt-apply-discount", "type": "text" },
+        { "id": "arr-disc-yes", "type": "arrow" },
         { "id": "arr-apply-calc", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-apply",
+      "id": "txt-apply-discount",
       "type": "text",
       "x": 460,
-      "y": 390,
+      "y": 350,
       "width": 160,
       "height": 20,
       "angle": 0,
@@ -192,15 +192,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-apply",
+      "containerId": "apply-discount",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-calc",
+      "id": "calc-total",
       "type": "rectangle",
-      "x": 220,
-      "y": 620,
+      "x": 200,
+      "y": 560,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -213,21 +213,21 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-calc", "type": "text" },
-        { "id": "arr-disc-calc", "type": "arrow" },
+        { "id": "txt-calc-total", "type": "text" },
+        { "id": "arr-disc-no", "type": "arrow" },
         { "id": "arr-apply-calc", "type": "arrow" },
         { "id": "arr-calc-ship", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-calc",
+      "id": "txt-calc-total",
       "type": "text",
-      "x": 220,
-      "y": 650,
+      "x": 200,
+      "y": 590,
       "width": 160,
       "height": 20,
       "angle": 0,
@@ -249,15 +249,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-calc",
+      "containerId": "calc-total",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-ship",
+      "id": "select-ship",
       "type": "rectangle",
-      "x": 220,
-      "y": 760,
+      "x": 200,
+      "y": 700,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -270,20 +270,20 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-ship", "type": "text" },
+        { "id": "txt-select-ship", "type": "text" },
         { "id": "arr-calc-ship", "type": "arrow" },
         { "id": "arr-ship-pay", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-ship",
+      "id": "txt-select-ship",
       "type": "text",
-      "x": 220,
-      "y": 782.5,
+      "x": 200,
+      "y": 722,
       "width": 160,
       "height": 35,
       "angle": 0,
@@ -305,15 +305,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-ship",
+      "containerId": "select-ship",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-pay",
+      "id": "enter-pay",
       "type": "rectangle",
-      "x": 220,
-      "y": 900,
+      "x": 200,
+      "y": 840,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -326,21 +326,21 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-pay", "type": "text" },
+        { "id": "txt-enter-pay", "type": "text" },
         { "id": "arr-ship-pay", "type": "arrow" },
         { "id": "arr-pay-valid", "type": "arrow" },
         { "id": "arr-retry", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-pay",
+      "id": "txt-enter-pay",
       "type": "text",
-      "x": 220,
-      "y": 922.5,
+      "x": 200,
+      "y": 862,
       "width": 160,
       "height": 35,
       "angle": 0,
@@ -362,15 +362,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-pay",
+      "containerId": "enter-pay",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-valid",
+      "id": "pay-diamond",
       "type": "diamond",
-      "x": 240,
-      "y": 1040,
+      "x": 220,
+      "y": 980,
       "width": 120,
       "height": 120,
       "angle": 0,
@@ -383,22 +383,22 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-valid", "type": "text" },
+        { "id": "txt-pay-diamond", "type": "text" },
         { "id": "arr-pay-valid", "type": "arrow" },
-        { "id": "arr-valid-confirm", "type": "arrow" },
+        { "id": "arr-success", "type": "arrow" },
         { "id": "arr-retry", "type": "arrow" },
         { "id": "arr-cancel", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-valid",
+      "id": "txt-pay-diamond",
       "type": "text",
-      "x": 240,
-      "y": 1082.5,
+      "x": 220,
+      "y": 1023,
       "width": 120,
       "height": 35,
       "angle": 0,
@@ -416,19 +416,19 @@
       "locked": false,
       "text": "Payment\nValid?",
       "originalText": "Payment\nValid?",
-      "fontSize": 16,
+      "fontSize": 14,
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-valid",
+      "containerId": "pay-diamond",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-confirm",
+      "id": "confirm-order",
       "type": "rectangle",
-      "x": 220,
-      "y": 1300,
+      "x": 200,
+      "y": 1240,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -441,20 +441,20 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-confirm", "type": "text" },
-        { "id": "arr-valid-confirm", "type": "arrow" },
+        { "id": "txt-confirm-order", "type": "text" },
+        { "id": "arr-success", "type": "arrow" },
         { "id": "arr-confirm-email", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-confirm",
+      "id": "txt-confirm-order",
       "type": "text",
-      "x": 220,
-      "y": 1330,
+      "x": 200,
+      "y": 1270,
       "width": 160,
       "height": 20,
       "angle": 0,
@@ -476,15 +476,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-confirm",
+      "containerId": "confirm-order",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-email",
+      "id": "send-email",
       "type": "rectangle",
-      "x": 220,
-      "y": 1440,
+      "x": 200,
+      "y": 1380,
       "width": 160,
       "height": 80,
       "angle": 0,
@@ -497,20 +497,20 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": null,
       "boundElements": [
-        { "id": "txt-email", "type": "text" },
+        { "id": "txt-send-email", "type": "text" },
         { "id": "arr-confirm-email", "type": "arrow" },
         { "id": "arr-email-end", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": null
     },
     {
-      "id": "txt-email",
+      "id": "txt-send-email",
       "type": "text",
-      "x": 220,
-      "y": 1462.5,
+      "x": 200,
+      "y": 1402,
       "width": 160,
       "height": 35,
       "angle": 0,
@@ -532,15 +532,15 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "s-email",
+      "containerId": "send-email",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "s-end-main",
+      "id": "end",
       "type": "ellipse",
-      "x": 280,
-      "y": 1580,
+      "x": 260,
+      "y": 1520,
       "width": 40,
       "height": 40,
       "angle": 0,
@@ -553,42 +553,19 @@
       "opacity": 100,
       "groupIds": [],
       "frameId": null,
-      "roundness": { "type": 2 },
       "boundElements": [
-        { "id": "arr-email-end", "type": "arrow" }
-      ],
-      "link": null,
-      "locked": false
-    },
-    {
-      "id": "s-end-cancel",
-      "type": "ellipse",
-      "x": 60,
-      "y": 1080,
-      "width": 40,
-      "height": 40,
-      "angle": 0,
-      "strokeColor": "#01190e",
-      "backgroundColor": "#d9fce3",
-      "fillStyle": "solid",
-      "strokeWidth": 4,
-      "strokeStyle": "solid",
-      "roughness": 1,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "roundness": { "type": 2 },
-      "boundElements": [
+        { "id": "arr-email-end", "type": "arrow" },
         { "id": "arr-cancel", "type": "arrow" }
       ],
       "link": null,
-      "locked": false
+      "locked": false,
+      "roundness": { "type": 2 }
     },
     {
       "id": "arr-start-cart",
       "type": "arrow",
-      "x": 300,
-      "y": 140,
+      "x": 280,
+      "y": 100,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -607,24 +584,23 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-start",
+        "elementId": "start",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-cart",
+        "elementId": "view-cart",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
       "id": "arr-cart-disc",
       "type": "arrow",
-      "x": 300,
-      "y": 280,
+      "x": 280,
+      "y": 240,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -643,25 +619,24 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-cart",
+        "elementId": "view-cart",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-disc",
+        "elementId": "disc-diamond",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
-      "id": "arr-disc-apply",
+      "id": "arr-disc-yes",
       "type": "arrow",
-      "x": 360,
-      "y": 400,
-      "width": 100,
+      "x": 340,
+      "y": 360,
+      "width": 120,
       "height": 0,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -674,32 +649,31 @@
       "groupIds": [],
       "frameId": null,
       "boundElements": [
-        { "id": "lbl-disc-apply", "type": "text" }
+        { "id": "lbl-disc-yes", "type": "text" }
       ],
       "link": null,
       "locked": false,
-      "points": [[0, 0], [100, 0]],
+      "points": [[0, 0], [120, 0]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-disc",
+        "elementId": "disc-diamond",
         "fixedPoint": [1, 0.5]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-apply",
+        "elementId": "apply-discount",
         "fixedPoint": [0, 0.5]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
-      "id": "lbl-disc-apply",
+      "id": "lbl-disc-yes",
       "type": "text",
-      "x": 392,
-      "y": 391.25,
-      "width": 36,
+      "x": 373,
+      "y": 342.75,
+      "width": 30,
       "height": 17.5,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -720,56 +694,17 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "arr-disc-apply",
+      "containerId": "arr-disc-yes",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "arr-apply-calc",
+      "id": "arr-disc-no",
       "type": "arrow",
-      "x": 540,
-      "y": 440,
-      "width": 160,
-      "height": 220,
-      "angle": 0,
-      "strokeColor": "#01190e",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 2,
-      "strokeStyle": "solid",
-      "roughness": 1,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "boundElements": [],
-      "link": null,
-      "locked": false,
-      "points": [[0, 0], [0, 220], [-160, 220]],
-      "startBinding": {
-        "mode": "orbit",
-        "elementId": "s-apply",
-        "fixedPoint": [0.5, 1.03]
-      },
-      "endBinding": {
-        "mode": "orbit",
-        "elementId": "s-calc",
-        "fixedPoint": [1.03, 0.5]
-      },
-      "startArrowhead": null,
-      "endArrowhead": "arrow",
-      "elbowed": true,
-      "fixedSegments": null,
-      "startIsSpecial": null,
-      "endIsSpecial": null,
-      "roundness": null
-    },
-    {
-      "id": "arr-disc-calc",
-      "type": "arrow",
-      "x": 300,
-      "y": 460,
+      "x": 280,
+      "y": 420,
       "width": 0,
-      "height": 160,
+      "height": 140,
       "angle": 0,
       "strokeColor": "#01190e",
       "backgroundColor": "transparent",
@@ -781,32 +716,31 @@
       "groupIds": [],
       "frameId": null,
       "boundElements": [
-        { "id": "lbl-disc-calc", "type": "text" }
+        { "id": "lbl-disc-no", "type": "text" }
       ],
       "link": null,
       "locked": false,
-      "points": [[0, 0], [0, 160]],
+      "points": [[0, 0], [0, 140]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-disc",
+        "elementId": "disc-diamond",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-calc",
+        "elementId": "calc-total",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
-      "id": "lbl-disc-calc",
+      "id": "lbl-disc-no",
       "type": "text",
-      "x": 310,
-      "y": 531.25,
-      "width": 27,
+      "x": 288,
+      "y": 481.25,
+      "width": 30,
       "height": 17.5,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -827,15 +761,53 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "arr-disc-calc",
+      "containerId": "arr-disc-no",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
+      "id": "arr-apply-calc",
+      "type": "arrow",
+      "x": 540,
+      "y": 400,
+      "width": 260,
+      "height": 160,
+      "angle": 0,
+      "strokeColor": "#01190e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "boundElements": [],
+      "link": null,
+      "locked": false,
+      "points": [[0, 0], [0, 160], [-260, 160]],
+      "startBinding": {
+        "mode": "orbit",
+        "elementId": "apply-discount",
+        "fixedPoint": [0.5, 1.03]
+      },
+      "endBinding": {
+        "mode": "orbit",
+        "elementId": "calc-total",
+        "fixedPoint": [0.5, -0.03]
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null
+    },
+    {
       "id": "arr-calc-ship",
       "type": "arrow",
-      "x": 300,
-      "y": 700,
+      "x": 280,
+      "y": 640,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -854,24 +826,23 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-calc",
+        "elementId": "calc-total",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-ship",
+        "elementId": "select-ship",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
       "id": "arr-ship-pay",
       "type": "arrow",
-      "x": 300,
-      "y": 840,
+      "x": 280,
+      "y": 780,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -890,24 +861,23 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-ship",
+        "elementId": "select-ship",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-pay",
+        "elementId": "enter-pay",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
       "id": "arr-pay-valid",
       "type": "arrow",
-      "x": 300,
-      "y": 980,
+      "x": 280,
+      "y": 920,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -926,24 +896,23 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-pay",
+        "elementId": "enter-pay",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-valid",
+        "elementId": "pay-diamond",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
-      "id": "arr-valid-confirm",
+      "id": "arr-success",
       "type": "arrow",
-      "x": 300,
-      "y": 1160,
+      "x": 280,
+      "y": 1100,
       "width": 0,
       "height": 140,
       "angle": 0,
@@ -957,32 +926,31 @@
       "groupIds": [],
       "frameId": null,
       "boundElements": [
-        { "id": "lbl-valid-confirm", "type": "text" }
+        { "id": "lbl-success", "type": "text" }
       ],
       "link": null,
       "locked": false,
       "points": [[0, 0], [0, 140]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-valid",
+        "elementId": "pay-diamond",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-confirm",
+        "elementId": "confirm-order",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
-      "id": "lbl-valid-confirm",
+      "id": "lbl-success",
       "type": "text",
-      "x": 310,
-      "y": 1221.25,
-      "width": 63,
+      "x": 288,
+      "y": 1161.25,
+      "width": 60,
       "height": 17.5,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -1003,7 +971,7 @@
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "arr-valid-confirm",
+      "containerId": "arr-success",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -1011,8 +979,8 @@
       "id": "arr-retry",
       "type": "arrow",
       "x": 360,
-      "y": 1100,
-      "width": 120,
+      "y": 1040,
+      "width": 160,
       "height": 160,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -1029,15 +997,15 @@
       ],
       "link": null,
       "locked": false,
-      "points": [[0, 0], [120, 0], [120, -160], [20, -160]],
+      "points": [[0, 0], [160, 0], [160, -160], [20, -160]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-valid",
-        "fixedPoint": [1.03, 0.5]
+        "elementId": "pay-diamond",
+        "fixedPoint": [1, 0.5]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-pay",
+        "elementId": "enter-pay",
         "fixedPoint": [1.03, 0.5]
       },
       "startArrowhead": null,
@@ -1045,14 +1013,13 @@
       "elbowed": true,
       "fixedSegments": null,
       "startIsSpecial": null,
-      "endIsSpecial": null,
-      "roundness": null
+      "endIsSpecial": null
     },
     {
       "id": "lbl-retry",
       "type": "text",
-      "x": 430,
-      "y": 1011.25,
+      "x": 453,
+      "y": 951.25,
       "width": 45,
       "height": 17.5,
       "angle": 0,
@@ -1081,10 +1048,10 @@
     {
       "id": "arr-cancel",
       "type": "arrow",
-      "x": 240,
-      "y": 1100,
+      "x": 220,
+      "y": 1040,
       "width": 140,
-      "height": 0,
+      "height": 500,
       "angle": 0,
       "strokeColor": "#01190e",
       "backgroundColor": "transparent",
@@ -1100,28 +1067,30 @@
       ],
       "link": null,
       "locked": false,
-      "points": [[0, 0], [-140, 0]],
+      "points": [[0, 0], [-140, 0], [-140, 500], [40, 500]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-valid",
+        "elementId": "pay-diamond",
         "fixedPoint": [0, 0.5]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-end-cancel",
-        "fixedPoint": [1, 0.5]
+        "elementId": "end",
+        "fixedPoint": [-0.03, 0.5]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null
     },
     {
       "id": "lbl-cancel",
       "type": "text",
-      "x": 142,
-      "y": 1091.25,
-      "width": 54,
+      "x": 48,
+      "y": 1281.25,
+      "width": 55,
       "height": 17.5,
       "angle": 0,
       "strokeColor": "#01190e",
@@ -1149,8 +1118,8 @@
     {
       "id": "arr-confirm-email",
       "type": "arrow",
-      "x": 300,
-      "y": 1380,
+      "x": 280,
+      "y": 1320,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -1169,24 +1138,23 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-confirm",
+        "elementId": "confirm-order",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-email",
+        "elementId": "send-email",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     },
     {
       "id": "arr-email-end",
       "type": "arrow",
-      "x": 300,
-      "y": 1520,
+      "x": 280,
+      "y": 1460,
       "width": 0,
       "height": 60,
       "angle": 0,
@@ -1205,18 +1173,17 @@
       "points": [[0, 0], [0, 60]],
       "startBinding": {
         "mode": "orbit",
-        "elementId": "s-email",
+        "elementId": "send-email",
         "fixedPoint": [0.5, 1]
       },
       "endBinding": {
         "mode": "orbit",
-        "elementId": "s-end-main",
+        "elementId": "end",
         "fixedPoint": [0.5, 0]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
-      "roundness": null
+      "elbowed": false
     }
   ],
   "appState": {
