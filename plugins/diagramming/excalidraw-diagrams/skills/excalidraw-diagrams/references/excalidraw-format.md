@@ -194,15 +194,25 @@ along an edge is valid.
 
 **Distributing multiple arrows on the same side:**
 
-When several arrows connect to the same side of a shape, space them evenly along
-that edge to prevent overlapping:
+When multiple arrows connect to the same side of a shape, distribute them
+symmetrically using equal divisions of the face:
 
-- 2 arrows on the left side: `[0, 0.33]` and `[0, 0.67]`
-- 3 arrows on the left side: `[0, 0.25]`, `[0, 0.5]`, and `[0, 0.75]`
-- 2 arrows on the bottom: `[0.33, 1]` and `[0.67, 1]`
+- 2 arrows: fixedPoints at **0.25** and **0.75** (25th and 75th percentile)
+- 3 arrows: fixedPoints at **0.2**, **0.5**, and **0.8**
 
-The exact positions may need adjusting during visual iteration to achieve a clean
-look — these are starting points, not rigid rules.
+Examples — 2 arrows on the left side: `[0, 0.25]` and `[0, 0.75]`.
+2 arrows on the bottom: `[0.25, 1]` and `[0.75, 1]`.
+
+This distribution is MANDATORY. Adjust only during Category B visual
+iteration if labels overlap, and document the reason.
+
+**Converging arrows from different sources:**
+
+When multiple arrows from different source shapes target the same face of a
+single shape, they MUST bind to separate fixedPoints on that face — using
+the same distribution pattern as arrows leaving a face (0.25/0.75 for 2
+arrows, 0.2/0.5/0.8 for 3). Arrows MUST NOT share an entry point or
+converge to the same coordinate.
 
 **Choosing sides and points:**
 
@@ -270,6 +280,13 @@ For straight arrows, `orbit` mode also handles the visual gap — set the arrow'
   from the source face) so the elbow sits well above or beside the label midpoint
   of the adjacent straight arrow.
 - Choose the route that avoids crossing or overlapping existing arrows
+- **Consistent bend height for parallel elbowed arrows**: when two or more
+  elbowed arrows travel from the same region toward the same target (or
+  targets at the same y-level), their horizontal bend segments MUST use the
+  same y-coordinate. Calculate a single bend y — typically the midpoint
+  between the source row and target row — and use it for all parallel
+  elbowed arrows. This produces visually aligned "routing channels" rather
+  than scattered bend heights
 - Set the arrow's `width` to the maximum absolute x-offset and `height` to the
   maximum absolute y-offset across all points
 - **Perpendicular binding rule**: the first segment (from source) and last segment
