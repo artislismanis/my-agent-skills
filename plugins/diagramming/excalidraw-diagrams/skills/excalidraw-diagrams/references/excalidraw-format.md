@@ -194,25 +194,26 @@ along an edge is valid.
 
 **Distributing multiple arrows on the same side:**
 
-When multiple arrows connect to the same side of a shape, distribute them
-symmetrically using equal divisions of the face:
+Count ALL arrows touching each face — both outgoing and incoming — then
+distribute them symmetrically using equal divisions:
 
 - 2 arrows: fixedPoints at **0.25** and **0.75** (25th and 75th percentile)
 - 3 arrows: fixedPoints at **0.2**, **0.5**, and **0.8**
+- 4 arrows: fixedPoints at **0.15**, **0.38**, **0.62**, and **0.85**
 
 Examples — 2 arrows on the left side: `[0, 0.25]` and `[0, 0.75]`.
-2 arrows on the bottom: `[0.25, 1]` and `[0.75, 1]`.
+3 arrows on the bottom: `[0.2, 1]`, `[0.5, 1]`, and `[0.8, 1]`.
 
-This distribution is MANDATORY. Adjust only during Category B visual
-iteration if labels overlap, and document the reason.
+**No two arrows may share a fixedPoint.** Every arrow on a face MUST have
+its own unique position. This applies regardless of whether the arrows go
+to the same target or different targets, and regardless of direction
+(outgoing or incoming). This is MANDATORY — adjust only during Category B
+visual iteration if labels overlap, and document the reason.
 
-**Converging arrows from different sources:**
-
-When multiple arrows from different source shapes target the same face of a
-single shape, they MUST bind to separate fixedPoints on that face — using
-the same distribution pattern as arrows leaving a face (0.25/0.75 for 2
-arrows, 0.2/0.5/0.8 for 3). Arrows MUST NOT share an entry point or
-converge to the same coordinate.
+The same rule applies to converging arrows from different sources: when
+multiple arrows from different source shapes target the same face of a
+single shape, they MUST also bind to separate fixedPoints using the same
+distribution pattern.
 
 **Choosing sides and points:**
 

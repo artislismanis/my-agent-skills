@@ -362,9 +362,10 @@ Verify each row:
 - Entry/exit perpendicular to face (vertical → top/bottom; horizontal → left/right)
 - No segment overlaps any shape edge or frame border
 - Loop-back arrows travel entirely through open margin outside all shapes and frames
-- Multiple arrows on the same face use symmetric fixedPoint distribution
-  (0.25/0.75 for 2, 0.2/0.5/0.8 for 3)
-- Converging arrows from different sources bind to separate fixedPoints
+- **Face inventory**: for each shape, list ALL arrows touching each face
+  (both outgoing and incoming). Count them and assign fixedPoints using the
+  distribution pattern (0.25/0.75 for 2, 0.2/0.5/0.8 for 3, etc.). No two
+  arrows may share a fixedPoint — every arrow gets its own unique position
 - Parallel elbowed arrows use the same bend y-coordinate (shared routing channel)
 
 ### Step 4: Label placement check
