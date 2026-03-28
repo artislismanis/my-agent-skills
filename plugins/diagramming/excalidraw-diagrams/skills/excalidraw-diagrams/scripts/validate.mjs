@@ -219,7 +219,10 @@ for (const el of elements) {
   }
 }
 
-// V3: Minimum spacing between adjacent shapes (brand-defined, if brand loaded)
+// V3: Minimum spacing between shapes that are in the same row or column
+// Only check pairs that are NOT overlapping (gapX or gapY > 0) AND
+// are adjacent on the relevant axis (the OTHER axis overlaps), to avoid
+// false positives between shapes in completely different regions.
 if (brand) {
   const minGap = brand.layout?.minGap ?? 40;
   for (let i = 0; i < shapes.length; i++) {
@@ -232,14 +235,15 @@ if (brand) {
       const bx2 = b.x + (b.width ?? 0);
       const by2 = b.y + (b.height ?? 0);
 
-      // Only check pairs that are close on at least one axis
-      const gapX = Math.max(a.x - bx2, b.x - ax2);
-      const gapY = Math.max(a.y - by2, b.y - ay2);
+      const gapX = Math.max(a.x - bx2, b.x - ax2); // negative = horizontal overlap
+      const gapY = Math.max(a.y - by2, b.y - ay2); // negative = vertical overlap
 
-      if (gapX >= 0 && gapX < minGap) {
+      // Only warn about horizontal proximity if the shapes also share vertical space
+      if (gapX >= 0 && gapX < minGap && gapY < 0) {
         warning('V3', `Elements "${a.id}" and "${b.id}" are only ${Math.round(gapX)}px apart horizontally (minimum: ${minGap}px)`, a.id);
       }
-      if (gapY >= 0 && gapY < minGap) {
+      // Only warn about vertical proximity if the shapes also share horizontal space
+      if (gapY >= 0 && gapY < minGap && gapX < 0) {
         warning('V3', `Elements "${a.id}" and "${b.id}" are only ${Math.round(gapY)}px apart vertically (minimum: ${minGap}px)`, a.id);
       }
     }

@@ -119,16 +119,21 @@ function color(key) {
   return B.colors[key] ?? B.colors[B.colorAssignment[key]] ?? key;
 }
 
+/** Normalise label text: convert literal \n (2 chars) to actual newline */
+function normalizeText(text) {
+  return text.replace(/\\n/g, '\n');
+}
+
 /** Estimate text width in pixels for given text and fontSize */
 function estimateTextWidth(text, fontSize) {
-  const longestLine = text.split('\\n').reduce((a, b) => a.length > b.length ? a : b, '');
+  const longestLine = text.split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
   const charWidth = B.text.charWidthBySize[String(fontSize)] ?? 9;
   return Math.ceil(longestLine.length * charWidth);
 }
 
-/** Count lines in a text string (using literal \n) */
+/** Count lines in a text string */
 function countLines(text) {
-  return text.split('\\n').length;
+  return text.split('\n').length;
 }
 
 /** Calculate text element height */
@@ -167,6 +172,37 @@ function shapeToExcalidraw(shape) {
     case 'frame':        return { type: 'frame',     roundness: null };
     default:             return { type: 'rectangle', roundness: null };
   }
+}
+
+// ─── Geometry helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Find the point on a shape's bounding box edge in the direction of a target point.
+ * Returns [x, y] at the edge.
+ */
+function getEdgePoint(pos, targetCx, targetCy) {
+  const cx = pos.x + pos.w / 2;
+  const cy = pos.y + pos.h / 2;
+  const dx = targetCx - cx;
+  const dy = targetCy - cy;
+  if (dx === 0 && dy === 0) return [cx, cy];
+  const hw = pos.w / 2;
+  const hh = pos.h / 2;
+  // Scale to reach the bounding box boundary
+  const scaleX = dx !== 0 ? hw / Math.abs(dx) : Infinity;
+  const scaleY = dy !== 0 ? hh / Math.abs(dy) : Infinity;
+  const scale = Math.min(scaleX, scaleY);
+  return [cx + dx * scale, cy + dy * scale];
+}
+
+/**
+ * Convert an edge point back to a normalised fixedPoint [0..1, 0..1].
+ */
+function toFixedPoint(pos, edgePt) {
+  return [
+    Math.max(0, Math.min(1, (edgePt[0] - pos.x) / pos.w)),
+    Math.max(0, Math.min(1, (edgePt[1] - pos.y) / pos.h)),
+  ];
 }
 
 // ─── ID generation ───────────────────────────────────────────────────────────
@@ -248,20 +284,29 @@ function computeLayout(elements, connections) {
     }
   } else {
     // Top-to-bottom: depth = row, position within depth = column
-    let y = oy;
     const depths = Object.keys(byDepth).sort((a, b) => a - b);
-    for (const d of depths) {
+
+    // First pass: calculate row widths to find the maximum (used for centering)
+    const rowWidths = depths.map(d => {
+      const ids = byDepth[d];
+      return ids.reduce((sum, id) => {
+        const el = elements.find(e => e.id === id);
+        return sum + (el.size?.[0] ?? DEFAULT_SIZE[0]);
+      }, 0) + (ids.length - 1) * layout.horizontalSpacing;
+    });
+    const maxRowWidth = Math.max(...rowWidths);
+
+    // Second pass: assign positions, centering each row relative to the widest row
+    let y = oy;
+    for (let di = 0; di < depths.length; di++) {
+      const d = depths[di];
       const ids = byDepth[d];
       const rowHeight = Math.max(...ids.map(id => {
         const el = elements.find(e => e.id === id);
         return (el.size?.[1] ?? DEFAULT_SIZE[1]);
       }));
-      // Centre the row horizontally
-      const totalRowWidth = ids.reduce((sum, id) => {
-        const el = elements.find(e => e.id === id);
-        return sum + (el.size?.[0] ?? DEFAULT_SIZE[0]);
-      }, 0) + (ids.length - 1) * layout.horizontalSpacing;
-      let x = ox + Math.max(0, (800 - totalRowWidth) / 2); // rough centering on 800px canvas
+      const rowWidth = rowWidths[di];
+      let x = ox + (maxRowWidth - rowWidth) / 2;
       for (const id of ids) {
         const el = elements.find(e => e.id === id);
         const [w, h] = el.size ?? DEFAULT_SIZE;
@@ -341,7 +386,8 @@ function buildDocument(input, brand) {
     if (el.label) {
       const txtId = nextId('t');
       const fontSize = brand.text.fontSize.elementLabel;
-      const th = textHeight(el.label, fontSize);
+      const label = normalizeText(el.label);
+      const th = textHeight(label, fontSize);
       const tx = pos.x;
       const ty = pos.y + (h - th) / 2;
 
@@ -352,8 +398,8 @@ function buildDocument(input, brand) {
         y: ty,
         width: w,
         height: th,
-        text: el.label,
-        originalText: el.label,
+        text: label,
+        originalText: label,
         fontSize,
         fontFamily: brand.text.fontFamily,
         textAlign: 'center',
@@ -444,27 +490,31 @@ function buildDocument(input, brand) {
     const arrId = nextId('a');
     const isDashed = conn.style === 'dashed';
 
-    // Calculate arrow start/end positions (use shape centres)
+    // Calculate edge-to-edge arrow positions for the static renderer
     const fromCx = fromSpec.pos.x + fromSpec.pos.w / 2;
     const fromCy = fromSpec.pos.y + fromSpec.pos.h / 2;
     const toCx = toSpec.pos.x + toSpec.pos.w / 2;
     const toCy = toSpec.pos.y + toSpec.pos.h / 2;
 
-    const dx = toCx - fromCx;
-    const dy = toCy - fromCy;
-    const arrX = fromCx;
-    const arrY = fromCy;
+    const [startX, startY] = getEdgePoint(fromSpec.pos, toCx, toCy);
+    const [endX, endY]     = getEdgePoint(toSpec.pos, fromCx, fromCy);
+
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    const startFP = toFixedPoint(fromSpec.pos, [startX, startY]);
+    const endFP   = toFixedPoint(toSpec.pos,   [endX,   endY]);
 
     const arrow = {
       id: arrId,
       type: 'arrow',
-      x: arrX,
-      y: arrY,
+      x: startX,
+      y: startY,
       width: Math.abs(dx),
       height: Math.abs(dy),
       points: [[0, 0], [dx, dy]],
-      startBinding: { mode: 'orbit', elementId: fromExId, fixedPoint: [0.5001, 0.5001] },
-      endBinding:   { mode: 'orbit', elementId: toExId,   fixedPoint: [0.5001, 0.5001] },
+      startBinding: { mode: 'orbit', elementId: fromExId, fixedPoint: startFP },
+      endBinding:   { mode: 'orbit', elementId: toExId,   fixedPoint: endFP },
       startArrowhead: conn.bidirectional ? 'arrow' : null,
       endArrowhead: brand.arrow.endArrowhead,
       elbowed: false,
@@ -492,10 +542,11 @@ function buildDocument(input, brand) {
     if (conn.label) {
       const lblId = nextId('al');
       const fontSize = brand.text.fontSize.arrowLabel;
-      const tw = estimateTextWidth(conn.label, fontSize);
-      const th = textHeight(conn.label, fontSize);
-      const midX = arrX + dx / 2 - tw / 2;
-      const midY = arrY + dy / 2 - th / 2;
+      const label = normalizeText(conn.label);
+      const tw = estimateTextWidth(label, fontSize);
+      const th = textHeight(label, fontSize);
+      const midX = startX + dx / 2 - tw / 2;
+      const midY = startY + dy / 2 - th / 2;
 
       const lblEl = {
         id: lblId,
@@ -504,8 +555,8 @@ function buildDocument(input, brand) {
         y: midY,
         width: tw,
         height: th,
-        text: conn.label,
-        originalText: conn.label,
+        text: label,
+        originalText: label,
         fontSize,
         fontFamily: brand.text.fontFamily,
         textAlign: 'center',
