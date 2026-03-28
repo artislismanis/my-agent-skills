@@ -322,10 +322,10 @@
       "id": "fr1",
       "type": "frame",
       "name": "Online Bookstore",
-      "x": 60,
-      "y": 60,
-      "width": 640,
-      "height": 620,
+      "x": 40,
+      "y": 40,
+      "width": 680,
+      "height": 660,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -398,9 +398,9 @@
     {
       "id": "a2",
       "type": "arrow",
-      "x": 560,
+      "x": 510,
       "y": 420,
-      "width": 360,
+      "width": 310,
       "height": 120,
       "points": [
         [
@@ -412,11 +412,11 @@
           60
         ],
         [
-          -360,
+          -310,
           60
         ],
         [
-          -360,
+          -310,
           120
         ]
       ],
@@ -424,7 +424,7 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.5,
+          0.25,
           1.03
         ]
       },
@@ -519,9 +519,9 @@
     {
       "id": "a4",
       "type": "arrow",
-      "x": 560,
+      "x": 610,
       "y": 420,
-      "width": 360,
+      "width": 310,
       "height": 120,
       "points": [
         [
@@ -533,11 +533,11 @@
           60
         ],
         [
-          360,
+          310,
           60
         ],
         [
-          360,
+          310,
           120
         ]
       ],
@@ -545,7 +545,7 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.5,
+          0.75,
           1.03
         ]
       },
@@ -615,7 +615,7 @@
     {
       "id": "al2",
       "type": "text",
-      "x": 368,
+      "x": 343,
       "y": 471.25,
       "width": 24,
       "height": 17.5,
@@ -675,7 +675,7 @@
     {
       "id": "al4",
       "type": "text",
-      "x": 720,
+      "x": 745,
       "y": 471.25,
       "width": 40,
       "height": 17.5,

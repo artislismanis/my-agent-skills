@@ -511,10 +511,10 @@
       "id": "fr1",
       "type": "frame",
       "name": "Order Service",
-      "x": 60,
-      "y": 60,
-      "width": 1000,
-      "height": 620,
+      "x": 40,
+      "y": 40,
+      "width": 1040,
+      "height": 660,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -587,9 +587,9 @@
     {
       "id": "a2",
       "type": "arrow",
-      "x": 560,
+      "x": 510,
       "y": 420,
-      "width": 360,
+      "width": 310,
       "height": 120,
       "points": [
         [
@@ -601,11 +601,11 @@
           60
         ],
         [
-          -360,
+          -310,
           60
         ],
         [
-          -360,
+          -310,
           120
         ]
       ],
@@ -613,7 +613,7 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.5,
+          0.25,
           1.03
         ]
       },
@@ -708,9 +708,9 @@
     {
       "id": "a4",
       "type": "arrow",
-      "x": 560,
+      "x": 610,
       "y": 420,
-      "width": 360,
+      "width": 310,
       "height": 120,
       "points": [
         [
@@ -722,11 +722,11 @@
           60
         ],
         [
-          360,
+          310,
           60
         ],
         [
-          360,
+          310,
           120
         ]
       ],
@@ -734,7 +734,7 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.5,
+          0.75,
           1.03
         ]
       },
@@ -969,7 +969,7 @@
     {
       "id": "al2",
       "type": "text",
-      "x": 364,
+      "x": 339,
       "y": 471.25,
       "width": 32,
       "height": 17.5,
@@ -1029,7 +1029,7 @@
     {
       "id": "al4",
       "type": "text",
-      "x": 692,
+      "x": 717,
       "y": 471.25,
       "width": 96,
       "height": 17.5,
@@ -1060,7 +1060,7 @@
       "id": "al5",
       "type": "text",
       "x": 160,
-      "y": 691.25,
+      "y": 730,
       "width": 80,
       "height": 17.5,
       "text": "REST/HTTPS",
@@ -1090,7 +1090,7 @@
       "id": "al6",
       "type": "text",
       "x": 544,
-      "y": 691.25,
+      "y": 730,
       "width": 32,
       "height": 17.5,
       "text": "gRPC",
@@ -1120,7 +1120,7 @@
       "id": "al7",
       "type": "text",
       "x": 908,
-      "y": 691.25,
+      "y": 730,
       "width": 24,
       "height": 17.5,
       "text": "SQL",

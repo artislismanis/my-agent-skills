@@ -206,84 +206,117 @@ function toFixedPoint(pos, edgePt) {
 }
 
 /**
- * Return the centre point on a named face of a shape, plus its elbowed-arrow fixedPoint.
- * Face offsets slightly beyond the edge so elbowed binding gaps render correctly.
+ * Return a point on a named face of a shape at parameter t (0→1 along the edge).
+ * t = 0.5 gives the face centre. fixedPoint uses ~0.03 offset for elbowed binding gap.
  */
-function getFacePoint(pos, face) {
-  const cx = pos.x + pos.w / 2;
-  const cy = pos.y + pos.h / 2;
+function getFacePointAt(pos, face, t = 0.5) {
   switch (face) {
-    case 'top':    return { pt: [cx,          pos.y],          fp: [0.5,  -0.03] };
-    case 'bottom': return { pt: [cx,          pos.y + pos.h],  fp: [0.5,   1.03] };
-    case 'left':   return { pt: [pos.x,       cy],             fp: [-0.03, 0.5]  };
-    case 'right':  return { pt: [pos.x + pos.w, cy],           fp: [1.03,  0.5]  };
-    default:       return { pt: [cx, cy],                      fp: [0.5,   0.5]  };
+    case 'top':    return { pt: [pos.x + pos.w * t, pos.y],          fp: [t,     -0.03] };
+    case 'bottom': return { pt: [pos.x + pos.w * t, pos.y + pos.h],  fp: [t,      1.03] };
+    case 'left':   return { pt: [pos.x,             pos.y + pos.h * t], fp: [-0.03, t]   };
+    case 'right':  return { pt: [pos.x + pos.w,     pos.y + pos.h * t], fp: [1.03,  t]   };
+    default:       return { pt: [pos.x + pos.w / 2, pos.y + pos.h / 2], fp: [0.5, 0.5]  };
+  }
+}
+
+// ─── Arrow face selection ───────────────────────────────────────────────────
+
+const AXIS_TOL = 2; // px — treat as axis-aligned below this threshold
+
+/**
+ * Determine which faces an arrow should exit/enter based on shape positions.
+ *
+ * LR layout:
+ *   Axis-aligned (|relY| ≤ TOL) → straight horizontal: right → left
+ *   Large vertical offset (> shape height) → L-shape: bottom → left (or top → left)
+ *   Small vertical offset → S-shape: right → left with horizontal-first bend
+ *
+ * TB layout:
+ *   Axis-aligned (|relX| ≤ TOL) → straight vertical: bottom → top
+ *   Non-aligned → S-shape: bottom → top with vertical-first bend
+ */
+function determineFaces(fromPos, toPos) {
+  const relX = (toPos.x + toPos.w / 2) - (fromPos.x + fromPos.w / 2);
+  const relY = (toPos.y + toPos.h / 2) - (fromPos.y + fromPos.h / 2);
+
+  if (isLR) {
+    if (Math.abs(relY) <= AXIS_TOL) {
+      return { exitFace: relX >= 0 ? 'right' : 'left',
+               entryFace: relX >= 0 ? 'left' : 'right', straight: true };
+    }
+    // Target significantly below/above: L-shape avoids crossing horizontal arrows
+    if (Math.abs(relY) > Math.max(fromPos.h, toPos.h)) {
+      return { exitFace: relY >= 0 ? 'bottom' : 'top',
+               entryFace: relX >= 0 ? 'left' : 'right', straight: false };
+    }
+    return { exitFace: relX >= 0 ? 'right' : 'left',
+             entryFace: relX >= 0 ? 'left' : 'right', straight: false };
+  } else {
+    if (Math.abs(relX) <= AXIS_TOL) {
+      return { exitFace: relY >= 0 ? 'bottom' : 'top',
+               entryFace: relY >= 0 ? 'top' : 'bottom', straight: true };
+    }
+    return { exitFace: relY >= 0 ? 'bottom' : 'top',
+             entryFace: relY >= 0 ? 'top' : 'bottom', straight: false };
   }
 }
 
 /**
  * Route an arrow between two shapes.
- * Returns start/end positions, fixedPoints, points array, and elbowed flag.
  *
- * Axis-aligned arrows (|relY| ≤ TOL in LR, |relX| ≤ TOL in TB) stay straight.
- * All other arrows get a 4-point elbowed path with one right-angle bend.
+ * @param {object} faces - { exitFace, entryFace, straight } from determineFaces()
+ * @param {number} startT - parameter along exit face edge (0-1). 0.5 = centre.
+ * @param {number} endT   - parameter along entry face edge (0-1).
  *
- * Routing strategy:
- *   LR layout — primary axis horizontal: exit right, enter left, bend mid-X.
- *   TB layout — primary axis vertical:   exit bottom, enter top, bend mid-Y.
- *               Backward edges (target above): exit top, enter bottom, bend mid-Y.
+ * When exit and entry are on perpendicular axes (e.g. bottom → left), produces
+ * an L-shape (3 points, 1 bend). When on the same axis (e.g. bottom → top),
+ * produces an S-shape (4 points, 2 bends).
  */
-function routeArrow(fromPos, toPos) {
-  const AXIS_TOL = 2; // px — treat as axis-aligned below this threshold
+function routeArrow(fromPos, toPos, faces, startT = 0.5, endT = 0.5) {
+  const { exitFace, entryFace, straight } = faces;
 
-  const fromCx = fromPos.x + fromPos.w / 2;
-  const fromCy = fromPos.y + fromPos.h / 2;
-  const toCx   = toPos.x   + toPos.w   / 2;
-  const toCy   = toPos.y   + toPos.h   / 2;
-  const relX   = toCx - fromCx;
-  const relY   = toCy - fromCy;
-
-  if (isLR) {
-    if (Math.abs(relY) <= AXIS_TOL) {
-      // Pure horizontal — straight 2-point arrow, orbit mode
-      const [startX, startY] = getEdgePoint(fromPos, toCx, toCy);
-      const [endX,   endY  ] = getEdgePoint(toPos,   fromCx, fromCy);
-      const startFP = toFixedPoint(fromPos, [startX, startY]);
-      const endFP   = toFixedPoint(toPos,   [endX,   endY  ]);
-      return { startX, startY, endX, endY, startFP, endFP,
-               points: [[0, 0], [endX - startX, endY - startY]], elbowed: false };
-    }
-    // Non-aligned in LR: horizontal-first elbow
-    const exitFace  = relX >= 0 ? 'right' : 'left';
-    const entryFace = relX >= 0 ? 'left'  : 'right';
-    const { pt: [startX, startY], fp: startFP } = getFacePoint(fromPos, exitFace);
-    const { pt: [endX,   endY  ], fp: endFP   } = getFacePoint(toPos,   entryFace);
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const bendX = dx / 2;
+  if (straight) {
+    // Axis-aligned: orbit mode with edge-point calculation
+    const fromCx = fromPos.x + fromPos.w / 2;
+    const fromCy = fromPos.y + fromPos.h / 2;
+    const toCx   = toPos.x   + toPos.w   / 2;
+    const toCy   = toPos.y   + toPos.h   / 2;
+    const [startX, startY] = getEdgePoint(fromPos, toCx, toCy);
+    const [endX,   endY  ] = getEdgePoint(toPos,   fromCx, fromCy);
+    const startFP = toFixedPoint(fromPos, [startX, startY]);
+    const endFP   = toFixedPoint(toPos,   [endX,   endY  ]);
     return { startX, startY, endX, endY, startFP, endFP,
-             points: [[0, 0], [bendX, 0], [bendX, dy], [dx, dy]], elbowed: true };
-  } else {
-    if (Math.abs(relX) <= AXIS_TOL) {
-      // Pure vertical — straight 2-point arrow, orbit mode
-      const [startX, startY] = getEdgePoint(fromPos, toCx, toCy);
-      const [endX,   endY  ] = getEdgePoint(toPos,   fromCx, fromCy);
-      const startFP = toFixedPoint(fromPos, [startX, startY]);
-      const endFP   = toFixedPoint(toPos,   [endX,   endY  ]);
-      return { startX, startY, endX, endY, startFP, endFP,
-               points: [[0, 0], [endX - startX, endY - startY]], elbowed: false };
-    }
-    // Non-aligned in TB: vertical-first elbow
-    const exitFace  = relY >= 0 ? 'bottom' : 'top';
-    const entryFace = relY >= 0 ? 'top'    : 'bottom';
-    const { pt: [startX, startY], fp: startFP } = getFacePoint(fromPos, exitFace);
-    const { pt: [endX,   endY  ], fp: endFP   } = getFacePoint(toPos,   entryFace);
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const bendY = dy / 2;
-    return { startX, startY, endX, endY, startFP, endFP,
-             points: [[0, 0], [0, bendY], [dx, bendY], [dx, dy]], elbowed: true };
+             points: [[0, 0], [endX - startX, endY - startY]], elbowed: false };
   }
+
+  // Elbowed routing with face-parameterised start/end
+  const { pt: [startX, startY], fp: startFP } = getFacePointAt(fromPos, exitFace, startT);
+  const { pt: [endX,   endY  ], fp: endFP   } = getFacePointAt(toPos,   entryFace, endT);
+  const dx = endX - startX;
+  const dy = endY - startY;
+
+  // Choose L-shape (1 bend) or S-shape (2 bends) based on face axis pairing
+  const exitVertical  = (exitFace  === 'top' || exitFace  === 'bottom');
+  const entryVertical = (entryFace === 'top' || entryFace === 'bottom');
+  let points;
+
+  if (exitVertical !== entryVertical) {
+    // Perpendicular axes → L-shape: 3 points, 1 bend
+    points = exitVertical
+      ? [[0, 0], [0, dy], [dx, dy]]   // vertical first, then horizontal
+      : [[0, 0], [dx, 0], [dx, dy]];  // horizontal first, then vertical
+  } else {
+    // Same axis → S-shape: 4 points, 2 bends at midpoint
+    if (exitVertical) {
+      const bendY = dy / 2;
+      points = [[0, 0], [0, bendY], [dx, bendY], [dx, dy]];
+    } else {
+      const bendX = dx / 2;
+      points = [[0, 0], [bendX, 0], [bendX, dy], [dx, dy]];
+    }
+  }
+
+  return { startX, startY, endX, endY, startFP, endFP, points, elbowed: true };
 }
 
 // ─── ID generation ───────────────────────────────────────────────────────────
@@ -346,22 +379,59 @@ function computeLayout(elements, connections) {
 
   if (isLR) {
     // Left-to-right: depth = column, position within depth = row
-    let x = ox;
     const depths = Object.keys(byDepth).sort((a, b) => a - b);
-    for (const d of depths) {
+    const maxSlots = Math.max(...depths.map(d => byDepth[d].length));
+
+    // Compute max height per row slot across all columns so shapes in the
+    // same row slot share a common vertical centre (visual-language rule:
+    // centre-line alignment eliminates diagonal arrows).
+    const slotMaxH = [];
+    for (let slot = 0; slot < maxSlots; slot++) {
+      let maxH = 0;
+      for (const d of depths) {
+        const ids = byDepth[d];
+        if (slot < ids.length) {
+          const el = elements.find(e => e.id === ids[slot]);
+          maxH = Math.max(maxH, el.size?.[1] ?? DEFAULT_SIZE[1]);
+        }
+      }
+      slotMaxH.push(maxH);
+    }
+
+    // Pre-compute which column transitions have labelled connections, so the
+    // layout uses horizontalSpacingLabelled (240px) rather than the default
+    // horizontalSpacing (160px). This ensures labelled arrows have enough
+    // visible line on both sides of their label (visual-language rule).
+    const depthSet = depths.map(d => new Set(byDepth[d]));
+
+    let x = ox;
+    for (let di = 0; di < depths.length; di++) {
+      const d = depths[di];
       const ids = byDepth[d];
       const colWidth = Math.max(...ids.map(id => {
         const el = elements.find(e => e.id === id);
         return (el.size?.[0] ?? DEFAULT_SIZE[0]);
       }));
       let y = oy;
-      for (const id of ids) {
+      for (let slot = 0; slot < ids.length; slot++) {
+        const id = ids[slot];
         const el = elements.find(e => e.id === id);
         const [w, h] = el.size ?? DEFAULT_SIZE;
-        positions[id] = { x, y, w, h };
-        y += h + layout.verticalSpacing;
+        // Centre within the slot height so all shapes at slot N share the same cy
+        const yOffset = (slotMaxH[slot] - h) / 2;
+        positions[id] = { x, y: y + yOffset, w, h };
+        y += slotMaxH[slot] + layout.verticalSpacing;
       }
-      x += colWidth + layout.horizontalSpacing;
+      // Use wider spacing after this column if any connection to the next
+      // column carries a label (reserves room for the label text).
+      let colSpacing = layout.horizontalSpacing;
+      if (di < depths.length - 1) {
+        const fromIds = depthSet[di];
+        const toIds   = depthSet[di + 1];
+        const hasLabel = connections.some(c => fromIds.has(c.from) && toIds.has(c.to) && c.label);
+        if (hasLabel) colSpacing = layout.horizontalSpacingLabelled;
+      }
+      x += colWidth + colSpacing;
     }
   } else {
     // Top-to-bottom: depth = row, position within depth = column
@@ -559,23 +629,85 @@ function buildDocument(input, brand) {
   const arrowElements = [];
   const arrowTextElements = [];
 
-  // Minimum clearance between an arrow label and a frame border (px)
-  const FRAME_LABEL_GAP = 8;
+  // Breathing space between arrow labels and frame borders (px)
+  const FRAME_LABEL_GAP = 30;
 
-  for (const conn of (input.connections ?? [])) {
+  const conns = input.connections ?? [];
+
+  // Pre-scan: determine exit/entry faces and group by shared face to distribute
+  // fixedPoints evenly (e.g. 25%/50%/75% when 3 arrows exit the same face).
+  const connFaces = [];    // per-connection { exitFace, entryFace, straight } | null
+  const exitGroups  = {};  // `${userId}:${face}` → [connIndex, …]
+  const entryGroups = {};  // `${userId}:${face}` → [connIndex, …]
+
+  for (let ci = 0; ci < conns.length; ci++) {
+    const conn = conns[ci];
     const fromExId = idMap[conn.from];
-    const toExId = idMap[conn.to];
-    if (!fromExId || !toExId) continue;
+    const toExId   = idMap[conn.to];
+    if (!fromExId || !toExId) { connFaces.push(null); continue; }
 
     const fromSpec = shapeElements.find(s => s.exId === fromExId);
-    const toSpec = shapeElements.find(s => s.exId === toExId);
-    if (!fromSpec || !toSpec) continue;
+    const toSpec   = shapeElements.find(s => s.exId === toExId);
+    if (!fromSpec || !toSpec) { connFaces.push(null); continue; }
+
+    const faces = determineFaces(fromSpec.pos, toSpec.pos);
+    connFaces.push(faces);
+
+    (exitGroups[`${conn.from}:${faces.exitFace}`] ??= []).push(ci);
+    (entryGroups[`${conn.to}:${faces.entryFace}`] ??= []).push(ci);
+  }
+
+  // Assign distributed t-values for each face group with multiple arrows.
+  // Sort by target/source position along the transverse axis of the face, then
+  // assign (i+1)/(n+1) — e.g. 0.25, 0.5, 0.75 for 3 arrows.
+  const startTs = new Array(conns.length).fill(0.5);
+  const endTs   = new Array(conns.length).fill(0.5);
+
+  for (const [key, indices] of Object.entries(exitGroups)) {
+    if (indices.length < 2) continue;
+    const face = key.split(':').pop();
+    const transverseIsX = (face === 'bottom' || face === 'top');
+    indices.sort((a, b) => {
+      const pA = positions[conns[a].to] ?? { x: 0, y: 0, w: 0, h: 0 };
+      const pB = positions[conns[b].to] ?? { x: 0, y: 0, w: 0, h: 0 };
+      return transverseIsX
+        ? (pA.x + pA.w / 2) - (pB.x + pB.w / 2)
+        : (pA.y + pA.h / 2) - (pB.y + pB.h / 2);
+    });
+    const n = indices.length;
+    for (let i = 0; i < n; i++) startTs[indices[i]] = (i + 1) / (n + 1);
+  }
+
+  for (const [key, indices] of Object.entries(entryGroups)) {
+    if (indices.length < 2) continue;
+    const face = key.split(':').pop();
+    const transverseIsX = (face === 'bottom' || face === 'top');
+    indices.sort((a, b) => {
+      const pA = positions[conns[a].from] ?? { x: 0, y: 0, w: 0, h: 0 };
+      const pB = positions[conns[b].from] ?? { x: 0, y: 0, w: 0, h: 0 };
+      return transverseIsX
+        ? (pA.x + pA.w / 2) - (pB.x + pB.w / 2)
+        : (pA.y + pA.h / 2) - (pB.y + pB.h / 2);
+    });
+    const n = indices.length;
+    for (let i = 0; i < n; i++) endTs[indices[i]] = (i + 1) / (n + 1);
+  }
+
+  for (let ci = 0; ci < conns.length; ci++) {
+    const conn  = conns[ci];
+    const faces = connFaces[ci];
+    if (!faces) continue;
+
+    const fromExId = idMap[conn.from];
+    const toExId   = idMap[conn.to];
+    const fromSpec = shapeElements.find(s => s.exId === fromExId);
+    const toSpec   = shapeElements.find(s => s.exId === toExId);
 
     const arrId = nextId('a');
     const isDashed = conn.style === 'dashed';
 
-    // Route the arrow — elbowed when shapes are not axis-aligned
-    const route = routeArrow(fromSpec.pos, toSpec.pos);
+    // Route the arrow with distributed fixedPoints
+    const route = routeArrow(fromSpec.pos, toSpec.pos, faces, startTs[ci], endTs[ci]);
     const { startX, startY, endX, endY, startFP, endFP, points, elbowed } = route;
     const dx = endX - startX;
     const dy = endY - startY;
@@ -622,34 +754,66 @@ function buildDocument(input, brand) {
     if (conn.label) {
       const lblId = nextId('al');
       const fontSize = brand.text.fontSize.arrowLabel;
-      const label = normalizeText(conn.label);
-      const tw = estimateTextWidth(label, fontSize);
-      const th = textHeight(label, fontSize);
+      let label = normalizeText(conn.label);
+      let tw = estimateTextWidth(label, fontSize);
+      let th = textHeight(label, fontSize);
 
       // Start at geometric midpoint of the straight-line segment
       let midX = startX + dx / 2 - tw / 2;
       let midY = startY + dy / 2 - th / 2;
 
-      // Shift label so it doesn't straddle any frame border
+      // Shift label so it doesn't straddle any frame border.
+      // If the label is too wide for the available space, auto-wrap it to
+      // two lines at the word boundary that minimises the maximum line width.
       for (const fr of frameElements) {
         const frRight  = fr.x + fr.width;
         const frBottom = fr.y + fr.height;
-        const lblRight  = midX + tw;
-        const lblBottom = midY + th;
 
-        // Left border
-        if (midX < fr.x && lblRight > fr.x) {
-          midX = fr.x - FRAME_LABEL_GAP - tw;
+        // ── Horizontal straddle (left or right border) ──
+        let straddledX = null; // the x-coordinate of the border being straddled
+        if (midX < fr.x && midX + tw > fr.x)     straddledX = fr.x;
+        if (midX < frRight && midX + tw > frRight) straddledX = frRight;
+
+        if (straddledX !== null) {
+          // Available space on each side of the border within the arrow span
+          const arrowMinX = Math.min(startX, startX + dx);
+          const arrowMaxX = Math.max(startX, startX + dx);
+          const spaceLeft  = straddledX - FRAME_LABEL_GAP - arrowMinX;
+          const spaceRight = arrowMaxX - straddledX - FRAME_LABEL_GAP;
+
+          // If label doesn't fit on either side, try word-wrapping
+          if (tw > Math.max(spaceLeft, spaceRight) && label.includes(' ')) {
+            const words = label.split(' ');
+            let bestLabel = label;
+            let bestWidth = tw;
+            for (let wi = 1; wi < words.length; wi++) {
+              const l1 = words.slice(0, wi).join(' ');
+              const l2 = words.slice(wi).join(' ');
+              const maxW = Math.max(estimateTextWidth(l1, fontSize),
+                                    estimateTextWidth(l2, fontSize));
+              if (maxW < bestWidth) { bestWidth = maxW; bestLabel = l1 + '\n' + l2; }
+            }
+            label = bestLabel;
+            tw = bestWidth;
+            th = textHeight(label, fontSize);
+            midX = startX + dx / 2 - tw / 2;
+            midY = startY + dy / 2 - th / 2;
+          }
+
+          // Re-check straddle with (possibly wrapped) label and push outside
+          if (midX < fr.x && midX + tw > fr.x) {
+            midX = fr.x - FRAME_LABEL_GAP - tw;
+          }
+          if (midX < frRight && midX + tw > frRight) {
+            midX = frRight + FRAME_LABEL_GAP;
+          }
         }
-        // Right border
-        if (midX < frRight && lblRight > frRight) {
-          midX = frRight + FRAME_LABEL_GAP;
-        }
-        // Top border
+
+        // ── Vertical straddle (top or bottom border) ──
+        const lblBottom = midY + th;
         if (midY < fr.y && lblBottom > fr.y) {
           midY = fr.y - FRAME_LABEL_GAP - th;
         }
-        // Bottom border
         if (midY < frBottom && lblBottom > frBottom) {
           midY = frBottom + FRAME_LABEL_GAP;
         }

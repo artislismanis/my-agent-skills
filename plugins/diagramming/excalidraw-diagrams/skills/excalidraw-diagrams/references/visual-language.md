@@ -64,7 +64,7 @@ clarity and professionalism.
 - **Minimum gap between elements**: `40px`
 - **Arrow gap from shape border**: `8px` (implicit in `orbit` mode bindings)
 - **Standard shape size**: `160 × 80` for boxes, `80 × 80` for circles/diamonds
-- **Frame padding**: `40px` inside frame boundary around child elements
+- **Frame padding**: `60px` inside frame boundary around child elements
 - **Horizontal spacing (left-to-right layouts)**: `160px` minimum between shape
   edges for unlabelled arrows. For labelled arrows, use `label_width + 160px`
   — this leaves ~80px of visible arrow line on each side of the label. Most

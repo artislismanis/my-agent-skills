@@ -51,7 +51,7 @@ JSON pattern, sizing formulas, and readability rules.
 - Arrange in-scope system at centre
 - Users/persons at top or left
 - External systems at right or bottom
-- Boundary frame wraps the in-scope system (40px padding)
+- Boundary frame wraps the in-scope system (60px padding)
 
 ### Example Structure (3-element context)
 

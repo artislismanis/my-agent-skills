@@ -58,7 +58,7 @@
     "arrowGap": 8,
     "standardShape": [160, 80],
     "standardCircle": [80, 80],
-    "framePadding": 40,
+    "framePadding": 60,
     "canvasOrigin": [100, 100],
     "horizontalSpacing": 160,
     "horizontalSpacingLabelled": 240,
