@@ -205,6 +205,87 @@ function toFixedPoint(pos, edgePt) {
   ];
 }
 
+/**
+ * Return the centre point on a named face of a shape, plus its elbowed-arrow fixedPoint.
+ * Face offsets slightly beyond the edge so elbowed binding gaps render correctly.
+ */
+function getFacePoint(pos, face) {
+  const cx = pos.x + pos.w / 2;
+  const cy = pos.y + pos.h / 2;
+  switch (face) {
+    case 'top':    return { pt: [cx,          pos.y],          fp: [0.5,  -0.03] };
+    case 'bottom': return { pt: [cx,          pos.y + pos.h],  fp: [0.5,   1.03] };
+    case 'left':   return { pt: [pos.x,       cy],             fp: [-0.03, 0.5]  };
+    case 'right':  return { pt: [pos.x + pos.w, cy],           fp: [1.03,  0.5]  };
+    default:       return { pt: [cx, cy],                      fp: [0.5,   0.5]  };
+  }
+}
+
+/**
+ * Route an arrow between two shapes.
+ * Returns start/end positions, fixedPoints, points array, and elbowed flag.
+ *
+ * Axis-aligned arrows (|relY| ≤ TOL in LR, |relX| ≤ TOL in TB) stay straight.
+ * All other arrows get a 4-point elbowed path with one right-angle bend.
+ *
+ * Routing strategy:
+ *   LR layout — primary axis horizontal: exit right, enter left, bend mid-X.
+ *   TB layout — primary axis vertical:   exit bottom, enter top, bend mid-Y.
+ *               Backward edges (target above): exit top, enter bottom, bend mid-Y.
+ */
+function routeArrow(fromPos, toPos) {
+  const AXIS_TOL = 2; // px — treat as axis-aligned below this threshold
+
+  const fromCx = fromPos.x + fromPos.w / 2;
+  const fromCy = fromPos.y + fromPos.h / 2;
+  const toCx   = toPos.x   + toPos.w   / 2;
+  const toCy   = toPos.y   + toPos.h   / 2;
+  const relX   = toCx - fromCx;
+  const relY   = toCy - fromCy;
+
+  if (isLR) {
+    if (Math.abs(relY) <= AXIS_TOL) {
+      // Pure horizontal — straight 2-point arrow, orbit mode
+      const [startX, startY] = getEdgePoint(fromPos, toCx, toCy);
+      const [endX,   endY  ] = getEdgePoint(toPos,   fromCx, fromCy);
+      const startFP = toFixedPoint(fromPos, [startX, startY]);
+      const endFP   = toFixedPoint(toPos,   [endX,   endY  ]);
+      return { startX, startY, endX, endY, startFP, endFP,
+               points: [[0, 0], [endX - startX, endY - startY]], elbowed: false };
+    }
+    // Non-aligned in LR: horizontal-first elbow
+    const exitFace  = relX >= 0 ? 'right' : 'left';
+    const entryFace = relX >= 0 ? 'left'  : 'right';
+    const { pt: [startX, startY], fp: startFP } = getFacePoint(fromPos, exitFace);
+    const { pt: [endX,   endY  ], fp: endFP   } = getFacePoint(toPos,   entryFace);
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const bendX = dx / 2;
+    return { startX, startY, endX, endY, startFP, endFP,
+             points: [[0, 0], [bendX, 0], [bendX, dy], [dx, dy]], elbowed: true };
+  } else {
+    if (Math.abs(relX) <= AXIS_TOL) {
+      // Pure vertical — straight 2-point arrow, orbit mode
+      const [startX, startY] = getEdgePoint(fromPos, toCx, toCy);
+      const [endX,   endY  ] = getEdgePoint(toPos,   fromCx, fromCy);
+      const startFP = toFixedPoint(fromPos, [startX, startY]);
+      const endFP   = toFixedPoint(toPos,   [endX,   endY  ]);
+      return { startX, startY, endX, endY, startFP, endFP,
+               points: [[0, 0], [endX - startX, endY - startY]], elbowed: false };
+    }
+    // Non-aligned in TB: vertical-first elbow
+    const exitFace  = relY >= 0 ? 'bottom' : 'top';
+    const entryFace = relY >= 0 ? 'top'    : 'bottom';
+    const { pt: [startX, startY], fp: startFP } = getFacePoint(fromPos, exitFace);
+    const { pt: [endX,   endY  ], fp: endFP   } = getFacePoint(toPos,   entryFace);
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const bendY = dy / 2;
+    return { startX, startY, endX, endY, startFP, endFP,
+             points: [[0, 0], [0, bendY], [dx, bendY], [dx, dy]], elbowed: true };
+  }
+}
+
 // ─── ID generation ───────────────────────────────────────────────────────────
 
 const counters = {};
@@ -478,6 +559,9 @@ function buildDocument(input, brand) {
   const arrowElements = [];
   const arrowTextElements = [];
 
+  // Minimum clearance between an arrow label and a frame border (px)
+  const FRAME_LABEL_GAP = 8;
+
   for (const conn of (input.connections ?? [])) {
     const fromExId = idMap[conn.from];
     const toExId = idMap[conn.to];
@@ -490,34 +574,30 @@ function buildDocument(input, brand) {
     const arrId = nextId('a');
     const isDashed = conn.style === 'dashed';
 
-    // Calculate edge-to-edge arrow positions for the static renderer
-    const fromCx = fromSpec.pos.x + fromSpec.pos.w / 2;
-    const fromCy = fromSpec.pos.y + fromSpec.pos.h / 2;
-    const toCx = toSpec.pos.x + toSpec.pos.w / 2;
-    const toCy = toSpec.pos.y + toSpec.pos.h / 2;
-
-    const [startX, startY] = getEdgePoint(fromSpec.pos, toCx, toCy);
-    const [endX, endY]     = getEdgePoint(toSpec.pos, fromCx, fromCy);
-
+    // Route the arrow — elbowed when shapes are not axis-aligned
+    const route = routeArrow(fromSpec.pos, toSpec.pos);
+    const { startX, startY, endX, endY, startFP, endFP, points, elbowed } = route;
     const dx = endX - startX;
     const dy = endY - startY;
 
-    const startFP = toFixedPoint(fromSpec.pos, [startX, startY]);
-    const endFP   = toFixedPoint(toSpec.pos,   [endX,   endY]);
+    // Width/height = max absolute extent across all points
+    const arrowW = Math.max(...points.map(p => Math.abs(p[0])), 1);
+    const arrowH = Math.max(...points.map(p => Math.abs(p[1])), 1);
 
     const arrow = {
       id: arrId,
       type: 'arrow',
       x: startX,
       y: startY,
-      width: Math.abs(dx),
-      height: Math.abs(dy),
-      points: [[0, 0], [dx, dy]],
+      width: arrowW,
+      height: arrowH,
+      points,
       startBinding: { mode: 'orbit', elementId: fromExId, fixedPoint: startFP },
       endBinding:   { mode: 'orbit', elementId: toExId,   fixedPoint: endFP },
       startArrowhead: conn.bidirectional ? 'arrow' : null,
       endArrowhead: brand.arrow.endArrowhead,
-      elbowed: false,
+      elbowed,
+      ...(elbowed ? { fixedSegments: null, startIsSpecial: null, endIsSpecial: null } : {}),
       backgroundColor: 'transparent',
       fillStyle: 'solid',
       strokeColor: brand.colors.stroke,
@@ -545,8 +625,35 @@ function buildDocument(input, brand) {
       const label = normalizeText(conn.label);
       const tw = estimateTextWidth(label, fontSize);
       const th = textHeight(label, fontSize);
-      const midX = startX + dx / 2 - tw / 2;
-      const midY = startY + dy / 2 - th / 2;
+
+      // Start at geometric midpoint of the straight-line segment
+      let midX = startX + dx / 2 - tw / 2;
+      let midY = startY + dy / 2 - th / 2;
+
+      // Shift label so it doesn't straddle any frame border
+      for (const fr of frameElements) {
+        const frRight  = fr.x + fr.width;
+        const frBottom = fr.y + fr.height;
+        const lblRight  = midX + tw;
+        const lblBottom = midY + th;
+
+        // Left border
+        if (midX < fr.x && lblRight > fr.x) {
+          midX = fr.x - FRAME_LABEL_GAP - tw;
+        }
+        // Right border
+        if (midX < frRight && lblRight > frRight) {
+          midX = frRight + FRAME_LABEL_GAP;
+        }
+        // Top border
+        if (midY < fr.y && lblBottom > fr.y) {
+          midY = fr.y - FRAME_LABEL_GAP - th;
+        }
+        // Bottom border
+        if (midY < frBottom && lblBottom > frBottom) {
+          midY = frBottom + FRAME_LABEL_GAP;
+        }
+      }
 
       const lblEl = {
         id: lblId,

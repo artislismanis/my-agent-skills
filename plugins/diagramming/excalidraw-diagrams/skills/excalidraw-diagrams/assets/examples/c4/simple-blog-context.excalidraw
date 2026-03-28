@@ -283,38 +283,49 @@
       "id": "a1",
       "type": "arrow",
       "x": 260,
-      "y": 142.35294117647058,
+      "y": 140,
       "width": 160,
-      "height": 4.705882352941188,
+      "height": 10,
       "points": [
         [
           0,
           0
         ],
         [
+          80,
+          0
+        ],
+        [
+          80,
+          10
+        ],
+        [
           160,
-          4.705882352941188
+          10
         ]
       ],
       "startBinding": {
         "mode": "orbit",
         "elementId": "s1",
         "fixedPoint": [
-          1,
-          0.5294117647058822
+          1.03,
+          0.5
         ]
       },
       "endBinding": {
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0,
-          0.4705882352941177
+          -0.03,
+          0.5
         ]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -338,38 +349,49 @@
       "id": "a2",
       "type": "arrow",
       "x": 620,
-      "y": 147.05882352941177,
+      "y": 150,
       "width": 160,
-      "height": 4.705882352941188,
+      "height": 10,
       "points": [
         [
           0,
           0
         ],
         [
+          80,
+          0
+        ],
+        [
+          80,
+          -10
+        ],
+        [
           160,
-          -4.705882352941188
+          -10
         ]
       ],
       "startBinding": {
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          1,
-          0.4705882352941177
+          1.03,
+          0.5
         ]
       },
       "endBinding": {
         "mode": "orbit",
         "elementId": "s3",
         "fixedPoint": [
-          0,
-          0.5294117647058822
+          -0.03,
+          0.5
         ]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -392,39 +414,50 @@
     {
       "id": "a3",
       "type": "arrow",
-      "x": 610,
-      "y": 200,
-      "width": 180,
-      "height": 100,
+      "x": 620,
+      "y": 150,
+      "width": 160,
+      "height": 200,
       "points": [
         [
           0,
           0
         ],
         [
-          180,
-          100
+          80,
+          0
+        ],
+        [
+          80,
+          200
+        ],
+        [
+          160,
+          200
         ]
       ],
       "startBinding": {
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.95,
-          1
+          1.03,
+          0.5
         ]
       },
       "endBinding": {
         "mode": "orbit",
         "elementId": "s4",
         "fixedPoint": [
-          0.05,
-          0
+          -0.03,
+          0.5
         ]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -447,8 +480,8 @@
     {
       "id": "al1",
       "type": "text",
-      "x": 292,
-      "y": 135.95588235294116,
+      "x": 276,
+      "y": 136.25,
       "width": 96,
       "height": 17.5,
       "text": "Writes posts",
@@ -477,8 +510,8 @@
     {
       "id": "al2",
       "type": "text",
-      "x": 652,
-      "y": 135.95588235294116,
+      "x": 668,
+      "y": 136.25,
       "width": 96,
       "height": 17.5,
       "text": "Serves posts",
@@ -507,7 +540,7 @@
     {
       "id": "al3",
       "type": "text",
-      "x": 636,
+      "x": 668,
       "y": 241.25,
       "width": 128,
       "height": 17.5,

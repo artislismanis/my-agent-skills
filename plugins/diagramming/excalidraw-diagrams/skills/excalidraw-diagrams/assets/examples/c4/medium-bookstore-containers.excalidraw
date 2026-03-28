@@ -345,7 +345,7 @@
       "type": "arrow",
       "x": 560,
       "y": 200,
-      "width": 0,
+      "width": 1,
       "height": 120,
       "points": [
         [
@@ -398,9 +398,9 @@
     {
       "id": "a2",
       "type": "arrow",
-      "x": 478.1818181818182,
+      "x": 560,
       "y": 420,
-      "width": 196.36363636363637,
+      "width": 360,
       "height": 120,
       "points": [
         [
@@ -408,7 +408,15 @@
           0
         ],
         [
-          -196.36363636363637,
+          0,
+          60
+        ],
+        [
+          -360,
+          60
+        ],
+        [
+          -360,
           120
         ]
       ],
@@ -416,21 +424,24 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.09090909090909094,
-          1
+          0.5,
+          1.03
         ]
       },
       "endBinding": {
         "mode": "orbit",
         "elementId": "s3",
         "fixedPoint": [
-          0.9090909090909091,
-          0
+          0.5,
+          -0.03
         ]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -455,7 +466,7 @@
       "type": "arrow",
       "x": 560,
       "y": 420,
-      "width": 0,
+      "width": 1,
       "height": 120,
       "points": [
         [
@@ -508,9 +519,9 @@
     {
       "id": "a4",
       "type": "arrow",
-      "x": 641.8181818181818,
+      "x": 560,
       "y": 420,
-      "width": 196.3636363636365,
+      "width": 360,
       "height": 120,
       "points": [
         [
@@ -518,7 +529,15 @@
           0
         ],
         [
-          196.3636363636365,
+          0,
+          60
+        ],
+        [
+          360,
+          60
+        ],
+        [
+          360,
           120
         ]
       ],
@@ -526,21 +545,24 @@
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.9090909090909087,
-          1
+          0.5,
+          1.03
         ]
       },
       "endBinding": {
         "mode": "orbit",
         "elementId": "s5",
         "fixedPoint": [
-          0.09090909090909122,
-          0
+          0.5,
+          -0.03
         ]
       },
       "startArrowhead": null,
       "endArrowhead": "arrow",
-      "elbowed": false,
+      "elbowed": true,
+      "fixedSegments": null,
+      "startIsSpecial": null,
+      "endIsSpecial": null,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
