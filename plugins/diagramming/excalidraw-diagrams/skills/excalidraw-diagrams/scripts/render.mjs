@@ -5,6 +5,9 @@
  * Usage:
  *   node render.mjs <input-path> [output-path] [--width <pixels>]
  *
+ * By default renders at life-size (canvas coordinates = pixels, no scaling).
+ * Pass --width to constrain the longest dimension to a specific pixel count.
+ *
  * Prerequisites:
  *   Node.js 22+
  *   npm install  (run once in this directory)
@@ -24,12 +27,13 @@ const args = process.argv.slice(2);
 
 if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
   console.log('Usage: node render.mjs <input-path> [output-path] [--width <pixels>]');
+  console.log('Default: life-size render (canvas coordinates = pixels, no scaling).');
   process.exit(args.length === 0 ? 1 : 0);
 }
 
 let inputPath = null;
 let outputPath = null;
-let width = 1200;
+let width = null;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--width' && args[i + 1]) {
@@ -216,7 +220,7 @@ console.warn = (...args) => {
 };
 
 try {
-  const canvas = await exportToCanvas({
+  const exportOpts = {
     elements: doc.elements,
     appState: {
       exportBackground: true,
@@ -224,8 +228,9 @@ try {
       exportWithDarkMode: false,
     },
     files: doc.files || {},
-    maxWidthOrHeight: width,
-  });
+  };
+  if (width !== null) exportOpts.maxWidthOrHeight = width;
+  const canvas = await exportToCanvas(exportOpts);
 
   const renderWidth = canvas.width;
   const renderHeight = canvas.height;

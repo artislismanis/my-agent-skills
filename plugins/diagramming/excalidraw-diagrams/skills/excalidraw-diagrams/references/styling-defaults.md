@@ -126,6 +126,11 @@ in cloud architecture, etc.
 - **Use multiline labels** to reduce label width when the label would violate
   the minimum arrow length — split into 2 lines with `\n` (e.g.
   `"Browses &\npurchases"` instead of `"Browses & purchases"`)
+- **Adjacent vertical arrow labels MUST use multi-line format** when single-line
+  labels would overlap horizontally. Two vertical arrows whose x-coordinates
+  are within 80px of each other will produce overlapping single-line labels —
+  split each label to 2 lines with `\n` (e.g. `"Menu\nQuery"` not
+  `"Menu Query"`) to halve label width and eliminate the overlap
 - If splitting is insufficient, increase spacing between the connected elements
 
 ### Structure
@@ -405,6 +410,12 @@ box in the diagram (from Step 4):
 
 Write the check as a table: arrow segment | segment y | nearest label |
 label y-range | clearance | pass/fail. Fix any failures before proceeding.
+
+Also verify the **minimum terminal segment** constraint for each elbowed arrow:
+`|bend_coord − target_edge| ≥ 50`. If both the 30px label clearance and the
+50px terminal segment cannot be satisfied simultaneously, increase the
+row-to-row spacing between source and target shapes rather than violating
+either constraint.
 
 ### Step 5: Checklist pass
 

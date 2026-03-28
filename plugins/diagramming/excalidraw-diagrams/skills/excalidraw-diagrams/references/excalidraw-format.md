@@ -290,6 +290,13 @@ For straight arrows, `orbit` mode also handles the visual gap — set the arrow'
   than scattered bend heights
 - Set the arrow's `width` to the maximum absolute x-offset and `height` to the
   maximum absolute y-offset across all points
+- **Minimum terminal segment length**: the final segment of an elbowed arrow
+  (the perpendicular approach into the target) MUST be at least **50px** long.
+  Shorter segments cause arrowheads to compress or clip because the renderer
+  scales arrowheads to fit the available segment. When computing the bend
+  coordinate, verify: `|bend_coord − target_edge| ≥ 50`. If this forces the
+  bend too close to labels, increase the spacing between the source and target
+  shape rows instead of shortening the final segment
 - **Perpendicular binding rule**: the first segment (from source) and last segment
   (into target) must be perpendicular to the face they connect to:
   - Binding to a **left or right** face → terminal segment must be **horizontal**
