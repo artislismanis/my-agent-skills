@@ -3,8 +3,8 @@
 **Standard**: BPMN 2.0 (Business Process Model and Notation)
 **Use for**: Business workflows, approval processes, service interactions, process documentation
 
-Apply styling defaults from `references/styling-defaults.md`. This template defines
-BPMN-specific shape conventions. Note: Excalidraw does not have native BPMN shapes —
+Apply brand values from `references/brand.md` and visual language principles from
+`references/visual-language.md`. This template defines BPMN-specific shape conventions. Note: Excalidraw does not have native BPMN shapes —
 use the approximations below, which are standard practice for BPMN in general-purpose
 diagramming tools.
 

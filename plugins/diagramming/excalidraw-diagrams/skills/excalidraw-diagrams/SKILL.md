@@ -6,219 +6,113 @@ description: >-
   flowcharts, BPMN, data flow, and cloud architecture diagrams. Produces valid
   Excalidraw JSON with consistent professional styling.
 metadata:
-  version: 1.0.0
+  version: 2.0.0
   author: Artis Lismanis
-allowed-tools: Bash Read Write
+allowed-tools: Bash Read Write Agent
 ---
 
 # Excalidraw Diagram Skill
 
-You generate professional, consistently styled Excalidraw diagrams from natural
-language descriptions. Every diagram you produce is valid Excalidraw JSON saved
-as a `.excalidraw` file, styled according to the brand defined in
-`references/styling-defaults.md`.
-
-## Reference Material
-
-**Always load before generating any diagram:**
-
-1. Read `references/excalidraw-format.md` — Excalidraw JSON format, all element
-   types, binding rules, and a complete worked example
-2. Read `references/styling-defaults.md` — colour palette, fonts, stroke
-   settings, and layout spacing guidelines
-
-**Load for specific diagram types:**
-
-- C4 diagrams → `assets/templates/c4-diagrams.md`
-- Data flow diagrams → `assets/templates/data-flow.md`
-- Cloud architecture → `assets/templates/cloud-architecture.md`
-- Flowcharts / decision trees → `assets/templates/flowchart.md`
-- BPMN business process → `assets/templates/bpmn.md`
-
-If the diagram type does not match any template, apply styling defaults and
-general-purpose box-and-arrow conventions.
-
----
+You orchestrate the creation of professional, consistently styled Excalidraw diagrams
+from natural language. Your role is the **design conversation** — understand what the
+user wants, then delegate technical generation to the `excalidraw-builder` agent.
 
 ## Design Session
 
-**Do not generate the diagram immediately.** First, have a collaborative design
-conversation to understand the diagram's intent and content:
+**Do not generate JSON.** First, understand the diagram's intent:
 
-1. **Identify the diagram type** from the user's description (C4, flowchart,
-   BPMN, data flow, cloud architecture, or general)
-2. **Ask clarifying questions** about:
-   - The systems, components, or actors involved and their names
-   - The relationships and data flows between them
-   - Any groupings, boundaries, or swim lanes needed
-   - The level of detail (high-level overview vs. detailed component view)
-   - Any specific technology labels or annotations required
-3. **Confirm your understanding** by summarising the planned diagram before
-   generating JSON
-4. Only proceed to generation once the user confirms the scope and content
+1. **Identify the diagram type** (C4, flowchart, BPMN, data flow, cloud architecture, or general)
+2. Load `references/visual-language.md` and the relevant type card from `references/diagram-types/`
+3. **Ask 2–4 targeted questions** covering:
+   - Systems, components, actors, and their names
+   - Relationships and data flows between them
+   - Groupings, boundaries, or swim lanes needed
+   - Level of detail required
+4. **Confirm your understanding** — summarise the planned diagram before proceeding
 
-Keep the design conversation concise — typically 2–4 targeted questions. If the
-user's description is already detailed, confirm your interpretation in one
-message and proceed.
+If the user's description is already detailed, confirm your interpretation in one message.
 
----
+### Diagram Type → Reference Card
 
-## Generation Rules
-
-### Structure
-
-1. Load `references/excalidraw-format.md` and `references/styling-defaults.md`
-2. If a template applies, load it from `assets/templates/`
-3. Generate all elements in a single valid JSON document (schema version 2)
-4. Assign unique short alphanumeric IDs to every element (e.g. `"r1"`, `"a2"`)
-5. Every shape that has a text label needs BOTH:
-   - A bound `text` element with `containerId` set to the shape's `id`
-   - A `boundElements` entry on the shape referencing the text element
-6. Every arrow that connects two shapes needs BOTH shapes' `boundElements` to
-   reference the arrow
-7. Every arrow that has a label needs BOTH:
-   - A bound `text` element with `containerId` set to the arrow's `id`
-   - A `boundElements` entry on the arrow referencing the text element
-8. Multi-line labels (e.g. name + type) use literal `\n` in both `text` and
-   `originalText` fields: `"Customer\n[Person]"`
-
-> **NEVER** use `containerId: null` with manual `x`/`y` positioning and `groupIds`
-> for text inside shapes or on arrows. This renders incorrectly in PNG output.
-> Always use proper `containerId` binding with calculated `x`/`y`/`width`/`height`
-> per the positioning formulas in `references/excalidraw-format.md`.
-
-### Styling
-
-Apply all values from `references/styling-defaults.md` — colours, fonts, stroke
-settings, fill styles, and arrow defaults. Use the colour palette by role (blue
-for internal, green for external, grey for infrastructure, yellow for data
-stores / decisions). If the user specified style overrides during the design
-session, apply only those overrides while keeping all other defaults.
-
-### Layout
-
-Follow the Layout Spacing Guidelines in `references/styling-defaults.md` for
-element positioning, gap sizes, standard shape dimensions, and frame padding.
-
-### Text and Labels
-
-Follow the Font Sizes table in `references/styling-defaults.md` for element
-labels, sub-labels, frame names, and arrow labels. Text outside shapes MUST be
-shown in full. Text inside shapes MAY be truncated only when necessary — if
-truncated, flag this to the user and ask for a decision.
-
-Arrow labels are bound text — use `containerId` pointing to the arrow's `id`,
-exactly as with shape labels. Calculate the label's `x`/`y`/`width`/`height`
-using the arrow midpoint formulas in `references/excalidraw-format.md`.
-
-### Validation Before Output
-
-Before saving, verify:
-- [ ] Every `id` is unique
-- [ ] Every arrow binding references an existing shape `id`
-- [ ] Every text `containerId` references an existing shape, with back-reference
-- [ ] Every `frameId` references an existing frame element
-- [ ] All `points` arrays have at least 2 entries
-- [ ] No overlapping elements (unless template-defined nesting like C4 boundaries)
+| User requests... | Load type card |
+|-----------------|----------------|
+| C4, context, container, component diagram | `references/diagram-types/c4.md` |
+| Data flow, DFD | `references/diagram-types/data-flow.md` |
+| AWS, GCP, Azure, cloud, infrastructure | `references/diagram-types/cloud-architecture.md` |
+| Flowchart, decision tree, process flow | `references/diagram-types/flowchart.md` |
+| BPMN, business process, swim lane | `references/diagram-types/bpmn.md` |
+| Anything else | Apply `references/visual-language.md` defaults; box-and-arrow conventions |
 
 ---
 
-## Output
+## Generation: Delegate to excalidraw-builder Agent
 
-Save the generated diagram as a `.excalidraw` file using the Write tool. Use a
-descriptive filename based on the diagram content (e.g.
-`ecommerce-c4-context.excalidraw`).
+Once the user confirms the diagram scope, construct a **high-level diagram description**
+(not raw Excalidraw JSON) and pass it to the `excalidraw-builder` agent.
 
-After saving:
+### Builder Input Format
 
-1. Confirm the file path to the user
-2. Run the render script to generate a PNG preview (see render instructions below)
-3. Show the PNG to the user for visual validation
-4. Ask if any adjustments are needed
-
----
-
-## Render Script
-
-After saving a `.excalidraw` file, render it to PNG for visual validation.
-
-**Prerequisites**: Node.js 22+ must be available.
-
-### Dependency Check
-
-Before rendering, check whether the render script's dependencies are installed:
-
-```bash
-ls "${CLAUDE_SKILL_DIR}/scripts/node_modules" 2>/dev/null
+```json
+{
+  "diagramType": "flowchart",
+  "direction": "top-to-bottom",
+  "outputPath": "/path/to/output.excalidraw",
+  "elements": [
+    { "id": "start", "shape": "rounded-rect", "role": "terminal", "label": "Start", "size": [160, 60] },
+    { "id": "p1",    "shape": "rect",          "role": "internal", "label": "Process Data" },
+    { "id": "d1",    "shape": "diamond",        "role": "decision", "label": "Valid?",      "size": [120, 120] },
+    { "id": "end",   "shape": "rounded-rect",  "role": "terminal", "label": "End",          "size": [160, 60] }
+  ],
+  "connections": [
+    { "from": "start", "to": "p1" },
+    { "from": "p1",    "to": "d1" },
+    { "from": "d1",    "to": "end", "label": "Yes" },
+    { "from": "d1",    "to": "err", "label": "No", "style": "dashed" }
+  ],
+  "frames": [
+    { "id": "f1", "name": "Validation Flow", "contains": ["start", "p1", "d1", "end"] }
+  ]
+}
 ```
 
-If `node_modules` does not exist, **do not install automatically**. Instead,
-inform the user:
+**Supported shapes**: `rect`, `rounded-rect`, `diamond`, `ellipse`, `frame`
+**Supported roles**: `internal`, `external`, `infrastructure`, `dataStore`, `decision`, `terminal`, `terminal-start`, `terminal-end`, `error`
 
-> "The render script needs three npm packages installed locally:
-> - `@excalidraw/utils` — official Excalidraw export utilities (JSON to PNG)
-> - `@napi-rs/canvas` — canvas backend for Node.js rendering
-> - `jsdom` — DOM polyfill for the Excalidraw renderer
->
-> These install to the plugin's own `scripts/` directory — nothing global.
-> Shall I run `npm install` to set them up?"
-
-Once the user confirms, run:
-
-```bash
-cd "${CLAUDE_SKILL_DIR}/scripts" && npm install
-```
-
-### Rendering
-
-Once dependencies are installed, render with:
-
-```bash
-cd "${CLAUDE_SKILL_DIR}/scripts"
-node render.mjs <path-to-file>.excalidraw
-```
-
-This produces `<filename>.png` in the same directory as the input file.
-
-The render script accepts:
-- `<input-path>` — required: path to the `.excalidraw` file
-- `[output-path]` — optional: custom output path (default: same dir, `.png` extension)
-- `[--width <pixels>]` — optional: output width (default: `1200`)
-
-On success it prints: `Rendered: <width>x<height> → <output-path>`
+Pass this description to the `excalidraw-builder` agent. The agent handles:
+- Layout calculation and coordinate placement
+- Brand styling application from `references/brand.md`
+- Binding wiring (shapes ↔ arrows ↔ labels)
+- Text positioning and sizing
+- Running `build.mjs`, `validate.mjs`, and `render.mjs`
+- Returning the PNG for your review
 
 ---
 
 ## Iteration
 
-When the user requests changes to an existing diagram:
+When the user requests changes, describe them to the `excalidraw-builder` agent:
 
-1. Read the existing `.excalidraw` file
-2. Identify which elements to add, remove, or modify
-3. For additions: generate new elements with fresh unique IDs, apply brand
-   styling, establish proper bindings
-4. For removals: remove the element AND any arrows/texts bound to it; remove
-   back-references from connected shapes
-5. For moves: update `x`/`y` coordinates and recalculate arrow `points` to
-   maintain connectivity
-6. Preserve all unchanged element IDs and styling
-7. Maintain consistency with `references/styling-defaults.md` brand throughout
-8. Maintain consistency with the applicable diagram template conventions
-9. Save the updated file and re-render to PNG for visual confirmation
+- **Add/remove elements**: provide updated builder input JSON
+- **Restyle an element**: specify element ID + desired changes
+- **Repositioning**: note which elements need moving and why
+- **Small targeted edits**: the agent can edit the .excalidraw file directly for minor tweaks
 
 ---
 
-## Template Selection
+## Render Script (fallback — if agent unavailable)
 
-| User requests... | Load template |
-|-----------------|---------------|
-| C4, context diagram, container diagram, component diagram | `assets/templates/c4-diagrams.md` |
-| Data flow, DFD, data diagram | `assets/templates/data-flow.md` |
-| AWS, GCP, Azure, cloud architecture, infrastructure | `assets/templates/cloud-architecture.md` |
-| Flowchart, flow diagram, decision tree, process flow | `assets/templates/flowchart.md` |
-| BPMN, business process, swim lane diagram | `assets/templates/bpmn.md` |
-| Anything else | Apply styling defaults; use general box-and-arrow conventions |
+If the agent cannot be used, render manually after writing the .excalidraw file:
 
-For unsupported types, apply `references/styling-defaults.md` defaults and
-note to the user that no specific template is available. Offer to clarify the
-conventions to use.
+```bash
+# Check dependencies
+ls "${CLAUDE_SKILL_DIR}/scripts/node_modules" 2>/dev/null
+
+# Install if missing (ask user first)
+cd "${CLAUDE_SKILL_DIR}/scripts" && npm install
+
+# Render
+cd "${CLAUDE_SKILL_DIR}/scripts"
+node render.mjs <path-to-file>.excalidraw
+```
+
+Output: `<filename>.png` in the same directory. Accepts `[--width <pixels>]` (default 1200).

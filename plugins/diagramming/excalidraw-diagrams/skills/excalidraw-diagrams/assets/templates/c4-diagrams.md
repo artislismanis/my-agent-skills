@@ -3,8 +3,8 @@
 **Standard**: C4 Model (Simon Brown) — https://c4model.com
 **Supported levels**: Context, Container, Component
 
-Apply the styling defaults from `references/styling-defaults.md` for all colours,
-fonts, and stroke settings. This template defines C4-specific shape conventions,
+Apply brand values from `references/brand.md` and visual language principles from
+`references/visual-language.md`. This template defines C4-specific shape conventions,
 labelling patterns, and layout approach on top of those defaults.
 
 ---

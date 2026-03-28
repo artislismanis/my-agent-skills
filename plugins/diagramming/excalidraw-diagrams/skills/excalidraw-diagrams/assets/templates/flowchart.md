@@ -3,8 +3,9 @@
 **Standard**: ANSI/ISO flowchart notation (industry-standard symbols)
 **Use for**: Process flows, decision trees, algorithms, approval workflows
 
-Apply styling defaults from `references/styling-defaults.md`. This template
-defines flowchart-specific shape conventions on top of those defaults.
+Apply brand values from `references/brand.md` and visual language principles from
+`references/visual-language.md`. This template defines flowchart-specific shape
+conventions on top of those defaults.
 
 ---
 

@@ -1,0 +1,72 @@
+{
+  "colors": {
+    "stroke": "#1e1e1e",
+    "text": "#1e1e1e",
+    "backgroundBlue": "#dbe4ff",
+    "backgroundGreen": "#d3f9d8",
+    "backgroundYellow": "#fff3bf",
+    "backgroundRed": "#ffe3e3",
+    "backgroundGrey": "#f1f3f5",
+    "canvas": "#ffffff",
+    "transparent": "transparent"
+  },
+  "colorAssignment": {
+    "external": "backgroundGreen",
+    "internal": "backgroundBlue",
+    "infrastructure": "backgroundGrey",
+    "dataStore": "backgroundYellow",
+    "decision": "backgroundYellow",
+    "frame": "transparent",
+    "arrow": "transparent",
+    "error": "backgroundRed"
+  },
+  "text": {
+    "fontFamily": 6,
+    "fontSize": {
+      "elementLabel": 16,
+      "subLabel": 14,
+      "frameLabel": 18,
+      "heading": 20,
+      "arrowLabel": 14
+    },
+    "lineHeight": 1.25,
+    "charWidthBySize": {
+      "12": 8,
+      "14": 8,
+      "16": 10,
+      "20": 10,
+      "36": 22
+    }
+  },
+  "stroke": {
+    "strokeColor": "#1e1e1e",
+    "strokeWidth": 2,
+    "strokeStyle": "solid",
+    "roughness": 0,
+    "opacity": 100
+  },
+  "fill": {
+    "fillStyle": "solid"
+  },
+  "arrow": {
+    "startArrowhead": null,
+    "endArrowhead": "arrow",
+    "elbowed": false
+  },
+  "layout": {
+    "minGap": 40,
+    "arrowGap": 8,
+    "standardShape": [160, 80],
+    "standardCircle": [80, 80],
+    "framePadding": 40,
+    "canvasOrigin": [100, 100],
+    "horizontalSpacing": 160,
+    "horizontalSpacingLabelled": 240,
+    "verticalSpacing": 120
+  },
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null,
+    "theme": "light"
+  }
+}

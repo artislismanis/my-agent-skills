@@ -2,9 +2,9 @@
 
 **Scope**: AWS, GCP, Azure, and multi-cloud infrastructure diagrams
 
-Apply styling defaults from `references/styling-defaults.md`. This template
-defines cloud-specific conventions for service categories, grouping, and
-connectivity patterns.
+Apply brand values from `references/brand.md` and visual language principles from
+`references/visual-language.md`. This template defines cloud-specific conventions
+for service categories, grouping, and connectivity patterns.
 
 ---
 

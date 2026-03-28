@@ -1,20 +1,20 @@
 # excalidraw-diagrams
 
 Generate professional, consistently styled Excalidraw diagrams from natural language
-descriptions. Claude handles the design conversation, generates valid Excalidraw JSON,
-and can render PNG previews — all without leaving your editor.
+descriptions. Claude handles the design conversation, a builder script handles all JSON
+generation and layout calculation, and a specialised agent orchestrates the full
+build → validate → render pipeline.
 
 ## What This Plugin Does
 
 The `excalidraw-diagrams` skill enables Claude to:
 
-1. **Generate diagrams from descriptions** — describe what you want, Claude asks
-   clarifying questions, then produces valid Excalidraw JSON with professional styling
-2. **Render PNG previews** — convert any `.excalidraw` file to PNG for visual
-   inspection using a self-contained Node.js script
-3. **Apply diagram-type templates** — correct visual conventions for C4, data flow,
-   cloud architecture, flowcharts, and BPMN
-4. **Iterate and refine** — modify existing diagrams while preserving styling consistency
+1. **Design diagrams collaboratively** — clarify content and structure through a concise conversation
+2. **Generate via a builder script** — Claude constructs a high-level semantic description; the script handles coordinates, bindings, and text positioning
+3. **Validate before rendering** — structural and visual checks run automatically before PNG generation
+4. **Render PNG previews** — convert any `.excalidraw` file to PNG using a self-contained Node.js script
+5. **Apply diagram-type templates** — correct visual conventions for C4, data flow, cloud architecture, flowcharts, and BPMN
+6. **Iterate without JSON gymnastics** — describe what to change; the agent handles the rest
 
 ## Supported Diagram Types
 
@@ -25,9 +25,6 @@ The `excalidraw-diagrams` skill enables Claude to:
 | **Cloud Architecture** | AWS / GCP / Azure service layouts with VPC/subnet boundaries |
 | **Flowchart** | ANSI/ISO notation — process, decision, terminator, swim lanes |
 | **BPMN** | BPMN 2.0 — events, tasks, gateways, pools, swim lanes |
-
-For diagram types not in the list, Claude applies the default styling brand and
-general box-and-arrow conventions.
 
 ## Installation
 
@@ -40,8 +37,7 @@ general box-and-arrow conventions.
 
 The PNG render script requires Node.js 22+ and three npm packages (`@excalidraw/utils`,
 `@napi-rs/canvas`, `jsdom`). Claude will check for these automatically before the first
-render and ask your permission to install them locally — no global packages or system
-dependencies needed.
+render and ask your permission to install them locally — no global packages needed.
 
 ## Usage
 
@@ -54,9 +50,10 @@ Ask Claude to create a diagram:
 
 Claude will:
 
-1. Ask clarifying questions about the diagram's content and structure
-2. Generate a `.excalidraw` file with professional styling
-3. Render a PNG preview for visual inspection
+1. Ask clarifying questions about content and structure
+2. Construct a high-level semantic description (nodes, connections, roles)
+3. Delegate to the `excalidraw-builder` agent which runs build → validate → render
+4. Show you the PNG preview
 
 ### Render an Existing File
 
@@ -64,20 +61,35 @@ Claude will:
 cd "${CLAUDE_SKILL_DIR}/scripts"
 node render.mjs /path/to/diagram.excalidraw
 # → produces /path/to/diagram.png
-```
 
-Options:
-
-```bash
+# Options
 node render.mjs input.excalidraw output.png --width 1600
 ```
+
+### Validate a File
+
+```bash
+cd "${CLAUDE_SKILL_DIR}/scripts"
+node validate.mjs /path/to/diagram.excalidraw
+# Exit 0 = valid, 1 = errors found, 2 = bad input
+```
+
+### Build from Description
+
+```bash
+cd "${CLAUDE_SKILL_DIR}/scripts"
+node build.mjs /path/to/diagram-input.json /path/to/output.excalidraw
+```
+
+Input format documented in `build.mjs` header — high-level semantic JSON with
+`elements` (nodes), `connections`, and optional `frames`.
 
 ### Iterate on a Diagram
 
 > "Add a notification service connected to the order service."
 
-Claude reads the existing `.excalidraw` file, adds the new element with consistent
-styling and proper bindings, and re-renders the PNG.
+Claude describes the change to the `excalidraw-builder` agent, which updates the
+file, re-validates, and re-renders.
 
 ## Output Files
 
@@ -86,43 +98,56 @@ styling and proper bindings, and re-renders the PNG.
 
 ## Styling
 
-All diagrams use a consistent professional brand:
+All diagrams use a consistent professional brand (see `references/brand.md`):
 
 - **Colours**: Blue (internal), green (external), yellow (data/decision), grey (infrastructure)
 - **Font**: Nunito (clean, readable sans-serif)
 - **Strokes**: `strokeWidth: 2`, `roughness: 0` (clean lines)
-- **Fill**: Solid colours, no hachure by default
 
-To customise styling, tell Claude what you want: "use darker blue backgrounds" or
-"make the arrows dashed". Claude applies your override while keeping all other defaults.
+Brand values live in `references/brand.json` and `references/brand.md`. To swap
+the brand, update these two files — visual language principles remain in
+`references/visual-language.md`.
 
 ## Plugin Contents
 
 ```text
 excalidraw-diagrams/
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin metadata
-├── README.md                    # This file
+│   └── plugin.json                  # Plugin metadata (v2.0.0)
+├── README.md                        # This file
+├── agents/
+│   └── excalidraw-builder/
+│       └── agent.md                 # Technical builder agent (build → validate → render)
 └── skills/
     └── excalidraw-diagrams/
-        ├── SKILL.md             # Skill definition and generation instructions
+        ├── SKILL.md                 # Thin orchestrator — design conversation + delegation
         ├── scripts/
-        │   ├── render.mjs       # PNG render script
-        │   └── package.json     # Script dependencies
+        │   ├── build.mjs            # Element builder from high-level description
+        │   ├── validate.mjs         # Structural + visual validator
+        │   ├── render.mjs           # PNG renderer
+        │   └── package.json         # Script dependencies
         ├── references/
-        │   ├── excalidraw-format.md   # Excalidraw JSON format reference
-        │   └── styling-defaults.md   # Brand: colours, fonts, stroke settings
+        │   ├── visual-language.md   # Generic diagram principles (tool-agnostic)
+        │   ├── brand.md             # Brand values: colours, fonts, sizes
+        │   ├── brand.json           # Machine-readable brand config for scripts
+        │   ├── excalidraw-format.md # Excalidraw JSON format reference (for edge cases)
+        │   └── diagram-types/       # Quick-reference cards (design phase)
+        │       ├── c4.md
+        │       ├── bpmn.md
+        │       ├── data-flow.md
+        │       ├── cloud-architecture.md
+        │       └── flowchart.md
         └── assets/
-            └── templates/
-                ├── c4-diagrams.md        # C4 Model conventions
-                ├── data-flow.md          # DFD conventions
-                ├── cloud-architecture.md # AWS/GCP/Azure conventions
-                ├── flowchart.md          # Flowchart/decision tree conventions
-                └── bpmn.md              # BPMN 2.0 conventions
+            └── templates/           # Full templates (loaded by agent per diagram type)
+                ├── c4-diagrams.md
+                ├── data-flow.md
+                ├── cloud-architecture.md
+                ├── flowchart.md
+                └── bpmn.md
 ```
 
 ## Prerequisites
 
-- Claude Code with plugin support
+- Claude Code with plugin and agent support
 - Node.js 22+ (for PNG rendering only)
 - No other dependencies beyond `npm install` in `scripts/`
