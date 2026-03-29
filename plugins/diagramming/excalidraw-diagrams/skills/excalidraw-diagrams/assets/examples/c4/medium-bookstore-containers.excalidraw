@@ -398,34 +398,30 @@
     {
       "id": "a2",
       "type": "arrow",
-      "x": 510,
-      "y": 420,
-      "width": 310,
-      "height": 200,
+      "x": 460,
+      "y": 370,
+      "width": 260,
+      "height": 250,
       "points": [
         [
           0,
           0
         ],
         [
-          0,
-          100
+          -260,
+          0
         ],
         [
-          -310,
-          100
-        ],
-        [
-          -310,
-          200
+          -260,
+          250
         ]
       ],
       "startBinding": {
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.25,
-          1.03
+          -0.03,
+          0.5
         ]
       },
       "endBinding": {
@@ -519,34 +515,30 @@
     {
       "id": "a4",
       "type": "arrow",
-      "x": 610,
-      "y": 420,
-      "width": 310,
-      "height": 200,
+      "x": 660,
+      "y": 370,
+      "width": 260,
+      "height": 250,
       "points": [
         [
           0,
           0
         ],
         [
-          0,
-          100
+          260,
+          0
         ],
         [
-          310,
-          100
-        ],
-        [
-          310,
-          200
+          260,
+          250
         ]
       ],
       "startBinding": {
         "mode": "orbit",
         "elementId": "s2",
         "fixedPoint": [
-          0.75,
-          1.03
+          1.03,
+          0.5
         ]
       },
       "endBinding": {
@@ -615,8 +607,8 @@
     {
       "id": "al2",
       "type": "text",
-      "x": 343,
-      "y": 511.25,
+      "x": 318,
+      "y": 486.25,
       "width": 24,
       "height": 17.5,
       "text": "SQL",
@@ -675,8 +667,8 @@
     {
       "id": "al4",
       "type": "text",
-      "x": 760,
-      "y": 511.25,
+      "x": 770,
+      "y": 486.25,
       "width": 40,
       "height": 17.5,
       "text": "HTTPS",

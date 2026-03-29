@@ -233,7 +233,8 @@ const AXIS_TOL = 2; // px — treat as axis-aligned below this threshold
  *
  * TB layout:
  *   Axis-aligned (|relX| ≤ TOL) → straight vertical: bottom → top
- *   Non-aligned → S-shape: bottom → top with vertical-first bend
+ *   Large horizontal offset (> shape width) → L-shape: right/left → top
+ *   Small horizontal offset → S-shape: bottom → top with vertical-first bend
  */
 function determineFaces(fromPos, toPos) {
   const relX = (toPos.x + toPos.w / 2) - (fromPos.x + fromPos.w / 2);
@@ -255,6 +256,11 @@ function determineFaces(fromPos, toPos) {
     if (Math.abs(relX) <= AXIS_TOL) {
       return { exitFace: relY >= 0 ? 'bottom' : 'top',
                entryFace: relY >= 0 ? 'top' : 'bottom', straight: true };
+    }
+    // Target significantly to the side: L-shape via side exit reduces bends from 2 → 1
+    if (Math.abs(relX) > Math.max(fromPos.w, toPos.w)) {
+      return { exitFace: relX >= 0 ? 'right' : 'left',
+               entryFace: relY >= 0 ? 'top' : 'bottom', straight: false };
     }
     return { exitFace: relY >= 0 ? 'bottom' : 'top',
              entryFace: relY >= 0 ? 'top' : 'bottom', straight: false };
