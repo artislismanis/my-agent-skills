@@ -81,13 +81,14 @@ On error: fix the input JSON based on the error message and retry.
 
 ```bash
 cd "${CLAUDE_SKILL_DIR}/scripts"
-node validate.mjs /path/to/output.excalidraw
+node validate.mjs /path/to/output.excalidraw --json
 ```
 
-- Exit 0: proceed to render
-- Exit 1 (errors): read the error messages, correct the issue (either fix the
-  input JSON and re-run build, or make targeted edits to the `.excalidraw` file),
-  then re-validate
+- Exit 0 (no output or empty `[]`): proceed to render
+- Exit 1 (errors/warnings): parse the JSON array, address each issue:
+  - Structural errors (S1-S6): fix the `.excalidraw` file or rebuild from corrected input
+  - Visual warnings (V1-V5): adjust spacing/positions in input JSON, rebuild
+  - Re-run validate until exit 0 before proceeding
 - Exit 2: bad file — diagnose and fix
 
 ### Step 5 — Render
@@ -99,6 +100,27 @@ node render.mjs /path/to/output.excalidraw
 
 On success: `Rendered: <width>x<height> → /path/to/output.png`
 
+### Step 5.5 — Visual QA
+
+Read the rendered PNG and inspect it for visual issues. Check for:
+
+1. **Label proximity** — any label too close to a frame border, another arrow, or a shape
+2. **Text overflow** — text clipped or extending outside its shape
+3. **Spacing balance** — some gaps much larger or smaller than others
+4. **Arrow routing** — arrows crossing shapes they shouldn't; excessive diagonal lines
+5. **Readability** — any element that looks crowded, unclear, or hard to follow
+
+If any issue is found:
+
+- Describe the specific fix needed (e.g. "increase spacing between X and Y", "move
+  label for arrow Z outside the frame")
+- Apply the fix: either adjust the input JSON and re-run build, or make a targeted
+  edit to the `.excalidraw` file
+- Re-run validate → render → inspect again
+- Iterate up to 3 times total (same retry limit as error handling)
+
+Only proceed to Step 6 when the diagram looks clean and all visual rules are satisfied.
+
 ### Step 6 — Return result
 
 Report back to the skill:
@@ -106,6 +128,7 @@ Report back to the skill:
 - Path to the `.excalidraw` file
 - Path to the rendered `.png` file
 - Any warnings from validation that the user should be aware of
+- How many visual QA iterations were needed and what was fixed
 - Whether any manual corrections were made during build
 
 ---

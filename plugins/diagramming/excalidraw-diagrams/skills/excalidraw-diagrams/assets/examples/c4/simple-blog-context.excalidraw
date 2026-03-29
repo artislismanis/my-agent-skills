@@ -112,8 +112,8 @@
       "type": "rectangle",
       "x": 940,
       "y": 320,
-      "width": 200,
-      "height": 100,
+      "width": 180,
+      "height": 80,
       "backgroundColor": "#f1f3f5",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -231,8 +231,8 @@
       "id": "t4",
       "type": "text",
       "x": 940,
-      "y": 350,
-      "width": 200,
+      "y": 340,
+      "width": 180,
       "height": 40,
       "text": "Email Service\n[Software System]",
       "originalText": "Email Service\n[Software System]",
@@ -395,7 +395,7 @@
       "x": 600,
       "y": 200,
       "width": 340,
-      "height": 170,
+      "height": 160,
       "points": [
         [
           0,
@@ -403,11 +403,11 @@
         ],
         [
           0,
-          170
+          160
         ],
         [
           340,
-          170
+          160
         ]
       ],
       "startBinding": {

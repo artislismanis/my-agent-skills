@@ -28,9 +28,21 @@ user wants, then delegate technical generation to the `excalidraw-builder` agent
    - Relationships and data flows between them
    - Groupings, boundaries, or swim lanes needed
    - Level of detail required
-4. **Confirm your understanding** — summarise the planned diagram before proceeding
+4. **Confirm your understanding** — produce a structured **Design Summary** before
+   proceeding:
 
-If the user's description is already detailed, confirm your interpretation in one message.
+   ```
+   Elements:    [each element: id | shape | role | label]
+   Connections: [each connection: from → to | label]
+   Frames:      [each boundary: name | contains]
+   Direction:   top-to-bottom | left-to-right
+   ```
+
+   Present this to the user. They can approve, amend, or reject before any diagram is
+   generated. Only proceed once the design is confirmed.
+
+If the user's description is already detailed, produce the Design Summary directly
+as your confirmation — one round-trip is enough.
 
 ### Diagram Type → Reference Card
 
@@ -83,8 +95,16 @@ Pass this description to the `excalidraw-builder` agent. The agent handles:
 - Brand styling application from `references/brand.md`
 - Binding wiring (shapes ↔ arrows ↔ labels)
 - Text positioning and sizing
-- Running `build.mjs`, `validate.mjs`, and `render.mjs`
+- Running `build.mjs`, `validate.mjs`, `render.mjs`, and visual QA
 - Returning the PNG for your review
+
+### Post-generation Review
+
+When the agent returns the PNG, show it to the user and ask:
+> "Here is your diagram. Does it look right, or would you like any adjustments?"
+
+If the user requests changes, describe them to the agent (see Iteration below). You own
+the design conversation at both ends — confirm before generation, review after.
 
 ---
 

@@ -1,0 +1,26 @@
+{
+  "diagramType": "c4",
+  "direction": "top-to-bottom",
+  "elements": [
+    { "id": "controller", "shape": "rect", "role": "internal",      "label": "OrderController\n[Component]\nHandles requests",     "size": [200, 100] },
+    { "id": "service",    "shape": "rect", "role": "internal",      "label": "OrderService\n[Component]\nProcesses orders",        "size": [200, 100] },
+    { "id": "payClient",  "shape": "rect", "role": "internal",      "label": "PaymentClient\n[Component]\nPayment integration",    "size": [200, 100] },
+    { "id": "invClient",  "shape": "rect", "role": "internal",      "label": "InventoryClient\n[Component]\nInventory checks",     "size": [200, 100] },
+    { "id": "repo",       "shape": "rect", "role": "internal",      "label": "OrderRepository\n[Component]\nData persistence",     "size": [200, 100] },
+    { "id": "payService", "shape": "rect", "role": "infrastructure", "label": "Payment Service\n[Container]",                     "size": [200, 100] },
+    { "id": "invService", "shape": "rect", "role": "infrastructure", "label": "Inventory Service\n[Container]",                   "size": [200, 100] },
+    { "id": "db",         "shape": "rect", "role": "dataStore",     "label": "PostgreSQL\n[Container]\nOrder data",               "size": [200, 100] }
+  ],
+  "connections": [
+    { "from": "controller", "to": "service",    "label": "Delegates to" },
+    { "from": "service",    "to": "payClient",  "label": "Uses" },
+    { "from": "service",    "to": "invClient",  "label": "Uses" },
+    { "from": "service",    "to": "repo",       "label": "Persists via" },
+    { "from": "payClient",  "to": "payService", "label": "REST/HTTPS" },
+    { "from": "invClient",  "to": "invService", "label": "gRPC" },
+    { "from": "repo",       "to": "db",         "label": "SQL" }
+  ],
+  "frames": [
+    { "id": "boundary", "name": "Order Service", "contains": ["controller", "service", "payClient", "invClient", "repo"] }
+  ]
+}

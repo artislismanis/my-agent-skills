@@ -1,0 +1,18 @@
+{
+  "diagramType": "c4",
+  "direction": "left-to-right",
+  "elements": [
+    { "id": "blogger",  "shape": "rounded-rect", "role": "external",      "label": "Blogger\n[Person]",                "size": [160, 80] },
+    { "id": "blog",     "shape": "rect",          "role": "internal",      "label": "Blog Platform\n[Software System]",  "size": [200, 100] },
+    { "id": "readers",  "shape": "rounded-rect", "role": "external",      "label": "Readers\n[Person]",                "size": [160, 80] },
+    { "id": "emailsvc", "shape": "rect",          "role": "infrastructure", "label": "Email Service\n[Software System]", "size": [180, 80] }
+  ],
+  "connections": [
+    { "from": "blogger",  "to": "blog",     "label": "Writes posts" },
+    { "from": "blog",     "to": "readers",  "label": "Serves posts" },
+    { "from": "blog",     "to": "emailsvc", "label": "Sends emails via" }
+  ],
+  "frames": [
+    { "id": "boundary", "name": "Blog Context", "contains": ["blog"] }
+  ]
+}

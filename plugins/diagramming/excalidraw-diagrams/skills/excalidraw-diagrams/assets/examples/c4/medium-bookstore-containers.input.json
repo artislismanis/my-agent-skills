@@ -1,0 +1,20 @@
+{
+  "diagramType": "c4",
+  "direction": "top-to-bottom",
+  "elements": [
+    { "id": "spa",     "shape": "rounded-rect", "role": "internal",      "label": "React SPA\n[Container: React]\nUser interface",       "size": [200, 100] },
+    { "id": "api",     "shape": "rect",          "role": "internal",      "label": "REST API\n[Container: Node.js]\nApplication server",   "size": [200, 100] },
+    { "id": "db",      "shape": "rect",          "role": "dataStore",     "label": "Database\n[Container: PostgreSQL]\nPrimary data store", "size": [200, 100] },
+    { "id": "cache",   "shape": "rect",          "role": "dataStore",     "label": "Cache\n[Container: Redis]\nSessions & reads",          "size": [200, 100] },
+    { "id": "payment", "shape": "rect",          "role": "infrastructure", "label": "Payment Gateway\n[Software System]",                  "size": [200, 100] }
+  ],
+  "connections": [
+    { "from": "spa",   "to": "api",     "label": "REST/HTTPS" },
+    { "from": "api",   "to": "db",      "label": "SQL" },
+    { "from": "api",   "to": "cache",   "label": "Redis" },
+    { "from": "api",   "to": "payment", "label": "HTTPS" }
+  ],
+  "frames": [
+    { "id": "boundary", "name": "Online Bookstore", "contains": ["spa", "api", "db", "cache"] }
+  ]
+}

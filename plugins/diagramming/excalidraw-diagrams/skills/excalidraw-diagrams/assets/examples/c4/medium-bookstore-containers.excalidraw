@@ -567,7 +567,7 @@
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
       "strokeWidth": 2,
-      "strokeStyle": "dashed",
+      "strokeStyle": "solid",
       "roughness": 0,
       "opacity": 100,
       "angle": 0,
