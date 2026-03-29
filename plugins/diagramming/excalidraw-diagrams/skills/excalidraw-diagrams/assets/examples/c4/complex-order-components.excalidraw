@@ -181,7 +181,7 @@
       "id": "s6",
       "type": "rectangle",
       "x": 100,
-      "y": 760,
+      "y": 840,
       "width": 200,
       "height": 100,
       "backgroundColor": "#f1f3f5",
@@ -211,7 +211,7 @@
       "id": "s7",
       "type": "rectangle",
       "x": 460,
-      "y": 760,
+      "y": 840,
       "width": 200,
       "height": 100,
       "backgroundColor": "#f1f3f5",
@@ -241,7 +241,7 @@
       "id": "s8",
       "type": "rectangle",
       "x": 820,
-      "y": 760,
+      "y": 840,
       "width": 200,
       "height": 100,
       "backgroundColor": "#fff3bf",
@@ -421,7 +421,7 @@
       "id": "t6",
       "type": "text",
       "x": 100,
-      "y": 790,
+      "y": 870,
       "width": 200,
       "height": 40,
       "text": "Payment Service\n[Container]",
@@ -451,7 +451,7 @@
       "id": "t7",
       "type": "text",
       "x": 460,
-      "y": 790,
+      "y": 870,
       "width": 200,
       "height": 40,
       "text": "Inventory Service\n[Container]",
@@ -481,7 +481,7 @@
       "id": "t8",
       "type": "text",
       "x": 820,
-      "y": 780,
+      "y": 860,
       "width": 200,
       "height": 60,
       "text": "PostgreSQL\n[Container]\nOrder data",
@@ -777,7 +777,7 @@
       "x": 200,
       "y": 640,
       "width": 1,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -785,7 +785,7 @@
         ],
         [
           0,
-          120
+          200
         ]
       ],
       "startBinding": {
@@ -832,7 +832,7 @@
       "x": 560,
       "y": 640,
       "width": 1,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -840,7 +840,7 @@
         ],
         [
           0,
-          120
+          200
         ]
       ],
       "startBinding": {
@@ -887,7 +887,7 @@
       "x": 920,
       "y": 640,
       "width": 1,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -895,7 +895,7 @@
         ],
         [
           0,
-          120
+          200
         ]
       ],
       "startBinding": {

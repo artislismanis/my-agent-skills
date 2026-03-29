@@ -315,6 +315,45 @@ for (const el of elements) {
   }
 }
 
+// V6: Arrow labels must not be within clearance of any non-parent shape
+// (catches labels squeezed between a frame border and a target shape)
+{
+  const SHAPE_CLEARANCE = 15; // minimum px from label edge to any non-parent shape
+  const nonFrameShapes = elements.filter(e =>
+    ['rectangle', 'diamond', 'ellipse'].includes(e.type) &&
+    typeof e.x === 'number'
+  );
+
+  for (const el of elements) {
+    if (el.type !== 'text' || !el.containerId) continue;
+    const arrow = byId[el.containerId];
+    if (!arrow || arrow.type !== 'arrow') continue;
+    if (typeof el.x !== 'number') continue;
+
+    // The two shapes this arrow connects — label may legitimately be near these
+    const connectedIds = new Set([
+      arrow.startBinding?.elementId,
+      arrow.endBinding?.elementId,
+    ].filter(Boolean));
+
+    const lx  = el.x,                  ly  = el.y;
+    const lx2 = lx + (el.width ?? 0), ly2 = ly + (el.height ?? 0);
+
+    for (const sh of nonFrameShapes) {
+      if (connectedIds.has(sh.id)) continue; // skip source/target shapes
+      const sx  = sh.x,                   sy  = sh.y;
+      const sx2 = sx + (sh.width  ?? 0), sy2 = sy + (sh.height ?? 0);
+
+      const xOverlaps = lx < sx2 + SHAPE_CLEARANCE && lx2 > sx - SHAPE_CLEARANCE;
+      const yOverlaps = ly < sy2 + SHAPE_CLEARANCE && ly2 > sy - SHAPE_CLEARANCE;
+
+      if (xOverlaps && yOverlaps) {
+        warning('V6', `Arrow label "${el.id}" is within ${SHAPE_CLEARANCE}px of shape "${sh.id}" (not the source/target)`, el.id);
+      }
+    }
+  }
+}
+
 // ─── Output ───────────────────────────────────────────────────────────────────
 
 const errors = diagnostics.filter(d => d.severity === 'error');

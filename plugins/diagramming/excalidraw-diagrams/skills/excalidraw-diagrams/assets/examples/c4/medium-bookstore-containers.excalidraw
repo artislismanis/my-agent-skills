@@ -82,7 +82,7 @@
       "id": "s3",
       "type": "rectangle",
       "x": 100,
-      "y": 540,
+      "y": 620,
       "width": 200,
       "height": 100,
       "backgroundColor": "#fff3bf",
@@ -112,7 +112,7 @@
       "id": "s4",
       "type": "rectangle",
       "x": 460,
-      "y": 540,
+      "y": 620,
       "width": 200,
       "height": 100,
       "backgroundColor": "#fff3bf",
@@ -142,7 +142,7 @@
       "id": "s5",
       "type": "rectangle",
       "x": 820,
-      "y": 540,
+      "y": 620,
       "width": 200,
       "height": 100,
       "backgroundColor": "#f1f3f5",
@@ -232,7 +232,7 @@
       "id": "t3",
       "type": "text",
       "x": 100,
-      "y": 560,
+      "y": 640,
       "width": 200,
       "height": 60,
       "text": "Database\n[Container: PostgreSQL]\nPrimary data store",
@@ -262,7 +262,7 @@
       "id": "t4",
       "type": "text",
       "x": 460,
-      "y": 560,
+      "y": 640,
       "width": 200,
       "height": 60,
       "text": "Cache\n[Container: Redis]\nSessions & reads",
@@ -292,7 +292,7 @@
       "id": "t5",
       "type": "text",
       "x": 820,
-      "y": 570,
+      "y": 650,
       "width": 200,
       "height": 40,
       "text": "Payment Gateway\n[Software System]",
@@ -325,7 +325,7 @@
       "x": 40,
       "y": 40,
       "width": 680,
-      "height": 660,
+      "height": 740,
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeColor": "#1e1e1e",
@@ -401,7 +401,7 @@
       "x": 510,
       "y": 420,
       "width": 310,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -409,15 +409,15 @@
         ],
         [
           0,
-          60
+          100
         ],
         [
           -310,
-          60
+          100
         ],
         [
           -310,
-          120
+          200
         ]
       ],
       "startBinding": {
@@ -467,7 +467,7 @@
       "x": 560,
       "y": 420,
       "width": 1,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -475,7 +475,7 @@
         ],
         [
           0,
-          120
+          200
         ]
       ],
       "startBinding": {
@@ -522,7 +522,7 @@
       "x": 610,
       "y": 420,
       "width": 310,
-      "height": 120,
+      "height": 200,
       "points": [
         [
           0,
@@ -530,15 +530,15 @@
         ],
         [
           0,
-          60
+          100
         ],
         [
           310,
-          60
+          100
         ],
         [
           310,
-          120
+          200
         ]
       ],
       "startBinding": {
@@ -616,7 +616,7 @@
       "id": "al2",
       "type": "text",
       "x": 343,
-      "y": 471.25,
+      "y": 511.25,
       "width": 24,
       "height": 17.5,
       "text": "SQL",
@@ -646,7 +646,7 @@
       "id": "al3",
       "type": "text",
       "x": 540,
-      "y": 471.25,
+      "y": 511.25,
       "width": 40,
       "height": 17.5,
       "text": "Redis",
@@ -676,7 +676,7 @@
       "id": "al4",
       "type": "text",
       "x": 760,
-      "y": 471.25,
+      "y": 511.25,
       "width": 40,
       "height": 17.5,
       "text": "HTTPS",

@@ -62,7 +62,8 @@
     "canvasOrigin": [100, 100],
     "horizontalSpacing": 160,
     "horizontalSpacingLabelled": 240,
-    "verticalSpacing": 120
+    "verticalSpacing": 120,
+    "verticalSpacingLabelled": 200
   },
   "appState": {
     "viewBackgroundColor": "#ffffff",

@@ -447,6 +447,12 @@ function computeLayout(elements, connections) {
     });
     const maxRowWidth = Math.max(...rowWidths);
 
+    // Pre-compute which row transitions have labelled connections, so the
+    // layout uses verticalSpacingLabelled rather than the default verticalSpacing.
+    // This ensures labelled cross-row arrows have enough room for the label text
+    // plus breathing space from both the frame border and the target shape.
+    const depthSetTB = depths.map(d => new Set(byDepth[d]));
+
     // Second pass: assign positions, centering each row relative to the widest row
     let y = oy;
     for (let di = 0; di < depths.length; di++) {
@@ -464,7 +470,27 @@ function computeLayout(elements, connections) {
         positions[id] = { x, y, w, h };
         x += w + layout.horizontalSpacing;
       }
-      y += rowHeight + layout.verticalSpacing;
+      // Use wider spacing after this row if any connection to the next row
+      // carries a label AND crosses a frame boundary. The extra space reserves
+      // room for the label text between the frame border and the target shape.
+      // Internal labelled connections (both endpoints in the same frame) keep
+      // standard spacing — their labels sit inside the frame with room to spare.
+      let rowSpacing = layout.verticalSpacing;
+      if (di < depths.length - 1) {
+        const fromIds = depthSetTB[di];
+        const toIds   = depthSetTB[di + 1];
+        const frameContains = (input.frames ?? []).flatMap(f => f.contains ?? []);
+        const frameSet = new Set(frameContains);
+        const hasCrossFrameLabel = connections.some(c => {
+          if (!fromIds.has(c.from) || !toIds.has(c.to) || !c.label) return false;
+          // Cross-frame: one endpoint in a frame, the other not (or in a different frame)
+          const fromInFrame = (input.frames ?? []).some(f => (f.contains ?? []).includes(c.from));
+          const toInFrame   = (input.frames ?? []).some(f => (f.contains ?? []).includes(c.to));
+          return fromInFrame !== toInFrame;
+        });
+        if (hasCrossFrameLabel) rowSpacing = layout.verticalSpacingLabelled ?? layout.verticalSpacing;
+      }
+      y += rowHeight + rowSpacing;
     }
   }
 
