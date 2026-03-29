@@ -274,6 +274,47 @@ for (const el of elements) {
   }
 }
 
+// V5: Arrow labels must not overlap or be within clearance of any frame border
+{
+  const CLEARANCE = 15; // minimum px from label edge to frame border line
+  const frames = elements.filter(e => e.type === 'frame' && typeof e.x === 'number');
+
+  for (const el of elements) {
+    if (el.type !== 'text' || !el.containerId) continue;
+    const parent = byId[el.containerId];
+    if (!parent || parent.type !== 'arrow') continue;
+    if (typeof el.x !== 'number') continue;
+
+    const lx  = el.x,                       ly  = el.y;
+    const lx2 = lx + (el.width  ?? 0),      ly2 = ly + (el.height ?? 0);
+
+    for (const fr of frames) {
+      const fx  = fr.x,                     fy  = fr.y;
+      const fx2 = fx + (fr.width  ?? 0),    fy2 = fy + (fr.height ?? 0);
+
+      const xOverlaps = lx < fx2 && lx2 > fx;
+      const yOverlaps = ly < fy2 && ly2 > fy;
+
+      // Top border
+      if (xOverlaps && ly2 > fy - CLEARANCE && ly < fy + CLEARANCE) {
+        warning('V5', `Arrow label "${el.id}" is within ${CLEARANCE}px of frame "${fr.id}" top border`, el.id);
+      }
+      // Bottom border
+      if (xOverlaps && ly2 > fy2 - CLEARANCE && ly < fy2 + CLEARANCE) {
+        warning('V5', `Arrow label "${el.id}" is within ${CLEARANCE}px of frame "${fr.id}" bottom border`, el.id);
+      }
+      // Left border
+      if (yOverlaps && lx2 > fx - CLEARANCE && lx < fx + CLEARANCE) {
+        warning('V5', `Arrow label "${el.id}" is within ${CLEARANCE}px of frame "${fr.id}" left border`, el.id);
+      }
+      // Right border
+      if (yOverlaps && lx2 > fx2 - CLEARANCE && lx < fx2 + CLEARANCE) {
+        warning('V5', `Arrow label "${el.id}" is within ${CLEARANCE}px of frame "${fr.id}" right border`, el.id);
+      }
+    }
+  }
+}
+
 // ─── Output ───────────────────────────────────────────────────────────────────
 
 const errors = diagnostics.filter(d => d.severity === 'error');

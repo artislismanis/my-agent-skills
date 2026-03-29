@@ -29,7 +29,7 @@ if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
 
 let inputPath = null;
 let outputPath = null;
-let width = 1200;
+let width = null; // null = render at natural element bounds size
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--width' && args[i + 1]) {
@@ -216,7 +216,7 @@ console.warn = (...args) => {
 };
 
 try {
-  const canvas = await exportToCanvas({
+  const exportOptions = {
     elements: doc.elements,
     appState: {
       exportBackground: true,
@@ -224,8 +224,13 @@ try {
       exportWithDarkMode: false,
     },
     files: doc.files || {},
-    maxWidthOrHeight: width,
-  });
+  };
+  // Only constrain size if --width was explicitly passed; otherwise render at
+  // natural element bounds (1px diagram unit = 1px in output PNG).
+  if (width !== null) {
+    exportOptions.maxWidthOrHeight = width;
+  }
+  const canvas = await exportToCanvas(exportOptions);
 
   const renderWidth = canvas.width;
   const renderHeight = canvas.height;

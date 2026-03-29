@@ -629,8 +629,10 @@ function buildDocument(input, brand) {
   const arrowElements = [];
   const arrowTextElements = [];
 
-  // Breathing space between arrow labels and frame borders (px)
-  const FRAME_LABEL_GAP = 30;
+  // Minimum clearance between an arrow label edge and any frame border (px).
+  // Applied both during straddle detection and as a proximity buffer so labels
+  // are never within this distance of a border even when not crossing it.
+  const FRAME_LABEL_GAP = 40;
 
   const conns = input.connections ?? [];
 
@@ -769,52 +771,48 @@ function buildDocument(input, brand) {
         const frRight  = fr.x + fr.width;
         const frBottom = fr.y + fr.height;
 
-        // ── Horizontal straddle (left or right border) ──
-        let straddledX = null; // the x-coordinate of the border being straddled
-        if (midX < fr.x && midX + tw > fr.x)     straddledX = fr.x;
-        if (midX < frRight && midX + tw > frRight) straddledX = frRight;
-
-        if (straddledX !== null) {
-          // Available space on each side of the border within the arrow span
-          const arrowMinX = Math.min(startX, startX + dx);
-          const arrowMaxX = Math.max(startX, startX + dx);
-          const spaceLeft  = straddledX - FRAME_LABEL_GAP - arrowMinX;
-          const spaceRight = arrowMaxX - straddledX - FRAME_LABEL_GAP;
-
-          // If label doesn't fit on either side, try word-wrapping
-          if (tw > Math.max(spaceLeft, spaceRight) && label.includes(' ')) {
-            const words = label.split(' ');
-            let bestLabel = label;
-            let bestWidth = tw;
-            for (let wi = 1; wi < words.length; wi++) {
-              const l1 = words.slice(0, wi).join(' ');
-              const l2 = words.slice(wi).join(' ');
-              const maxW = Math.max(estimateTextWidth(l1, fontSize),
-                                    estimateTextWidth(l2, fontSize));
-              if (maxW < bestWidth) { bestWidth = maxW; bestLabel = l1 + '\n' + l2; }
+        // ── Horizontal proximity or straddle (left or right border) ──
+        // If label straddles a border, try word-wrapping to fit on one side.
+        for (const borderX of [fr.x, frRight]) {
+          if (midX < borderX && midX + tw > borderX) {
+            const arrowMinX = Math.min(startX, startX + dx);
+            const arrowMaxX = Math.max(startX, startX + dx);
+            const spaceLeft  = borderX - FRAME_LABEL_GAP - arrowMinX;
+            const spaceRight = arrowMaxX - borderX - FRAME_LABEL_GAP;
+            if (tw > Math.max(spaceLeft, spaceRight) && label.includes(' ')) {
+              const words = label.split(' ');
+              let bestLabel = label, bestWidth = tw;
+              for (let wi = 1; wi < words.length; wi++) {
+                const l1 = words.slice(0, wi).join(' ');
+                const l2 = words.slice(wi).join(' ');
+                const maxW = Math.max(estimateTextWidth(l1, fontSize),
+                                      estimateTextWidth(l2, fontSize));
+                if (maxW < bestWidth) { bestWidth = maxW; bestLabel = l1 + '\n' + l2; }
+              }
+              label = bestLabel; tw = bestWidth; th = textHeight(label, fontSize);
+              midX = startX + dx / 2 - tw / 2;
+              midY = startY + dy / 2 - th / 2;
             }
-            label = bestLabel;
-            tw = bestWidth;
-            th = textHeight(label, fontSize);
-            midX = startX + dx / 2 - tw / 2;
-            midY = startY + dy / 2 - th / 2;
-          }
-
-          // Re-check straddle with (possibly wrapped) label and push outside
-          if (midX < fr.x && midX + tw > fr.x) {
-            midX = fr.x - FRAME_LABEL_GAP - tw;
-          }
-          if (midX < frRight && midX + tw > frRight) {
-            midX = frRight + FRAME_LABEL_GAP;
           }
         }
+        // Push label clear of each border with FRAME_LABEL_GAP minimum clearance.
+        // Handles both straddling and near-border (proximity) cases.
+        if (midX + tw > fr.x - FRAME_LABEL_GAP && midX < fr.x) {
+          midX = fr.x - FRAME_LABEL_GAP - tw;   // push left of left border
+        }
+        if (midX < frRight + FRAME_LABEL_GAP && midX + tw > frRight) {
+          midX = frRight + FRAME_LABEL_GAP;       // push right of right border
+        }
 
-        // ── Vertical straddle (top or bottom border) ──
-        const lblBottom = midY + th;
-        if (midY < fr.y && lblBottom > fr.y) {
+        // ── Vertical proximity or straddle (top or bottom border) ──
+        // Fires when the label edge (plus GAP buffer) crosses the border,
+        // catching both straddling and near-border cases.
+        // Top border: push above if label is within GAP below fr.y
+        if (midY < fr.y + FRAME_LABEL_GAP && midY + th > fr.y - FRAME_LABEL_GAP) {
           midY = fr.y - FRAME_LABEL_GAP - th;
         }
-        if (midY < frBottom && lblBottom > frBottom) {
+        // Bottom border: push below if label is within GAP above frBottom
+        if (midY < frBottom + FRAME_LABEL_GAP && midY + th > frBottom - FRAME_LABEL_GAP) {
           midY = frBottom + FRAME_LABEL_GAP;
         }
       }
