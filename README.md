@@ -7,6 +7,7 @@ Personal Claude plugin marketplace — skills, agents, and MCP servers organised
 | Plugin                                                          | Type  | Description                                                | Install                                               |
 |-----------------------------------------------------------------|-------|------------------------------------------------------------|-------------------------------------------------------|
 | [excalidraw-diagrams](plugins/diagramming/excalidraw-diagrams/) | Skill | Generate professional Excalidraw diagrams with PNG preview | `/plugin install excalidraw-diagrams@my-agent-skills` |
+| [hermes-tweet](plugins/social/hermes-tweet/)                    | Skill | Operate the Hermes Tweet X/Twitter plugin                  | `/plugin install hermes-tweet@my-agent-skills`        |
 
 Browse the [`plugins/`](plugins/) directory for all available packages, or see
 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) for the

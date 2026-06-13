@@ -8,6 +8,11 @@
       "name": "excalidraw-diagrams",
       "source": "./plugins/diagramming/excalidraw-diagrams",
       "description": "Generate professional Excalidraw diagrams from natural language. Includes C4, flowchart, BPMN, data flow, and cloud architecture templates with consistent styling and PNG preview."
+    },
+    {
+      "name": "hermes-tweet",
+      "source": "./plugins/social/hermes-tweet",
+      "description": "Operate the Hermes Tweet X/Twitter plugin with read-first workflows and approval-gated account actions."
     }
   ]
 }
