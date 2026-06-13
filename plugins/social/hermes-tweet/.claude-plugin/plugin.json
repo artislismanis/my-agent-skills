@@ -1,0 +1,8 @@
+{
+  "name": "hermes-tweet",
+  "version": "0.1.6",
+  "description": "Operate the Hermes Tweet X/Twitter plugin with read-first workflows and approval-gated account actions.",
+  "author": {
+    "name": "Xquik"
+  }
+}
