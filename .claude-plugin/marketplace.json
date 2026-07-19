@@ -3,11 +3,19 @@
   "owner": {
     "name": "Artis Lismanis"
   },
+  "metadata": {
+    "description": "Claude Code plugins for diagramming, social automation, and reusable agent workflows."
+  },
   "plugins": [
     {
       "name": "excalidraw-diagrams",
       "source": "./plugins/diagramming/excalidraw-diagrams",
       "description": "Generate professional Excalidraw diagrams from natural language. Includes C4, flowchart, BPMN, data flow, and cloud architecture templates with consistent styling and PNG preview."
+    },
+    {
+      "name": "xquik-social-automation",
+      "source": "./plugins/social/xquik-social-automation",
+      "description": "Use Xquik from Claude Code for X data workflows, bulk extraction, monitors, webhooks, MCP, and confirmation-gated publishing."
     }
   ]
 }
