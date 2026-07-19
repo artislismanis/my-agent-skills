@@ -1,0 +1,10 @@
+{
+  "name": "xquik-social-automation",
+  "version": "1.0.0",
+  "description": "Plan safe Xquik REST API, MCP, extraction, monitor, webhook, and confirmation-gated publishing workflows for X data automation.",
+  "author": { "name": "Xquik" },
+  "license": "MIT",
+  "capabilities": {
+    "skills": ["xquik-social-automation"]
+  }
+}
