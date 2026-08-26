@@ -7,6 +7,7 @@ Personal Claude plugin marketplace — skills, agents, and MCP servers organised
 | Plugin                                                          | Type  | Description                                                | Install                                               |
 |-----------------------------------------------------------------|-------|------------------------------------------------------------|-------------------------------------------------------|
 | [excalidraw-diagrams](plugins/diagramming/excalidraw-diagrams/) | Skill | Generate professional Excalidraw diagrams with PNG preview | `/plugin install excalidraw-diagrams@my-agent-skills` |
+| [my-claude](plugins/setup/my-claude/)                           | Skill | Personal baseline rules plus a one-step set-up command      | `/plugin install my-claude@my-agent-skills`           |
 
 Browse the [`plugins/`](plugins/) directory for all available packages, or see
 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) for the
@@ -89,6 +90,17 @@ open the VS Code command palette and run **"Dev Containers: Rebuild Container"**
 
 - [`docs/`](docs/) — Best-practice guides and reusable templates
 - [`configs/`](configs/) — System prompts and agent configuration files
+
+## Attribution
+
+Plugins here borrow ideas from other people's work. Where a plugin is derived from or
+inspired by an external repo, its own README carries a **Sources and attribution**
+section naming the source, its licence, and what it contributed. Check that section
+before reusing a plugin elsewhere.
+
+| Plugin | Draws on |
+|--------|----------|
+| [my-claude](plugins/setup/my-claude/#sources-and-attribution) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT) |
 
 ## License
 
