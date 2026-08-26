@@ -29,6 +29,31 @@ It also seeds `$CLAUDE_CONFIG_DIR/CLAUDE.md` from `templates/CLAUDE.md`, but onl
 that file does not exist. An existing file is never modified: it is hand-edited and
 holds machine-local notes that exist nowhere else.
 
+## Choosing which rules to install
+
+Rules are opt-out, not all-or-nothing. `/my-claude:set-up` lists what is available and
+asks which ones you want, then remembers the answer.
+
+```bash
+sync-claude-config --list                       # checkbox view of what is on
+sync-claude-config --only tone,defaults         # install these, remember the choice
+sync-claude-config --all                        # everything, forget the selection
+sync-claude-config                              # reinstall the remembered selection
+```
+
+`--only` is the complete selection rather than an addition, so removing a rule means
+re-running without it. The installed directory is rebuilt from scratch on every run, so
+a deselected rule disappears with nothing else to undo.
+
+The choice lives in `$CLAUDE_CONFIG_DIR/.my-claude-selection`, outside the plugin-owned
+directory so a sync cannot clear it. It is per machine, which is the point: a work
+container can run a different subset from a personal one. A machine with no selection
+saved gets every rule.
+
+Selection is not prompted for inside the script. The `Setup` hook has no TTY, and the
+skill invokes the script through Claude's Bash tool, so an interactive prompt would hang
+in both. Claude asks the question, the script takes the answer as a flag.
+
 ## Install
 
 ```bash

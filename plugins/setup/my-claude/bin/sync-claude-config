@@ -2,6 +2,10 @@
 # Copies this plugin's rules/ into the user rules directory, where Claude Code
 # loads them at the start of every session. Plugins cannot ship instructions
 # directly, so this runs on request via /my-claude:set-up or a Setup hook.
+#
+# Runs non-interactively: the Setup hook has no TTY, and the skill invokes this
+# through Claude's Bash tool. Rule selection therefore arrives as a flag and is
+# remembered, rather than being prompted for here.
 set -eu
 
 # Resolve our own location: CLAUDE_PLUGIN_ROOT is documented for path
@@ -19,21 +23,117 @@ plugin_root=$(cd -P "$(dirname "$src")/.." && pwd)
 
 config_dir=${CLAUDE_CONFIG_DIR:-$HOME/.claude}
 target=$config_dir/rules/my-claude
+# Kept outside target, which is wiped on every run.
+selection_file=$config_dir/.my-claude-selection
 
 if [ ! -d "$plugin_root/rules" ]; then
   echo "sync-claude-config: no rules/ at $plugin_root" >&2
   exit 1
 fi
 
+available() {
+  for f in "$plugin_root"/rules/*.md; do
+    basename "$f" .md
+  done
+}
+
+usage() {
+  cat <<'USAGE'
+Usage: sync-claude-config [--list | --only NAME[,NAME...] | --all]
+
+  (no flags)  Install the remembered selection, or every rule if none is remembered.
+  --list      Show available rules and which are currently selected.
+  --only ...  Install only these rules and remember the choice.
+  --all       Install every rule and forget any previous selection.
+USAGE
+}
+
+selection=""
+mode=sync
+while [ $# -gt 0 ]; do
+  case $1 in
+    --list) mode=list ;;
+    --all) mode=reset ;;
+    --only)
+      [ $# -ge 2 ] || { echo "sync-claude-config: --only needs a list" >&2; exit 2; }
+      selection=$(echo "$2" | tr ',' ' ')
+      mode=select
+      shift
+      ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "sync-claude-config: unknown option $1" >&2; usage >&2; exit 2 ;;
+  esac
+  shift
+done
+
+if [ "$mode" = list ]; then
+  if [ -f "$selection_file" ]; then
+    current=$(cat "$selection_file")
+    echo "Selected rules (remembered in $selection_file):"
+  else
+    current=$(available)
+    echo "Selected rules (no selection saved, so all of them):"
+  fi
+  for name in $(available); do
+    mark=" "
+    for on in $current; do
+      [ "$on" = "$name" ] && mark=x
+    done
+    echo "  [$mark] $name"
+  done
+  exit 0
+fi
+
+case $mode in
+  reset)
+    rm -f "$selection_file"
+    selection=$(available)
+    ;;
+  select)
+    [ -n "$selection" ] || { echo "sync-claude-config: --only selected nothing" >&2; exit 2; }
+    for name in $selection; do
+      found=no
+      for known in $(available); do
+        [ "$known" = "$name" ] && found=yes
+      done
+      if [ "$found" = no ]; then
+        echo "sync-claude-config: no such rule '$name'. Available:" >&2
+        available | sed 's/^/  /' >&2
+        exit 2
+      fi
+    done
+    mkdir -p "$config_dir"
+    echo "$selection" | tr ' ' '\n' | grep -v '^$' > "$selection_file"
+    ;;
+  sync)
+    if [ -f "$selection_file" ]; then
+      selection=$(cat "$selection_file")
+    else
+      selection=$(available)
+    fi
+    ;;
+esac
+
 mkdir -p "$target"
 # The directory is plugin-owned, so clear it first and a re-run always converges.
+# Deselecting a rule removes it here on the next sync, with nothing else to undo.
 rm -f "$target"/*.md
-cp "$plugin_root"/rules/*.md "$target"/
-
-echo "Installed $(ls -1 "$target"/*.md | wc -l | tr -d ' ') rules into $target:"
-for f in "$target"/*.md; do
-  echo "  $(basename "$f")"
+count=0
+for name in $selection; do
+  if [ -f "$plugin_root/rules/$name.md" ]; then
+    cp "$plugin_root/rules/$name.md" "$target/$name.md"
+    count=$((count + 1))
+  else
+    echo "sync-claude-config: skipping '$name', no longer shipped by this plugin" >&2
+  fi
 done
+
+total=$(available | wc -l | tr -d ' ')
+echo "Installed $count of $total rules into $target:"
+for name in $selection; do
+  [ -f "$target/$name.md" ] && echo "  $name"
+done
+[ "$count" -eq "$total" ] || echo "Selection remembered in $selection_file. Re-run with --all to restore every rule."
 
 # Seed the machine-local file on a fresh box, then never touch it again. It is
 # hand-edited, so overwriting it would lose notes that exist nowhere else.
