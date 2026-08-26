@@ -8,6 +8,11 @@
       "name": "excalidraw-diagrams",
       "source": "./plugins/diagramming/excalidraw-diagrams",
       "description": "Generate professional Excalidraw diagrams from natural language. Includes C4, flowchart, BPMN, data flow, and cloud architecture templates with consistent styling and PNG preview."
+    },
+    {
+      "name": "my-claude",
+      "source": "./plugins/setup/my-claude",
+      "description": "Personal Claude Code baseline: behavioural rules plus a set-up command that installs them into the user rules directory. Bootstraps a new machine or container in one step."
     }
   ]
 }

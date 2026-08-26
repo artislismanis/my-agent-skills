@@ -1,0 +1,46 @@
+#!/bin/sh
+# Copies this plugin's rules/ into the user rules directory, where Claude Code
+# loads them at the start of every session. Plugins cannot ship instructions
+# directly, so this runs on request via /my-claude:set-up or a Setup hook.
+set -eu
+
+# Resolve our own location: CLAUDE_PLUGIN_ROOT is documented for path
+# substitution, not for the environment of bin/ executables.
+src=$0
+while [ -L "$src" ]; do
+  dir=$(cd -P "$(dirname "$src")" && pwd)
+  src=$(readlink "$src")
+  case $src in
+    /*) ;;
+    *) src=$dir/$src ;;
+  esac
+done
+plugin_root=$(cd -P "$(dirname "$src")/.." && pwd)
+
+config_dir=${CLAUDE_CONFIG_DIR:-$HOME/.claude}
+target=$config_dir/rules/my-claude
+
+if [ ! -d "$plugin_root/rules" ]; then
+  echo "sync-claude-config: no rules/ at $plugin_root" >&2
+  exit 1
+fi
+
+mkdir -p "$target"
+# The directory is plugin-owned, so clear it first and a re-run always converges.
+rm -f "$target"/*.md
+cp "$plugin_root"/rules/*.md "$target"/
+
+echo "Installed $(ls -1 "$target"/*.md | wc -l | tr -d ' ') rules into $target:"
+for f in "$target"/*.md; do
+  echo "  $(basename "$f")"
+done
+
+# Seed the machine-local file on a fresh box, then never touch it again. It is
+# hand-edited, so overwriting it would lose notes that exist nowhere else.
+local_md=$config_dir/CLAUDE.md
+if [ -e "$local_md" ]; then
+  echo "Left $local_md alone (already exists)."
+else
+  cp "$plugin_root/templates/CLAUDE.md" "$local_md"
+  echo "Seeded $local_md from the plugin template."
+fi

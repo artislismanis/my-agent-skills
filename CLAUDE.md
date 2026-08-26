@@ -67,6 +67,9 @@ via the Claude plugin mechanism, where `<source-path>` is the `source` field fro
 - What each included skill/agent/MCP server does
 - Specific use case examples
 - Installation instructions for each component type
+- A **Sources and attribution** section whenever the plugin is derived from or inspired
+  by external work: the source repo, its licence, what it contributed, and any
+  deliberate deviations. Add a row to the Attribution table in the root README too.
 
 ## Skills (agentskills.io format)
 
