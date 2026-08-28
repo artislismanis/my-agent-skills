@@ -8,6 +8,7 @@ Personal Claude plugin marketplace — skills, agents, and MCP servers organised
 |-----------------------------------------------------------------|-------|------------------------------------------------------------|-------------------------------------------------------|
 | [excalidraw-diagrams](plugins/diagramming/excalidraw-diagrams/) | Skill | Generate professional Excalidraw diagrams with PNG preview | `/plugin install excalidraw-diagrams@my-agent-skills` |
 | [my-claude](plugins/setup/my-claude/)                           | Skill | Personal baseline rules plus a one-step set-up command      | `/plugin install my-claude@my-agent-skills`           |
+| [obsidian-tandem-comments](plugins/obsidian/obsidian-tandem-comments/) | Skill | Vendored Obsidian Tandem Comments skill for reading/writing comment threads | `/plugin install obsidian-tandem-comments@my-agent-skills` |
 
 Browse the [`plugins/`](plugins/) directory for all available packages, or see
 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) for the
@@ -101,6 +102,7 @@ before reusing a plugin elsewhere.
 | Plugin | Draws on |
 |--------|----------|
 | [my-claude](plugins/setup/my-claude/#sources-and-attribution) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT) |
+| [obsidian-tandem-comments](plugins/obsidian/obsidian-tandem-comments/#sources-and-attribution) | [leonpawelzik/obsidian-tandem-comments](https://github.com/leonpawelzik/obsidian-tandem-comments) (MIT) |
 
 ## License
 

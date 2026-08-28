@@ -1,0 +1,13 @@
+{
+  "name": "obsidian-tandem-comments",
+  "version": "0.1.0",
+  "description": "Vendored Claude Code skill for the Tandem Comments Obsidian plugin. Teaches Claude to read, write, reply to, and resolve comments and edit suggestions in the plugin's tandem-comments fenced-JSON format.",
+  "author": {
+    "name": "Artis Lismanis"
+  },
+  "capabilities": {
+    "skills": [
+      "obsidian-tandem-comments"
+    ]
+  }
+}
