@@ -18,6 +18,11 @@
       "name": "obsidian-tandem-comments",
       "source": "./plugins/obsidian/obsidian-tandem-comments",
       "description": "Vendored Claude Code skill for the Tandem Comments Obsidian plugin. Reads, writes, replies to, and resolves comments and edit suggestions in the tandem-comments fenced-JSON format."
+    },
+    {
+      "name": "obsidian-skills",
+      "source": "./plugins/obsidian/obsidian-skills",
+      "description": "Vendored subset of kepano/obsidian-skills: create and edit Obsidian Flavored Markdown, Bases, and JSON Canvas files. Omits obsidian-cli and defuddle."
     }
   ]
 }
