@@ -102,7 +102,7 @@ before reusing a plugin elsewhere.
 
 | Plugin | Draws on |
 |--------|----------|
-| [my-claude](plugins/setup/my-claude/#sources-and-attribution) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT) |
+| [my-claude](plugins/setup/my-claude/#sources-and-attribution) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT), Tiago Forte's Master Prompt concept |
 | [obsidian-tandem-comments](plugins/obsidian/obsidian-tandem-comments/#sources-and-attribution) | [leonpawelzik/obsidian-tandem-comments](https://github.com/leonpawelzik/obsidian-tandem-comments) (MIT) |
 | [obsidian-skills](plugins/obsidian/obsidian-skills/#sources-and-attribution) | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT) |
 
