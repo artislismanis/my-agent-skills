@@ -1,7 +1,7 @@
 {
   "name": "my-claude",
-  "version": "0.2.0",
-  "description": "Personal Claude Code baseline. Ships behavioural rules (tone, defaults, before-coding, verification, destructive actions) and a set-up command that installs them into the user rules directory, so a new machine or container matches the setup in one step.",
+  "version": "0.3.0",
+  "description": "Personal Claude Code baseline. Ships behavioural rules (tone, defaults, before-coding, verification, destructive actions, markdown, opt-in master-prompt) and a set-up command that installs them into the user rules directory, so a new machine or container matches the setup in one step.",
   "author": {
     "name": "Artis Lismanis"
   },
