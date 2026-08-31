@@ -1,12 +1,8 @@
 # Template: BPMN Business Process Diagrams
 
-**Standard**: BPMN 2.0 (Business Process Model and Notation)
-**Use for**: Business workflows, approval processes, service interactions, process documentation
+**Standard**: BPMN 2.0 (Business Process Model and Notation) **Use for**: Business workflows, approval processes, service interactions, process documentation
 
-Apply styling defaults from `references/styling-defaults.md`. This template defines
-BPMN-specific shape conventions. Note: Excalidraw does not have native BPMN shapes —
-use the approximations below, which are standard practice for BPMN in general-purpose
-diagramming tools.
+Apply styling defaults from `references/styling-defaults.md`. This template defines BPMN-specific shape conventions. Note: Excalidraw does not have native BPMN shapes — use the approximations below, which are standard practice for BPMN in general-purpose diagramming tools.
 
 ---
 
@@ -75,8 +71,7 @@ Label incoming arrow with the condition; label outgoing arrows with outcomes.
 
 ## Swim Lanes (Pools and Lanes)
 
-BPMN processes are organised into **Pools** (participants) and **Lanes** (roles/systems
-within a participant).
+BPMN processes are organised into **Pools** (participants) and **Lanes** (roles/systems within a participant).
 
 ### Pool
 
@@ -92,8 +87,7 @@ A `frame` element representing one process participant.
 
 Horizontal bands within a pool, each representing a role or system.
 
-Implement lanes as `rectangle` elements (or `frame` elements) stacked vertically
-inside the pool frame:
+Implement lanes as `rectangle` elements (or `frame` elements) stacked vertically inside the pool frame:
 
 ```
 Pool frame (full width)
@@ -102,8 +96,7 @@ Pool frame (full width)
 └── Lane: Warehouse    (bottom strip, height: 140)
 ```
 
-Lane label: vertical text at left edge — use standalone `text` element rotated
-90° (`angle: -1.5708` ≈ -90°) or a horizontal label at left edge.
+Lane label: vertical text at left edge — use standalone `text` element rotated 90° (`angle: -1.5708` ≈ -90°) or a horizontal label at left edge.
 
 For simplicity, use horizontal lane labels at the top-left of each lane rectangle.
 
@@ -126,11 +119,7 @@ Lane styling:
 | Default Flow | `solid` arrow with `//` marking | Use arrow label `"[default]"` |
 | Conditional Flow | `solid` arrow with diamond marker | Use arrow label with condition |
 
-**Arrow label binding:** All flow labels (gateway branch labels like `"Yes"` /
-`"No"`, condition labels, `"[default]"`) use `containerId` binding with
-`lineHeight: 1.25` and calculated midpoint positioning. See
-`references/excalidraw-format.md` section "Arrow label rules" for the complete
-JSON pattern, sizing formulas, and readability rules.
+**Arrow label binding:** All flow labels (gateway branch labels like `"Yes"` / `"No"`, condition labels, `"[default]"`) use `containerId` binding with `lineHeight: 1.25` and calculated midpoint positioning. See `references/excalidraw-format.md` section "Arrow label rules" for the complete JSON pattern, sizing formulas, and readability rules.
 
 ---
 
@@ -154,9 +143,7 @@ JSON pattern, sizing formulas, and readability rules.
 |————————————————————————————————————————————————|
 ```
 
-Minimum lane height: `160px` (to fit tasks + arrows + labels)
-Element start x: pool `x + 80` (leave room for lane label)
-Horizontal spacing between elements: `60px`
+Minimum lane height: `160px` (to fit tasks + arrows + labels) Element start x: pool `x + 80` (leave room for lane label) Horizontal spacing between elements: `60px`
 
 ### Spacing Within Lanes
 

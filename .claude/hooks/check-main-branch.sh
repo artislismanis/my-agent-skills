@@ -30,7 +30,7 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
 # Block on main or detached HEAD
 if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "HEAD" ]; then
-  REASON="GitHub Flow: you are on ${BRANCH}. Create a feature branch first: git checkout -b <name>, or use /speckit.specify for new plugins."
+  REASON="GitHub Flow: you are on ${BRANCH}. Create a feature branch first: git checkout -b <name>."
   printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}' "$REASON"
   exit 0
 fi
