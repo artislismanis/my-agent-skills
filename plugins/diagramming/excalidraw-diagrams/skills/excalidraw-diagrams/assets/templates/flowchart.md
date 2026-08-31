@@ -1,10 +1,8 @@
 # Template: Flowcharts and Decision Trees
 
-**Standard**: ANSI/ISO flowchart notation (industry-standard symbols)
-**Use for**: Process flows, decision trees, algorithms, approval workflows
+**Standard**: ANSI/ISO flowchart notation (industry-standard symbols) **Use for**: Process flows, decision trees, algorithms, approval workflows
 
-Apply styling defaults from `references/styling-defaults.md`. This template
-defines flowchart-specific shape conventions on top of those defaults.
+Apply styling defaults from `references/styling-defaults.md`. This template defines flowchart-specific shape conventions on top of those defaults.
 
 ---
 
@@ -48,10 +46,7 @@ Decision diamond labels:
 - Arrows come out from the **bottom** (false/no) and **right** (true/yes) — or bottom and left
 - Add a short text label on each outgoing arrow
 
-**Arrow label binding:** All arrow labels (including decision branch labels like
-`"Yes"` / `"No"`) use `containerId` binding with `lineHeight: 1.25` and calculated
-midpoint positioning. See `references/excalidraw-format.md` section "Arrow label
-rules" for the complete JSON pattern, sizing formulas, and readability rules.
+**Arrow label binding:** All arrow labels (including decision branch labels like `"Yes"` / `"No"`) use `containerId` binding with `lineHeight: 1.25` and calculated midpoint positioning. See `references/excalidraw-format.md` section "Arrow label rules" for the complete JSON pattern, sizing formulas, and readability rules.
 
 ---
 
@@ -73,9 +68,7 @@ Standard flow direction: start at top, end at bottom.
 [End]
 ```
 
-Vertical spacing: 60px between shapes (edge to edge).
-Horizontal spacing: 80px for branches.
-Decision branches: go right for "Yes", continue down for "No" (or vice versa — be consistent).
+Vertical spacing: 60px between shapes (edge to edge). Horizontal spacing: 80px for branches. Decision branches: go right for "Yes", continue down for "No" (or vice versa — be consistent).
 
 ### Left-to-Right (alternative)
 
@@ -120,8 +113,7 @@ Layout: top-down tree structure, outcomes spread left-to-right.
 
 ## Complex Flow Handling
 
-- **Loops**: Draw the return arrow to the left or right of the process block,
-  not through existing elements. Use enough spacing to route cleanly.
+- **Loops**: Draw the return arrow to the left or right of the process block, not through existing elements. Use enough spacing to route cleanly.
 - **Parallel paths**: Use a horizontal `line` to indicate fork and join (or label arrows clearly).
 - **Sub-processes**: Indicate with an `"[SP]"` suffix in the label or a nested frame.
 - **Off-page connectors**: Use small labelled `ellipse` elements at page breaks.

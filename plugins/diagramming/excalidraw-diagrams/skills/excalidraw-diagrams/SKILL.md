@@ -13,19 +13,14 @@ allowed-tools: Bash Read Write
 
 # Excalidraw Diagram Skill
 
-You generate professional, consistently styled Excalidraw diagrams from natural
-language descriptions. Every diagram you produce is valid Excalidraw JSON saved
-as a `.excalidraw` file, styled according to the brand defined in
-`references/styling-defaults.md`.
+You generate professional, consistently styled Excalidraw diagrams from natural language descriptions. Every diagram you produce is valid Excalidraw JSON saved as a `.excalidraw` file, styled according to the brand defined in `references/styling-defaults.md`.
 
 ## Reference Material
 
 **Always load before generating any diagram:**
 
-1. Read `references/excalidraw-format.md` — Excalidraw JSON format, all element
-   types, binding rules, and a complete worked example
-2. Read `references/styling-defaults.md` — colour palette, fonts, stroke
-   settings, and layout spacing guidelines
+1. Read `references/excalidraw-format.md` — Excalidraw JSON format, all element types, binding rules, and a complete worked example
+2. Read `references/styling-defaults.md` — colour palette, fonts, stroke settings, and layout spacing guidelines
 
 **Load for specific diagram types:**
 
@@ -35,31 +30,25 @@ as a `.excalidraw` file, styled according to the brand defined in
 - Flowcharts / decision trees → `assets/templates/flowchart.md`
 - BPMN business process → `assets/templates/bpmn.md`
 
-If the diagram type does not match any template, apply styling defaults and
-general-purpose box-and-arrow conventions.
+If the diagram type does not match any template, apply styling defaults and general-purpose box-and-arrow conventions.
 
 ---
 
 ## Design Session
 
-**Do not generate the diagram immediately.** First, have a collaborative design
-conversation to understand the diagram's intent and content:
+**Do not generate the diagram immediately.** First, have a collaborative design conversation to understand the diagram's intent and content:
 
-1. **Identify the diagram type** from the user's description (C4, flowchart,
-   BPMN, data flow, cloud architecture, or general)
+1. **Identify the diagram type** from the user's description (C4, flowchart, BPMN, data flow, cloud architecture, or general)
 2. **Ask clarifying questions** about:
    - The systems, components, or actors involved and their names
    - The relationships and data flows between them
    - Any groupings, boundaries, or swim lanes needed
    - The level of detail (high-level overview vs. detailed component view)
    - Any specific technology labels or annotations required
-3. **Confirm your understanding** by summarising the planned diagram before
-   generating JSON
+3. **Confirm your understanding** by summarising the planned diagram before generating JSON
 4. Only proceed to generation once the user confirms the scope and content
 
-Keep the design conversation concise — typically 2–4 targeted questions. If the
-user's description is already detailed, confirm your interpretation in one
-message and proceed.
+Keep the design conversation concise — typically 2–4 targeted questions. If the user's description is already detailed, confirm your interpretation in one message and proceed.
 
 ---
 
@@ -74,42 +63,27 @@ message and proceed.
 5. Every shape that has a text label needs BOTH:
    - A bound `text` element with `containerId` set to the shape's `id`
    - A `boundElements` entry on the shape referencing the text element
-6. Every arrow that connects two shapes needs BOTH shapes' `boundElements` to
-   reference the arrow
+6. Every arrow that connects two shapes needs BOTH shapes' `boundElements` to reference the arrow
 7. Every arrow that has a label needs BOTH:
    - A bound `text` element with `containerId` set to the arrow's `id`
    - A `boundElements` entry on the arrow referencing the text element
-8. Multi-line labels (e.g. name + type) use literal `\n` in both `text` and
-   `originalText` fields: `"Customer\n[Person]"`
+8. Multi-line labels (e.g. name + type) use literal `\n` in both `text` and `originalText` fields: `"Customer\n[Person]"`
 
-> **NEVER** use `containerId: null` with manual `x`/`y` positioning and `groupIds`
-> for text inside shapes or on arrows. This renders incorrectly in PNG output.
-> Always use proper `containerId` binding with calculated `x`/`y`/`width`/`height`
-> per the positioning formulas in `references/excalidraw-format.md`.
+> **NEVER** use `containerId: null` with manual `x`/`y` positioning and `groupIds` for text inside shapes or on arrows. This renders incorrectly in PNG output. Always use proper `containerId` binding with calculated `x`/`y`/`width`/`height` per the positioning formulas in `references/excalidraw-format.md`.
 
 ### Styling
 
-Apply all values from `references/styling-defaults.md` — colours, fonts, stroke
-settings, fill styles, and arrow defaults. Use the colour palette by role (blue
-for internal, green for external, grey for infrastructure, yellow for data
-stores / decisions). If the user specified style overrides during the design
-session, apply only those overrides while keeping all other defaults.
+Apply all values from `references/styling-defaults.md` — colours, fonts, stroke settings, fill styles, and arrow defaults. Use the colour palette by role (blue for internal, green for external, grey for infrastructure, yellow for data stores / decisions). If the user specified style overrides during the design session, apply only those overrides while keeping all other defaults.
 
 ### Layout
 
-Follow the Layout Spacing Guidelines in `references/styling-defaults.md` for
-element positioning, gap sizes, standard shape dimensions, and frame padding.
+Follow the Layout Spacing Guidelines in `references/styling-defaults.md` for element positioning, gap sizes, standard shape dimensions, and frame padding.
 
 ### Text and Labels
 
-Follow the Font Sizes table in `references/styling-defaults.md` for element
-labels, sub-labels, frame names, and arrow labels. Text outside shapes MUST be
-shown in full. Text inside shapes MAY be truncated only when necessary — if
-truncated, flag this to the user and ask for a decision.
+Follow the Font Sizes table in `references/styling-defaults.md` for element labels, sub-labels, frame names, and arrow labels. Text outside shapes MUST be shown in full. Text inside shapes MAY be truncated only when necessary — if truncated, flag this to the user and ask for a decision.
 
-Arrow labels are bound text — use `containerId` pointing to the arrow's `id`,
-exactly as with shape labels. Calculate the label's `x`/`y`/`width`/`height`
-using the arrow midpoint formulas in `references/excalidraw-format.md`.
+Arrow labels are bound text — use `containerId` pointing to the arrow's `id`, exactly as with shape labels. Calculate the label's `x`/`y`/`width`/`height` using the arrow midpoint formulas in `references/excalidraw-format.md`.
 
 ### Validation Before Output
 
@@ -125,9 +99,7 @@ Before saving, verify:
 
 ## Output
 
-Save the generated diagram as a `.excalidraw` file using the Write tool. Use a
-descriptive filename based on the diagram content (e.g.
-`ecommerce-c4-context.excalidraw`).
+Save the generated diagram as a `.excalidraw` file using the Write tool. Use a descriptive filename based on the diagram content (e.g. `ecommerce-c4-context.excalidraw`).
 
 After saving:
 
@@ -152,16 +124,14 @@ Before rendering, check whether the render script's dependencies are installed:
 ls "${CLAUDE_SKILL_DIR}/scripts/node_modules" 2>/dev/null
 ```
 
-If `node_modules` does not exist, **do not install automatically**. Instead,
-inform the user:
+If `node_modules` does not exist, **do not install automatically**. Instead, inform the user:
 
 > "The render script needs three npm packages installed locally:
 > - `@excalidraw/utils` — official Excalidraw export utilities (JSON to PNG)
 > - `@napi-rs/canvas` — canvas backend for Node.js rendering
 > - `jsdom` — DOM polyfill for the Excalidraw renderer
 >
-> These install to the plugin's own `scripts/` directory — nothing global.
-> Shall I run `npm install` to set them up?"
+> These install to the plugin's own `scripts/` directory — nothing global. Shall I run `npm install` to set them up?"
 
 Once the user confirms, run:
 
@@ -195,12 +165,9 @@ When the user requests changes to an existing diagram:
 
 1. Read the existing `.excalidraw` file
 2. Identify which elements to add, remove, or modify
-3. For additions: generate new elements with fresh unique IDs, apply brand
-   styling, establish proper bindings
-4. For removals: remove the element AND any arrows/texts bound to it; remove
-   back-references from connected shapes
-5. For moves: update `x`/`y` coordinates and recalculate arrow `points` to
-   maintain connectivity
+3. For additions: generate new elements with fresh unique IDs, apply brand styling, establish proper bindings
+4. For removals: remove the element AND any arrows/texts bound to it; remove back-references from connected shapes
+5. For moves: update `x`/`y` coordinates and recalculate arrow `points` to maintain connectivity
 6. Preserve all unchanged element IDs and styling
 7. Maintain consistency with `references/styling-defaults.md` brand throughout
 8. Maintain consistency with the applicable diagram template conventions
@@ -219,6 +186,4 @@ When the user requests changes to an existing diagram:
 | BPMN, business process, swim lane diagram | `assets/templates/bpmn.md` |
 | Anything else | Apply styling defaults; use general box-and-arrow conventions |
 
-For unsupported types, apply `references/styling-defaults.md` defaults and
-note to the user that no specific template is available. Offer to clarify the
-conventions to use.
+For unsupported types, apply `references/styling-defaults.md` defaults and note to the user that no specific template is available. Offer to clarify the conventions to use.

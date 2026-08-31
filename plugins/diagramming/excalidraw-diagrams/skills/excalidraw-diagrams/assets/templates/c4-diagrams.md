@@ -1,18 +1,14 @@
 # Template: C4 Diagrams
 
-**Standard**: C4 Model (Simon Brown) — https://c4model.com
-**Supported levels**: Context, Container, Component
+**Standard**: C4 Model (Simon Brown) — https://c4model.com **Supported levels**: Context, Container, Component
 
-Apply the styling defaults from `references/styling-defaults.md` for all colours,
-fonts, and stroke settings. This template defines C4-specific shape conventions,
-labelling patterns, and layout approach on top of those defaults.
+Apply the styling defaults from `references/styling-defaults.md` for all colours, fonts, and stroke settings. This template defines C4-specific shape conventions, labelling patterns, and layout approach on top of those defaults.
 
 ---
 
 ## C4 Level 1 — System Context Diagram
 
-**Purpose**: Shows the system in context with its users and external dependencies.
-High-level, suitable for non-technical stakeholders.
+**Purpose**: Shows the system in context with its users and external dependencies. High-level, suitable for non-technical stakeholders.
 
 ### Shape Conventions
 
@@ -41,10 +37,7 @@ Use `\n` within the text string:
 - Arrow labels use `containerId` binding to the arrow (bound text, `fontSize: 14`)
 - Use `"strokeStyle": "dashed"` for async or future relationships
 
-**Arrow label binding:** All relationship labels use `containerId` binding with
-`lineHeight: 1.25` and calculated midpoint positioning. See
-`references/excalidraw-format.md` section "Arrow label rules" for the complete
-JSON pattern, sizing formulas, and readability rules.
+**Arrow label binding:** All relationship labels use `containerId` binding with `lineHeight: 1.25` and calculated midpoint positioning. See `references/excalidraw-format.md` section "Arrow label rules" for the complete JSON pattern, sizing formulas, and readability rules.
 
 ### Layout
 
@@ -145,8 +138,7 @@ JSON pattern, sizing formulas, and readability rules.
 
 ## C4 Level 2 — Container Diagram
 
-**Purpose**: Zooms into the in-scope system to show containers (applications,
-databases, services) and their interactions.
+**Purpose**: Zooms into the in-scope system to show containers (applications, databases, services) and their interactions.
 
 ### Shape Conventions
 

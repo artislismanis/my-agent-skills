@@ -2,16 +2,13 @@
 
 **Scope**: AWS, GCP, Azure, and multi-cloud infrastructure diagrams
 
-Apply styling defaults from `references/styling-defaults.md`. This template
-defines cloud-specific conventions for service categories, grouping, and
-connectivity patterns.
+Apply styling defaults from `references/styling-defaults.md`. This template defines cloud-specific conventions for service categories, grouping, and connectivity patterns.
 
 ---
 
 ## Core Approach
 
-Cloud architecture diagrams use **shape + label** to represent services (no custom
-icons in Excalidraw text-based generation). Group services by:
+Cloud architecture diagrams use **shape + label** to represent services (no custom icons in Excalidraw text-based generation). Group services by:
 1. **Service category** (compute, storage, networking, database)
 2. **Network boundary** (VPC, subnet, region, availability zone)
 
@@ -45,8 +42,7 @@ icons in Excalidraw text-based generation). Group services by:
 | Internet | Stand-alone `rectangle` (green) | `"Internet"` |
 | On-Premises | `frame` | `"On-Premises"` |
 
-Use nested `frame` elements to represent subnet-within-VPC hierarchy. Child frames
-reference the parent frame via `frameId`, and child services reference the subnet frame.
+Use nested `frame` elements to represent subnet-within-VPC hierarchy. Child frames reference the parent frame via `frameId`, and child services reference the subnet frame.
 
 ---
 
@@ -81,11 +77,7 @@ Use `fontFamily: 6` (Nunito), `fontSize: 16` for the main label.
 
 Always add brief labels to arrows for protocol/port clarity.
 
-**Arrow label binding:** All connection labels (protocol names like `"HTTPS"`,
-`"gRPC"`, `"TCP/5432"`) use `containerId` binding with `lineHeight: 1.25` and
-calculated midpoint positioning. See `references/excalidraw-format.md` section
-"Arrow label rules" for the complete JSON pattern, sizing formulas, and
-readability rules.
+**Arrow label binding:** All connection labels (protocol names like `"HTTPS"`, `"gRPC"`, `"TCP/5432"`) use `containerId` binding with `lineHeight: 1.25` and calculated midpoint positioning. See `references/excalidraw-format.md` section "Arrow label rules" for the complete JSON pattern, sizing formulas, and readability rules.
 
 ---
 
@@ -103,8 +95,7 @@ readability rules.
 [Databases / Storage]        (data tier, yellow)     — private subnet
 ```
 
-Position from top to bottom with increasing trust level. Public-facing services
-at top, databases and internal services at bottom.
+Position from top to bottom with increasing trust level. Public-facing services at top, databases and internal services at bottom.
 
 ### Availability Zone Layout
 
@@ -120,8 +111,7 @@ VPC frame
 
 ### Multi-Region Layout
 
-Show regions as top-level `frame` elements, side by side. Use dashed arrows
-for cross-region replication.
+Show regions as top-level `frame` elements, side by side. Use dashed arrows for cross-region replication.
 
 ---
 

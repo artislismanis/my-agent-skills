@@ -1,10 +1,8 @@
 # Template: Data Flow Diagrams (DFD)
 
-**Standard**: Yourdon–DeMarco DFD notation
-**Levels**: Context (Level 0) and Detail (Level 1+)
+**Standard**: Yourdon–DeMarco DFD notation **Levels**: Context (Level 0) and Detail (Level 1+)
 
-Apply styling defaults from `references/styling-defaults.md`. This template
-defines DFD-specific shape conventions on top of those defaults.
+Apply styling defaults from `references/styling-defaults.md`. This template defines DFD-specific shape conventions on top of those defaults.
 
 ---
 
@@ -53,13 +51,11 @@ Represents a function or transformation. Label with a verb phrase.
 }
 ```
 
-Label convention: `"1.0\nProcess Name"` — process number on first line, name on second.
-Dimensions: `160 × 80` (wider than tall for readability).
+Label convention: `"1.0\nProcess Name"` — process number on first line, name on second. Dimensions: `160 × 80` (wider than tall for readability).
 
 ### Data Store (open rectangle, yellow fill)
 
-Represented as a rectangle with a visual cue. Use standard rectangle with a
-distinctive colour. Label format: `"D1: Store Name"` (Yourdon convention).
+Represented as a rectangle with a visual cue. Use standard rectangle with a distinctive colour. Label format: `"D1: Store Name"` (Yourdon convention).
 
 ```json
 {
@@ -87,10 +83,7 @@ Each arrow carries a label describing the data being transferred.
 }
 ```
 
-**Arrow label binding:** Data flow labels (e.g. `"Order Data"`, `"Payment Info"`)
-use `containerId` binding with `lineHeight: 1.25` and calculated midpoint
-positioning. See `references/excalidraw-format.md` section "Arrow label rules"
-for the complete JSON pattern, sizing formulas, and readability rules.
+**Arrow label binding:** Data flow labels (e.g. `"Order Data"`, `"Payment Info"`) use `containerId` binding with `lineHeight: 1.25` and calculated midpoint positioning. See `references/excalidraw-format.md` section "Arrow label rules" for the complete JSON pattern, sizing formulas, and readability rules.
 
 Use `"strokeStyle": "dashed"` for async or event-driven flows.
 
@@ -114,8 +107,7 @@ Layout: process at centre, entities arranged around it (top, bottom, left, right
 - Show all external entities with their data flows
 - Number processes starting from 1.0
 
-Layout: left-to-right flow with external entities on far left/right, data stores
-at the bottom.
+Layout: left-to-right flow with external entities on far left/right, data stores at the bottom.
 
 ### Level 2+ — Detailed DFD
 

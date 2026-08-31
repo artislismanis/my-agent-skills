@@ -1,19 +1,14 @@
 # excalidraw-diagrams
 
-Generate professional, consistently styled Excalidraw diagrams from natural language
-descriptions. Claude handles the design conversation, generates valid Excalidraw JSON,
-and can render PNG previews — all without leaving your editor.
+Generate professional, consistently styled Excalidraw diagrams from natural language descriptions. Claude handles the design conversation, generates valid Excalidraw JSON, and can render PNG previews — all without leaving your editor.
 
 ## What This Plugin Does
 
 The `excalidraw-diagrams` skill enables Claude to:
 
-1. **Generate diagrams from descriptions** — describe what you want, Claude asks
-   clarifying questions, then produces valid Excalidraw JSON with professional styling
-2. **Render PNG previews** — convert any `.excalidraw` file to PNG for visual
-   inspection using a self-contained Node.js script
-3. **Apply diagram-type templates** — correct visual conventions for C4, data flow,
-   cloud architecture, flowcharts, and BPMN
+1. **Generate diagrams from descriptions** — describe what you want, Claude asks clarifying questions, then produces valid Excalidraw JSON with professional styling
+2. **Render PNG previews** — convert any `.excalidraw` file to PNG for visual inspection using a self-contained Node.js script
+3. **Apply diagram-type templates** — correct visual conventions for C4, data flow, cloud architecture, flowcharts, and BPMN
 4. **Iterate and refine** — modify existing diagrams while preserving styling consistency
 
 ## Supported Diagram Types
@@ -26,8 +21,7 @@ The `excalidraw-diagrams` skill enables Claude to:
 | **Flowchart** | ANSI/ISO notation — process, decision, terminator, swim lanes |
 | **BPMN** | BPMN 2.0 — events, tasks, gateways, pools, swim lanes |
 
-For diagram types not in the list, Claude applies the default styling brand and
-general box-and-arrow conventions.
+For diagram types not in the list, Claude applies the default styling brand and general box-and-arrow conventions.
 
 ## Installation
 
@@ -38,10 +32,7 @@ general box-and-arrow conventions.
 
 ### Render Script Dependencies
 
-The PNG render script requires Node.js 22+ and three npm packages (`@excalidraw/utils`,
-`@napi-rs/canvas`, `jsdom`). Claude will check for these automatically before the first
-render and ask your permission to install them locally — no global packages or system
-dependencies needed.
+The PNG render script requires Node.js 22+ and three npm packages (`@excalidraw/utils`, `@napi-rs/canvas`, `jsdom`). Claude will check for these automatically before the first render and ask your permission to install them locally — no global packages or system dependencies needed.
 
 ## Usage
 
@@ -49,8 +40,7 @@ dependencies needed.
 
 Ask Claude to create a diagram:
 
-> "Draw a C4 context diagram for an e-commerce system with a web app,
-> payment gateway, and inventory service."
+> "Draw a C4 context diagram for an e-commerce system with a web app, payment gateway, and inventory service."
 
 Claude will:
 
@@ -76,8 +66,7 @@ node render.mjs input.excalidraw output.png --width 1600
 
 > "Add a notification service connected to the order service."
 
-Claude reads the existing `.excalidraw` file, adds the new element with consistent
-styling and proper bindings, and re-renders the PNG.
+Claude reads the existing `.excalidraw` file, adds the new element with consistent styling and proper bindings, and re-renders the PNG.
 
 ## Output Files
 
@@ -93,8 +82,7 @@ All diagrams use a consistent professional brand:
 - **Strokes**: `strokeWidth: 2`, `roughness: 0` (clean lines)
 - **Fill**: Solid colours, no hachure by default
 
-To customise styling, tell Claude what you want: "use darker blue backgrounds" or
-"make the arrows dashed". Claude applies your override while keeping all other defaults.
+To customise styling, tell Claude what you want: "use darker blue backgrounds" or "make the arrows dashed". Claude applies your override while keeping all other defaults.
 
 ## Plugin Contents
 

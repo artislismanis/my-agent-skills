@@ -1,7 +1,6 @@
 # Excalidraw JSON Format Reference
 
-**Schema Version**: 2
-**Scope**: All element types supported for diagram generation
+**Schema Version**: 2 **Scope**: All element types supported for diagram generation
 
 ---
 
@@ -160,27 +159,19 @@ Directed connector with optional arrowheads and bindings. Use for relationships,
 
 - `mode` — always `"orbit"` (connector finds the shortest path to the shape edge)
 - `elementId` — ID of the shape being connected to
-- `fixedPoint` — normalised `[x, y]` anchor on the shape (see fixedPoint Coordinate
-  System below)
+- `fixedPoint` — normalised `[x, y]` anchor on the shape (see fixedPoint Coordinate System below)
 - The source shape's `boundElements` must include `{ "id": "<arrow-id>", "type": "arrow" }`
 - The target shape's `boundElements` must include `{ "id": "<arrow-id>", "type": "arrow" }`
 
 **Arrowhead values:** `null` (none), `"arrow"` (filled), `"bar"`, `"dot"`, `"triangle"`
 
-**Points array:** Coordinates are offsets from the arrow's `x`/`y` origin. Always
-provide at least 2 points: `[[0, 0], [dx, dy]]`. Use more points for multi-segment
-arrows (see below).
+**Points array:** Coordinates are offsets from the arrow's `x`/`y` origin. Always provide at least 2 points: `[[0, 0], [dx, dy]]`. Use more points for multi-segment arrows (see below).
 
-**Straight vs elbow arrows:** Arrows should be straight (horizontal or vertical).
-Align connected shapes so their centres share the same y-coordinate (for horizontal
-arrows) or x-coordinate (for vertical arrows). When shapes cannot be axis-aligned,
-use multi-segment arrows with explicit intermediate points (see below).
+**Straight vs elbow arrows:** Arrows should be straight (horizontal or vertical). Align connected shapes so their centres share the same y-coordinate (for horizontal arrows) or x-coordinate (for vertical arrows). When shapes cannot be axis-aligned, use multi-segment arrows with explicit intermediate points (see below).
 
 ### fixedPoint Coordinate System
 
-`fixedPoint` uses normalised `[x, y]` where `(0, 0)` is the top-left and `(1, 1)`
-is the bottom-right of the shape's bounding box. Values are continuous — any point
-along an edge is valid.
+`fixedPoint` uses normalised `[x, y]` where `(0, 0)` is the top-left and `(1, 1)` is the bottom-right of the shape's bounding box. Values are continuous — any point along an edge is valid.
 
 **Common anchor points:**
 
@@ -194,30 +185,23 @@ along an edge is valid.
 
 **Distributing multiple arrows on the same side:**
 
-When several arrows connect to the same side of a shape, space them evenly along
-that edge to prevent overlapping:
+When several arrows connect to the same side of a shape, space them evenly along that edge to prevent overlapping:
 
 - 2 arrows on the left side: `[0, 0.33]` and `[0, 0.67]`
 - 3 arrows on the left side: `[0, 0.25]`, `[0, 0.5]`, and `[0, 0.75]`
 - 2 arrows on the bottom: `[0.33, 1]` and `[0.67, 1]`
 
-The exact positions may need adjusting during visual iteration to achieve a clean
-look — these are starting points, not rigid rules.
+The exact positions may need adjusting during visual iteration to achieve a clean look — these are starting points, not rigid rules.
 
 **Choosing sides and points:**
 
-- Default to the side facing the connected shape (left/right for horizontal arrows,
-  top/bottom for vertical)
-- When a new arrow would overlap an existing one on the same side, either distribute
-  both arrows along that side or route the new arrow to a different side entirely
-- For complex diagrams, iterate the `fixedPoint` values after rendering to find the
-  cleanest arrangement
+- Default to the side facing the connected shape (left/right for horizontal arrows, top/bottom for vertical)
+- When a new arrow would overlap an existing one on the same side, either distribute both arrows along that side or route the new arrow to a different side entirely
+- For complex diagrams, iterate the `fixedPoint` values after rendering to find the cleanest arrangement
 
 ### Elbowed (multi-segment) arrows
 
-When shapes are not axis-aligned, use native elbowed arrows with `"elbowed": true`.
-You must still provide the calculated intermediate points — the static renderer does
-not auto-route, but it does render whatever points you provide.
+When shapes are not axis-aligned, use native elbowed arrows with `"elbowed": true`. You must still provide the calculated intermediate points — the static renderer does not auto-route, but it does render whatever points you provide.
 
 **Required properties for elbowed arrows:**
 
@@ -244,28 +228,23 @@ Up/down-then-right (vertical first, then horizontal):
 
 **Binding gap for elbowed arrows:**
 
-Native elbowed arrows create the binding gap via `fixedPoint` values slightly
-outside `[0, 1]`. Use a `~0.03` offset from the edge:
+Native elbowed arrows create the binding gap via `fixedPoint` values slightly outside `[0, 1]`. Use a `~0.03` offset from the edge:
 
 - Start from right edge: `fixedPoint: [1.03, y]` (arrow origin ~6px past edge)
 - End at left edge: `fixedPoint: [-0.03, y]` (arrow ends ~6px before edge)
 - The arrow's `x`/`y` is the actual start position (no manual 8px offset needed)
 
-For straight arrows, `orbit` mode also handles the visual gap — set the arrow's
-`x`/`y` to the shape edge and the renderer creates the spacing automatically.
+For straight arrows, `orbit` mode also handles the visual gap — set the arrow's `x`/`y` to the shape edge and the renderer creates the spacing automatically.
 
 **Rules:**
 
 - Place bend points in empty space — not on top of other elements or arrow labels
 - Choose the route that avoids crossing or overlapping existing arrows
-- Set the arrow's `width` to the maximum absolute x-offset and `height` to the
-  maximum absolute y-offset across all points
+- Set the arrow's `width` to the maximum absolute x-offset and `height` to the maximum absolute y-offset across all points
 
 **Arrow label rules (text on an arrow):**
 
-Arrow labels use the same `containerId` binding as shape labels. **The static
-renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`,
-`width`, and `height` so the label appears at the arrow's midpoint.
+Arrow labels use the same `containerId` binding as shape labels. **The static renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`, `width`, and `height` so the label appears at the arrow's midpoint.
 
 1. Create a `text` element with `containerId` = the arrow's `id`
 2. Add `{ "id": "<text-id>", "type": "text" }` to the arrow's `boundElements`
@@ -274,9 +253,7 @@ renderer does NOT auto-position arrow labels** — you must calculate `x`, `y`,
 **Sizing formulas for arrow labels:**
 
 - `text_height` = `num_lines × fontSize × lineHeight` (e.g. 1 × 14 × 1.25 = 17.5)
-- `text_width` — estimate from text content: **~8px per character** for fontSize 14
-  Nunito, **~9px per character** for fontSize 16. Round up generously to avoid
-  clipping — the Excalidraw app measures precisely but we must overestimate.
+- `text_width` — estimate from text content: **~8px per character** for fontSize 14 Nunito, **~9px per character** for fontSize 16. Round up generously to avoid clipping — the Excalidraw app measures precisely but we must overestimate.
 - `text_x` = arrow midpoint x − text_width / 2
 - `text_y` = arrow midpoint y − text_height / 2
 
@@ -305,14 +282,9 @@ Example: "Uses" (4 chars, fontSize 14) on a horizontal arrow from x=260 to x=400
 }
 ```
 
-Arrow labels can use `\n` for multiline text, just like shape labels. This is
-useful for compact labels like `"REST/HTTPS\nJSON"`. Calculate `text_height`
-using the number of lines.
+Arrow labels can use `\n` for multiline text, just like shape labels. This is useful for compact labels like `"REST/HTTPS\nJSON"`. Calculate `text_height` using the number of lines.
 
-**Readability rule:** Labels should not cover arrowheads. For horizontal arrows,
-ensure the label doesn't extend to the arrow endpoints — leave at least ~30px
-of visible arrow line at each end. For vertical arrows, position the label
-beside the arrow (offset `text_x` to the right) rather than centred on it.
+**Readability rule:** Labels should not cover arrowheads. For horizontal arrows, ensure the label doesn't extend to the arrow endpoints — leave at least ~30px of visible arrow line at each end. For vertical arrows, position the label beside the arrow (offset `text_x` to the right) rather than centred on it.
 
 The arrow must reference this label in its `boundElements`:
 
@@ -324,8 +296,7 @@ The arrow must reference this label in its `boundElements`:
 }
 ```
 
-> **Do not** position arrow label text manually with `containerId: null` — the label
-> will not move with the arrow and will render at incorrect positions in PNG output.
+> **Do not** position arrow label text manually with `containerId: null` — the label will not move with the arrow and will render at incorrect positions in PNG output.
 
 ---
 
@@ -346,9 +317,7 @@ Non-directed line without arrowheads or bindings. Use for decorative separators,
 
 ### `text`
 
-Text elements can be **standalone** (floating on the canvas) or **bound** (inside a
-shape or on an arrow). Bound text is by far the most common — use it for all labels
-inside shapes and on arrows.
+Text elements can be **standalone** (floating on the canvas) or **bound** (inside a shape or on an arrow). Bound text is by far the most common — use it for all labels inside shapes and on arrows.
 
 | Field | Values | Notes |
 |-------|--------|-------|
@@ -360,9 +329,7 @@ inside shapes and on arrows.
 
 #### Bound text (label inside a shape)
 
-This is the standard pattern for labelling shapes. **The static renderer does NOT
-auto-centre text** — you must calculate `x`, `y`, `width`, and `height` so the
-text appears centred within the parent shape.
+This is the standard pattern for labelling shapes. **The static renderer does NOT auto-centre text** — you must calculate `x`, `y`, `width`, and `height` so the text appears centred within the parent shape.
 
 **Positioning formulas:**
 
@@ -399,16 +366,12 @@ Example: "System A" (1 line, fontSize 16) in a 160×80 box at (100, 200):
 
 1. Set `containerId` = parent shape's `id`
 2. Add `{ "id": "<text-id>", "type": "text" }` to parent shape's `boundElements`
-3. Always set `verticalAlign = "middle"` and `textAlign = "center"` explicitly —
-   the renderer does not default these, and omitting them causes top-left alignment
-4. **Calculate `x`, `y`, `width`, `height` explicitly** using the formulas above —
-   the static PNG renderer uses these values as-is and does not reposition text
+3. Always set `verticalAlign = "middle"` and `textAlign = "center"` explicitly — the renderer does not default these, and omitting them causes top-left alignment
+4. **Calculate `x`, `y`, `width`, `height` explicitly** using the formulas above — the static PNG renderer uses these values as-is and does not reposition text
 
 #### Multi-line text
 
-For labels with multiple lines (e.g. name + type in C4 boxes), use literal `\n` in
-both the `text` and `originalText` fields. Calculate `text_height` using the number
-of lines:
+For labels with multiple lines (e.g. name + type in C4 boxes), use literal `\n` in both the `text` and `originalText` fields. Calculate `text_height` using the number of lines:
 
 Example: "Customer\n[Person]" (2 lines, fontSize 16) in a 160×80 box at (100, 200):
 
@@ -427,8 +390,7 @@ Example: "Customer\n[Person]" (2 lines, fontSize 16) in a 160×80 box at (100, 2
 
 #### Standalone text (floating label)
 
-Only use `containerId: null` for text that is genuinely standalone — annotations,
-diagram titles, or notes that are not inside any shape or on any arrow.
+Only use `containerId: null` for text that is genuinely standalone — annotations, diagram titles, or notes that are not inside any shape or on any arrow.
 
 ```json
 {
@@ -440,10 +402,7 @@ diagram titles, or notes that are not inside any shape or on any arrow.
 }
 ```
 
-> **WARNING — Anti-pattern**: NEVER use `containerId: null` combined with manual
-> `x`/`y` positioning and `groupIds` to simulate text inside a shape. Always use
-> proper `containerId` binding for text inside shapes and on arrows, combined with
-> accurately calculated `x`/`y`/`width`/`height` values.
+> **WARNING — Anti-pattern**: NEVER use `containerId: null` combined with manual `x`/`y` positioning and `groupIds` to simulate text inside a shape. Always use proper `containerId` binding for text inside shapes and on arrows, combined with accurately calculated `x`/`y`/`width`/`height` values.
 
 ---
 
@@ -519,9 +478,7 @@ To group elements together (move/select as a unit):
 
 Elements can belong to multiple groups (nested grouping).
 
-> **Note:** `groupIds` controls selection and movement grouping only. It does NOT
-> affect text positioning or rendering. To place text inside a shape or on an arrow,
-> use `containerId` binding — not `groupIds`.
+> **Note:** `groupIds` controls selection and movement grouping only. It does NOT affect text positioning or rendering. To place text inside a shape or on an arrow, use `containerId` binding — not `groupIds`.
 
 ---
 
@@ -636,8 +593,7 @@ Text positions are calculated using the formulas from the text section above:
 
 ## Element Ordering (Z-order)
 
-The renderer draws elements in **array order** — later elements render on top of
-earlier ones. There is no separate Z-index property. Follow this ordering:
+The renderer draws elements in **array order** — later elements render on top of earlier ones. There is no separate Z-index property. Follow this ordering:
 
 1. **Frame children before their frame** — required for correct clipping
 2. **Shapes before their bound text labels** — so text renders on top of the fill
@@ -645,10 +601,7 @@ earlier ones. There is no separate Z-index property. Follow this ordering:
 
 Within a group of same-level elements, order does not matter.
 
-> **Note:** The Excalidraw app uses an `index` field (fractional indexing) for
-> collaborative editing. This field is **not required** for generation — array
-> position controls rendering order. Other app-managed fields (`version`,
-> `versionNonce`, `seed`, `updated`, `isDeleted`) can also be omitted.
+> **Note:** The Excalidraw app uses an `index` field (fractional indexing) for collaborative editing. This field is **not required** for generation — array position controls rendering order. Other app-managed fields (`version`, `versionNonce`, `seed`, `updated`, `isDeleted`) can also be omitted.
 
 ---
 
