@@ -1,0 +1,8 @@
+{
+  "name": "obsidian-skills",
+  "version": "0.1.0",
+  "description": "Vendored subset of kepano/obsidian-skills: create and edit Obsidian Flavored Markdown, Bases, and JSON Canvas files. Omits obsidian-cli (use MCP instead) and defuddle (WebFetch replacement, unrelated to Obsidian).",
+  "author": {
+    "name": "Artis Lismanis"
+  }
+}
