@@ -3,8 +3,6 @@
 
 # Ignore framework/generated files and external content
 ignores:
-  - ".claude/commands/**"
-  - ".specify/**"
   - "node_modules/**"
   # Excalidraw plugin template files use intentional markdown patterns:
   # unlabelled JSON code fences, duplicate section headings per diagram type

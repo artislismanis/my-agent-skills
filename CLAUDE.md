@@ -43,10 +43,6 @@ plugins/
           README.md
           src/
           package.json or pyproject.toml
-specs/                     # Speckit feature specs (plugin development work only)
-.specify/                  # Speckit framework
-  extensions.yml           # Extension registry config
-  extensions/              # Installed speckit extensions (e.g. verify)
 .claude/                   # Claude Code config (settings, commands, memory)
 ```
 
@@ -166,42 +162,10 @@ Users add this marketplace and install plugins via:
 Update both `README.md` and `.claude-plugin/marketplace.json` whenever a plugin is
 added, moved, or removed.
 
-## Developing New Plugins (speckit workflow)
-
-New plugin development uses the speckit pipeline:
-
-1. `/speckit.specify "description"` — creates branch + `specs/<branch>/spec.md`
-2. `/speckit.clarify` — resolve spec ambiguities
-3. `/speckit.plan` — implementation plan (includes constitution check)
-4. `/speckit.checklist` — quality checklist
-5. `/speckit.tasks` — generate task list
-6. `/speckit.analyze` — cross-artifact consistency & alignment report
-7. `/speckit.implement` — execute tasks
-8. `/speckit.verify` — post-implementation verification gate
-
-Plugin source lands in `plugins/<topic>/<plugin-name>/`; speckit artifacts live in
-`specs/<branch>/`. After implementation, update `README.md` and
-`.claude-plugin/marketplace.json`.
-
-### Speckit Extensions
-
-Extensions live in `.specify/extensions/` and register commands in
-`.claude/commands/speckit.<ext>*.md`. Extension config is in `.specify/extensions.yml`.
-
-Currently installed:
-
-- **verify** — post-implementation quality gate validating implementation against spec
-  artifacts. Source: <https://github.com/ismaelJimenez/spec-kit-verify>
-
 ## Branching (GitHub Flow)
 
 All changes — including docs, config, and ad-hoc fixes — MUST be made on a
 feature branch. Direct commits to `main` are not allowed.
-
-**For new plugin development**: the speckit pipeline creates the branch automatically
-via `/speckit.specify`. Speckit branches (`###-name`) are GitHub Flow branches.
-
-**For everything else** (docs, config, marketplace updates, etc.):
 
 ```bash
 git checkout -b <short-description>   # e.g. git checkout -b update-readme
@@ -210,15 +174,6 @@ git checkout -b <short-description>   # e.g. git checkout -b update-readme
 
 A `PreToolUse` hook in `.claude/settings.json` enforces this by blocking `Edit`,
 `Write`, and `NotebookEdit` calls when Claude is on `main`.
-
-Speckit commands are defined in `.claude/commands/speckit.*.md`. Key scripts:
-
-- `.specify/scripts/bash/create-new-feature.sh "" --json --short-name "name" "description"` — creates feature branch + spec. Never pass `--number`.
-- `.specify/scripts/bash/setup-plan.sh` — copies plan template; run from a `###-` branch.
-
-Constitution at `.specify/memory/constitution.md` (v1.0.0). Every `plan.md` must include
-a Constitution Check. Principles: Spec-First, Test-First, User Story Independence,
-MVP-First, Simplicity (YAGNI).
 
 ## Devcontainer Setup
 
@@ -255,10 +210,7 @@ These rules govern Claude Code operating in autonomous (`--dangerously-skip-perm
 ### Commit-per-iteration rule (advisory)
 
 Claude MUST commit changes after completing each logical unit of work before proceeding
-to the next. A logical unit of work is:
-
-- During speckit workflows: each task in `tasks.md`
-- Outside speckit: each coherent group of related file edits
+to the next: each coherent group of related file edits.
 
 This rule is advisory — enforced via this CLAUDE.md guidance and Claude's system prompt,
 not technically.
