@@ -19,7 +19,8 @@ config:
   MD010:
     code_blocks: false
 
-  # Line length — disabled: instruction documents and tables often exceed 80 chars
+  # Line length — disabled: this repo writes prose as one line per paragraph
+  # (see plugins/setup/my-claude/rules/markdown.md) and lets viewers wrap it
   MD013: false
 
   # First-line heading — disabled: not all markdown files are documents requiring h1
