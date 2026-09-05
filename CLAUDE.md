@@ -49,7 +49,7 @@ Single-type plugins (e.g. `skills`) may omit unused type subfolders (e.g., `agen
 
 Each plugin folder is a self-contained Claude plugin package.
 
-**`.claude-plugin/plugin.json`** declares plugin metadata: name, version, description, and capabilities. Plugins install to `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/` via the Claude plugin mechanism, where `<source-path>` is the `source` field from `marketplace.json`.
+**`.claude-plugin/plugin.json`** declares plugin metadata: name, version, description, and capabilities. Plugins install to `~/.claude/plugins/marketplaces/<marketplace>/<source-path>/` via the Claude plugin mechanism, where `<source-path>` is the `source` field from `marketplace.json`. Bump `version` (semver) whenever a plugin's files change — rules, skills, agents, or MCP servers — in the same PR as the change.
 
 **`README.md`** (required in every plugin) covers:
 
