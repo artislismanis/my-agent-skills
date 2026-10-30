@@ -10,6 +10,7 @@ Personal Claude plugin marketplace — skills, agents, and MCP servers organised
 | [my-claude](plugins/setup/my-claude/)                           | Skill | Personal baseline rules plus a one-step set-up command      | `/plugin install my-claude@my-agent-skills`           |
 | [obsidian-tandem-comments](plugins/obsidian/obsidian-tandem-comments/) | Skill | Vendored Obsidian Tandem Comments skill for reading/writing comment threads | `/plugin install obsidian-tandem-comments@my-agent-skills` |
 | [obsidian-skills](plugins/obsidian/obsidian-skills/) | Skill | Vendored subset of Obsidian Markdown, Bases, and JSON Canvas skills | `/plugin install obsidian-skills@my-agent-skills` |
+| worktrunk (remote, pinned to `v0.81.0`) | Hooks, Skill | [Worktrunk](https://github.com/max-sixty/worktrunk)'s Claude plugin: `wt` activity markers, worktree hooks and config guidance | `/plugin install worktrunk@my-agent-skills` |
 
 Browse the [`plugins/`](plugins/) directory for all available packages, or see [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) for the machine-readable manifest.
 
@@ -89,6 +90,7 @@ Plugins here borrow ideas from other people's work. Where a plugin is derived fr
 | [my-claude](plugins/setup/my-claude/#sources-and-attribution) | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT), Tiago Forte's Master Prompt concept |
 | [obsidian-tandem-comments](plugins/obsidian/obsidian-tandem-comments/#sources-and-attribution) | [leonpawelzik/obsidian-tandem-comments](https://github.com/leonpawelzik/obsidian-tandem-comments) (MIT) |
 | [obsidian-skills](plugins/obsidian/obsidian-skills/#sources-and-attribution) | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT) |
+| worktrunk | Installed unchanged from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (MIT OR Apache-2.0) at a pinned commit |
 
 ## License
 
