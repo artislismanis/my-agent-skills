@@ -12,7 +12,7 @@ Everything else a plugin ships, including skills and hooks, loads automatically 
 
 | Rule | Covers |
 |------|--------|
-| `tone.md` | Terseness, self-contained answers, no em-dashes |
+| `tone.md` | Terseness, self-contained answers, no em-dashes, and the de-prose style skill for all prose where that plugin is installed |
 | `defaults.md` | Editing over creating, no speculative abstractions, surgical diffs |
 | `before-coding.md` | Minimum viable implementation, stating assumptions |
 | `verification.md` | Turning vague tasks into verifiable ones |

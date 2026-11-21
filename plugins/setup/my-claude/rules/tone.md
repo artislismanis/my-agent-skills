@@ -8,3 +8,4 @@
 - Conclusions, not deliberation. State the decision, skip the path to it.
 - Only use emoji when I ask for them.
 - Strictly no em-dashes.
+- Where the de-prose plugin is installed, load `de-prose:prose-style` before writing any prose, in chat or in a file: commit messages, PR descriptions, comments, docs and tickets. It wins where it is stricter than these rules.
